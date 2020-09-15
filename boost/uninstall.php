@@ -19,24 +19,14 @@
  * MA 02110-1301  USA
  */
 
-function stories_uninstall(&$content)
+function triptrack_uninstall(&$content)
 {
     $db = \phpws2\Database::getDB();
-    $db->buildTable('storiesauthor')->drop(true);
-    $db->buildTable('storiesentry')->drop(true);
-    $db->buildTable('storiestag')->drop(true);
-    $db->buildTable('storiesfeaturestory')->drop(true);
-    $db->buildTable('storiespublish')->drop(true);
-    $db->buildTable('storiesfeature')->drop(true);
-    $db->buildTable('storiestagtoentry')->drop(true);
-    $db->buildTable('storiestrack')->drop(true);
-    $db->buildTable('storieshost')->drop(true);
-    $db->buildTable('storiesshare')->drop(true);
-    $db->buildTable('storiesguest')->drop(true);
+    $db->buildTable('trip_membertotrip')->drop(true);
+    $db->buildTable('trip_organization')->drop(true);
+    $db->buildTable('trip_member')->drop(true);
+    $db->buildTable('trip_trip')->drop(true);
+
     // From previous version
-    $db->buildTable('storiesentrytofeature')->drop(true);
-    $shortcuts = $db->addTable('access_shortcuts');
-    $shortcuts->addFieldConditional('url', 'stories:%', 'like');
-    $db->delete();
     return true;
 }

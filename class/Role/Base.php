@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Role;
+namespace triptrack\Role;
 
 abstract class Base
 {

@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Controller;
+namespace triptrack\Controller;
 
 use Canopy\Request;
 use phpws2\Database;
@@ -31,18 +31,18 @@ class Controller extends \phpws2\Http\Controller
     private function loadRole()
     {
         $userId = \Current_User::getId();
-        if (\Current_User::allow('cstravel')) {
-            $this->role = new \cstravel\Role\Admin($userId);
+        if (\Current_User::allow('triptrack')) {
+            $this->role = new \triptrack\Role\Admin($userId);
         } else {
-            $this->role = new \cstravel\Role\User;
+            $this->role = new \triptrack\Role\User;
         }
     }
 
     /**
      * Loads controller based on Role and Resource.
      * @param Request $request
-     * @throws \cstravel\Exception\PrivilegeMissing
-     * @throws \cstravel\Exception\BadCommand
+     * @throws \triptrack\Exception\PrivilegeMissing
+     * @throws \triptrack\Exception\BadCommand
      */
     private function loadSubController(Request $request)
     {
@@ -50,23 +50,23 @@ class Controller extends \phpws2\Http\Controller
                 FILTER_SANITIZE_STRING);
 
         if (empty($roleController) || preg_match('/\W/', $roleController)) {
-            throw new \cstravel\Exception\BadCommand('Missing role controller');
+            throw new \triptrack\Exception\BadCommand('Missing role controller');
         }
 
         $subController = filter_var($request->shiftCommand(),
                 FILTER_SANITIZE_STRING);
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
-            throw new \cstravel\Exception\PrivilegeMissing;
+            throw new \triptrack\Exception\PrivilegeMissing;
         }
 
         if (empty($subController)) {
-            throw new \cstravel\Exception\BadCommand('Missing subcontroller');
+            throw new \triptrack\Exception\BadCommand('Missing subcontroller');
         }
 
-        $subControllerName = '\\cstravel\\Controller\\' . $roleController . '\\' . $subController;
+        $subControllerName = '\\triptrack\\Controller\\' . $roleController . '\\' . $subController;
         if (!class_exists($subControllerName)) {
-            throw new \cstravel\Exception\BadCommand($subControllerName);
+            throw new \triptrack\Exception\BadCommand($subControllerName);
         }
         $this->subcontroller = new $subControllerName($this->role);
     }
@@ -75,12 +75,12 @@ class Controller extends \phpws2\Http\Controller
     {
         try {
             return parent::execute($request);
-        } catch (\cstravel\Exception\PrivilegeMissing $e) {
+        } catch (\triptrack\Exception\PrivilegeMissing $e) {
             \Current_User::requireLogin();
         } catch (\Exception $e) {
-            if (CSTRAVEL_SYSTEM_SETTINGS['friendlyErrors']) {
+            if (triptrack_SYSTEM_SETTINGS['friendlyErrors']) {
                 \phpws2\Error::log($e);
-                $controller = new \cstravel\Controller\FriendlyErrorController($this->getModule());
+                $controller = new \triptrack\Controller\FriendlyErrorController($this->getModule());
                 return $controller->get($request);
             } else {
                 throw $e;

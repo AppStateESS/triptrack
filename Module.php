@@ -10,20 +10,20 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel;
+namespace triptrack;
 
 use Canopy\Request;
 use Canopy\Response;
 use Canopy\Server;
 use Canopy\SettingDefaults;
-use cstravel\Controller\Controller;
-use cstravel\Factory\VisitorFactory;
+use triptrack\Controller\Controller;
+use triptrack\Factory\VisitorFactory;
 
-$defineFile = PHPWS_SOURCE_DIR . 'mod/cstravel/config/defines.php';
+$defineFile = PHPWS_SOURCE_DIR . 'mod/triptrack/config/defines.php';
 if (is_file($defineFile)) {
     require_once $defineFile;
 } else {
-    require_once PHPWS_SOURCE_DIR . 'mod/cstravel/config/defines.dist.php';
+    require_once PHPWS_SOURCE_DIR . 'mod/triptrack/config/defines.dist.php';
 }
 
 class Module extends \Canopy\Module implements SettingDefaults
@@ -32,16 +32,16 @@ class Module extends \Canopy\Module implements SettingDefaults
     public function __construct()
     {
         parent::__construct();
-        $this->setTitle('cstravel');
+        $this->setTitle('triptrack');
         $this->setProperName('Club Sports Travel Request');
-        \spl_autoload_register('\cstravel\Module::autoloader', true, true);
+        \spl_autoload_register('\triptrack\Module::autoloader', true, true);
     }
 
     public static function autoloader($class_name)
     {
         static $not_found = array();
 
-        if (strpos($class_name, 'cstravel') !== 0) {
+        if (strpos($class_name, 'triptrack') !== 0) {
             return;
         }
 
@@ -52,7 +52,7 @@ class Module extends \Canopy\Module implements SettingDefaults
         $shifted = array_shift($class_array);
         $class_dir = implode('/', $class_array);
 
-        $class_path = PHPWS_SOURCE_DIR . 'mod/cstravel/class/' . $class_dir . '.php';
+        $class_path = PHPWS_SOURCE_DIR . 'mod/triptrack/class/' . $class_dir . '.php';
 
 
         if (is_file($class_path)) {
@@ -66,15 +66,22 @@ class Module extends \Canopy\Module implements SettingDefaults
 
     public function getSettingDefaults()
     {
-        $settings = array('contactName' => '', 'contactEmail' => '');
+        $settings = array(
+            'siteContactName' => '',
+            'siteContactEmail' => '',
+            'hostLabel' => '',
+            'organizationLabel' => '',
+            'allowInternational' => false,
+            'contactBannerRequired' => true,
+            'secondContactBannerRequired' => true);
         return $settings;
     }
 
     public function runTime(Request $request)
     {
-        if (\Current_User::allow('cstravel')) {
-            $this->loadAdminBar();
-        }
+//        if (\Current_User::allow('triptrack')) {
+//            $this->loadAdminBar();
+//        }
     }
 
     public static function loadAdminBar()
@@ -85,7 +92,7 @@ class Module extends \Canopy\Module implements SettingDefaults
         $vars['logout_uri'] = $auth->logout_link;
         $vars['username'] = \Current_User::getDisplayName();
         $template = new \phpws2\Template($vars);
-        $template->setModuleTemplate('cstravel', 'navbar.html');
+        $template->setModuleTemplate('triptrack', 'navbar.html');
         $content = $template->get();
         \Layout::plug($content, 'NAV_LINKS');
     }
@@ -95,16 +102,16 @@ class Module extends \Canopy\Module implements SettingDefaults
         try {
             $controller = new Controller($this, $request);
             return $controller;
-        } catch (\cstravel\Exception\PrivilegeMissing $e) {
+        } catch (\triptrack\Exception\PrivilegeMissing $e) {
             if ($request->isGet() && !$request->isAjax()) {
                 \Current_User::requireLogin();
             } else {
                 throw $e;
             }
         } catch (\Exception $e) {
-            if (CSTRAVEL_SYSTEM_SETTINGS['friendlyErrors']) {
+            if (triptrack_SYSTEM_SETTINGS['friendlyErrors']) {
                 \phpws2\Error::log($e);
-                $controller = new \cstravel\Controller\FriendlyErrorController($this);
+                $controller = new \triptrack\Controller\FriendlyErrorController($this);
                 return $controller;
             } else {
                 throw $e;

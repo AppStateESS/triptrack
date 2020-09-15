@@ -10,11 +10,11 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Controller;
+namespace triptrack\Controller;
 
-use cstravel\Exception\BadCommand;
-use cstravel\Exception\PrivilegeMissing;
-use cstravel\Factory\StoryMenu;
+use triptrack\Exception\BadCommand;
+use triptrack\Exception\PrivilegeMissing;
+use triptrack\Factory\StoryMenu;
 use phpws2\Database;
 use Canopy\Request;
 
@@ -70,7 +70,7 @@ abstract class SubController
     {
         $id = $request->shiftCommand();
         if (!is_numeric($id)) {
-            throw new \cstravel\Exception\ResourceNotFound($id);
+            throw new \triptrack\Exception\ResourceNotFound($id);
         }
         $this->id = $id;
     }

@@ -1,83 +1,39 @@
 <?php
 
-/*
- * Copyright (C) 2017 Matthew McNaney <mcnaneym@appstate.edu>.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
- * MA 02110-1301  USA
+/**
+ * @author Matthew McNaney <mcnaneym@appstate.edu>
+ * @license https://opensource.org/licenses/MIT
  */
-
 use phpws2\Database;
 use phpws2\Database\ForeignKey;
 
 require_once PHPWS_SOURCE_DIR . 'mod/stories/boost/StoriesTables.php';
 
-function stories_install(&$content)
+function triptrack_install(&$content)
 {
     $db = Database::getDB();
     $db->begin();
 
     try {
-        $storiesTables = new StoriesTables;
-        
-        $entryTable = $storiesTables->createEntry();
-        $authorTable = $storiesTables->createAuthor();
-        $guestTable = $storiesTables->createGuest();
-        $hostTable = $storiesTables->createHost();
-        $shareTable = $storiesTables->createShare();
-        $trackTable = $storiesTables->createTrack();
-        $publishTable = $storiesTables->createPublish();
-        $featureTable = $storiesTables->createFeature();
-        $featureStoryTable = $storiesTables->createFeatureStory();
-        $tagTable = $storiesTables->createTag();
-        $tagToEntryTable = $storiesTables->createTagToEntry();
-        
+        $memberTable = createMemberTable();
+        $organizationTable = createOrganizationTable();
+        $tripTable = createTripTable();
+        $memberToTripTable = createMemberToTripTable();
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();
-        if (isset($entryTable)) {
-            $entryTable->drop(true);
-        }
-        if (isset($authorTable)) {
-            $authorTable->drop(true);
-        }
-        if (isset($guestTable)) {
-            $guestTable->drop(true);
-        }
-        if (isset($hostTable)) {
-            $hostTable->drop(true);
-        }
-        if (isset($shareTable)) {
-            $shareTable->drop(true);
-        }
 
-        if (isset($trackTable)) {
-            $trackTable->drop(true);
+        if (isset($memberToTripTable)) {
+            $memberToTripTable->drop();
         }
-        
-        if (isset($publishTable)) {
-            $publishTable->drop(true);
+        if (isset($tripTable)) {
+            $tripTable->drop();
         }
-        if (isset($featureTable)) {
-            $featureTable->drop(true);
+        if (isset($organizationTable)) {
+            $organizationTable->drop();
         }
-        if (isset($tagTable)) {
-            $tagTable->drop(true);
-        }
-        if (isset($tagToEntryTable)) {
-            $tagToEntryTable->drop(true);
+        if (isset($memberTable)) {
+            $memberTable->drop();
         }
         throw $e;
     }
@@ -85,4 +41,44 @@ function stories_install(&$content)
 
     $content[] = 'Tables created';
     return true;
+}
+
+function createMemberTable()
+{
+    $db = Database::getDB();
+    $member = new \triptrack\Resource\Member;
+    return $member->createTable($db);
+}
+
+function createOrganizationTable()
+{
+    $db = Database::getDB();
+    $organization = new \triptrack\Resource\Organization;
+    return $organization->createTable($db);
+}
+
+function createTripTable()
+{
+    $db = Database::getDB();
+    $trip = new \triptrack\Resource\Trip;
+    return $trip->createTable($db);
+}
+
+function createMemberToTripTable()
+{
+    $db = Database::getDB();
+    $orgTable = $db->addTable('trip_organization');
+    $memberToTripTable = $db->buildTable('trip_membertotrip');
+    $orgId = $memberToTripTable->addDataType('organizationId', 'int');
+    $memberId = $memberToTripTable->addDataType('memberId', 'int');
+    $memberToTripTable->create();
+
+    $unique = new \phpws2\Database\Unique([$orgId, $memberId]);
+    $unique->add();
+
+    $foreign = new ForeignKey($memberToTripTable->getDataType('organizationId'),
+            $orgTable->getDataType('id'), ForeignKey::CASCADE);
+    $foreign->add();
+
+    return $memberToTripTable;
 }

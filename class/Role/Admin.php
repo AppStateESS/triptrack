@@ -10,9 +10,9 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Role;
+namespace triptrack\Role;
 
-use cstravel\Factory\VisitorFactory;
+use triptrack\Factory\VisitorFactory;
 
 class Admin extends Base
 {

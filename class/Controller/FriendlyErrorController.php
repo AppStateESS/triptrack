@@ -10,9 +10,9 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Controller;
+namespace triptrack\Controller;
 
-define('CSTRAVEL_FRIENDLY_MESSAGE', 'Server error. Could not complete action');
+define('triptrack_FRIENDLY_MESSAGE', 'Server error. Could not complete action');
 
 class FriendlyErrorController extends \phpws2\Http\Controller
 {
@@ -20,17 +20,17 @@ class FriendlyErrorController extends \phpws2\Http\Controller
     public function execute(\Canopy\Request $request)
     {
         if ($request->isAjax()) {
-            throw new \Exception(CSTRAVEL_FRIENDLY_MESSAGE);
+            throw new \Exception(triptrack_FRIENDLY_MESSAGE);
         }
         return parent::execute($request);
     }
 
     public function get(\Canopy\Request $request)
     {
-        $vars = \cstravel\Factory\SettingsFactory::getContact();
+        $vars = \triptrack\Factory\SettingsFactory::getContact();
         $template = new \phpws2\Template($vars);
-        $template->setModuleTemplate('cstravel', 'error.html');
-        $template->add('message', CSTRAVEL_FRIENDLY_MESSAGE);
+        $template->setModuleTemplate('triptrack', 'error.html');
+        $template->add('message', triptrack_FRIENDLY_MESSAGE);
         $view = new \phpws2\View\HtmlView($template->get());
         $response = new \Canopy\Response($view);
         return $response;

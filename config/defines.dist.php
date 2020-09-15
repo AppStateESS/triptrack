@@ -12,7 +12,7 @@
 /**
  * Do not change the below unless developing
  */
-define('CSTRAVEL_SYSTEM_SETTINGS',
+define('triptrack_SYSTEM_SETTINGS',
         [
             'productionMode' => true,
             'friendlyErrors' => true

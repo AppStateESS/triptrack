@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace cstravel\Exception;
+namespace triptrack\Exception;
 
 class PrivilegeMissing extends \Exception
 {
