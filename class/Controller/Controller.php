@@ -113,7 +113,6 @@ class Controller extends \phpws2\Http\Controller
         if ($request->isAjax() || (bool) $request->pullGetBoolean('json', true)) {
             return $this->subcontroller->getJson($request);
         } else {
-            VisitorView::loggedInBox();
             return $this->subcontroller->getHtml($request);
         }
     }

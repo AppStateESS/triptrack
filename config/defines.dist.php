@@ -12,7 +12,7 @@
 /**
  * Do not change the below unless developing
  */
-define('triptrack_SYSTEM_SETTINGS',
+define('TRIPTRACK_SYSTEM_SETTINGS',
         [
             'productionMode' => true,
             'friendlyErrors' => true

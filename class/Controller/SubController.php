@@ -21,20 +21,12 @@ use Canopy\Request;
 abstract class SubController
 {
 
-    protected $factory;
-    protected $view;
     protected $role;
     protected $id;
-
-    abstract protected function loadFactory();
-
-    abstract protected function loadView();
 
     public function __construct($role)
     {
         $this->role = $role;
-        $this->loadFactory();
-        $this->loadView();
     }
 
     /**

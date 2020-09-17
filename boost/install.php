@@ -19,10 +19,14 @@ function triptrack_install(&$content)
         $organizationTable = createOrganizationTable();
         $tripTable = createTripTable();
         $memberToTripTable = createMemberToTripTable();
+        $documentTable = createDocumentTable();
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();
 
+        if (isset($documentTable)) {
+            $documentTable->drop();
+        }
         if (isset($memberToTripTable)) {
             $memberToTripTable->drop();
         }
@@ -41,6 +45,20 @@ function triptrack_install(&$content)
 
     $content[] = 'Tables created';
     return true;
+}
+
+function createDocumentTable()
+{
+    $db = Database::getDB();
+    $tripTable = $db->addTable('trip_trip');
+    $document = new \triptrack\Resource\Document;
+    $documentTable = $document->createTable($db);
+
+    $foreign = new ForeignKey($documentTable->getDataType('tripId'),
+            $tripTable->getDataType('id'), ForeignKey::CASCADE);
+    $foreign->add();
+
+    return $documentTable;
 }
 
 function createMemberTable()
