@@ -110,7 +110,7 @@ class Module extends \Canopy\Module implements SettingDefaults
                 throw $e;
             }
         } catch (\Exception $e) {
-            if (triptrack_SYSTEM_SETTINGS['friendlyErrors']) {
+            if (TRIPTRACK_SYSTEM_SETTINGS['friendlyErrors']) {
                 \phpws2\Error::log($e);
                 $controller = new \triptrack\Controller\FriendlyErrorController($this);
                 return $controller;

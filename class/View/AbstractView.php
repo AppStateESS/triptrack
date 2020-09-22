@@ -95,4 +95,15 @@ EOF;
         return $content;
     }
 
+    protected function dashboard($active, $script)
+    {
+        $vars['tripActive'] = $active == 'trip' ? ' active' : null;
+        $vars['orgActive'] = $active == 'org' ? ' active' : null;
+        $vars['memberActive'] = $active == 'member' ? ' active' : null;
+        $vars['settingActive'] = $active == 'setting' ? ' active' : null;
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
+        return $template->get();
+    }
+
 }

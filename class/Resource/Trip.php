@@ -19,7 +19,7 @@ class Trip extends \phpws2\Resource
     protected $destinationState;
     protected $housingAddress;
     protected $organizationId;
-    protected $secContantName;
+    protected $secContactName;
     protected $secContactPhone;
     protected $submitDate;
     protected $submitEmail;
@@ -45,7 +45,7 @@ class Trip extends \phpws2\Resource
         $this->destinationCountry = new \phpws2\Variable\TextOnly(null,
                 'destinationCountry', 2);
         $this->destinationState = new \phpws2\Variable\TextOnly(null,
-                'destinationState', 2);
+                'destinationState', 20);
         $this->housingAddress = new \phpws2\Variable\TextOnly(null,
                 'housingAddress');
         $this->organizationId = new \phpws2\Variable\IntegerVar(0,

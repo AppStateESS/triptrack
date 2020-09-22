@@ -7,12 +7,12 @@
 
 namespace triptrack\View;
 
-class TripView extends AbstractView
+class OrganizationView extends AbstractView
 {
 
     public function listHtml()
     {
-        return $this->dashboard('trip', 'TripList');
+        return $this->dashboard('org', 'OrganizationList');
     }
 
 }

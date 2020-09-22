@@ -1,6 +1,7 @@
 'use strict'
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
+import Form from './Form'
 
 export default class Create extends Component {
   constructor(props) {
@@ -9,7 +10,11 @@ export default class Create extends Component {
   }
 
   render() {
-    return <div>Create</div>
+    return (
+      <div>
+        <Form />
+      </div>
+    )
   }
 }
 

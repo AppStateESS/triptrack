@@ -7,12 +7,12 @@
 
 namespace triptrack\View;
 
-class TripView extends AbstractView
+class SettingView extends AbstractView
 {
 
     public function listHtml()
     {
-        return $this->dashboard('trip', 'TripList');
+        return $this->dashboard('setting', 'Settings');
     }
 
 }

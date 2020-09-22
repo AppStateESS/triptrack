@@ -24,7 +24,7 @@ abstract class SubController
     protected $role;
     protected $id;
 
-    public function __construct($role)
+    public function __construct(\triptrack\Role\Base $role)
     {
         $this->role = $role;
     }
