@@ -14,6 +14,7 @@ namespace triptrack\View;
 
 use Canopy\Request;
 use phpws2\Template;
+use triptrack\Factory\OrganizationFactory;
 
 abstract class AbstractView
 {
@@ -97,10 +98,34 @@ EOF;
 
     protected function dashboard($active, $script)
     {
-        $vars['tripActive'] = $active == 'trip' ? ' active' : null;
-        $vars['orgActive'] = $active == 'org' ? ' active' : null;
-        $vars['memberActive'] = $active == 'member' ? ' active' : null;
-        $vars['settingActive'] = $active == 'setting' ? ' active' : null;
+        $vars['tripActive'] = null;
+        $vars['orgActive'] = null;
+        $vars['memberActive'] = null;
+        $vars['settingActive'] = null;
+        $vars['dashboard'] = null;
+        $orgExists = OrganizationFactory::exists();
+        $vars['alert'] = false;
+
+        switch ($active) {
+            case 'trip':
+                $vars['tripActive'] = ' active';
+                $vars['dashboard'] = $this->scriptView('TripList');
+                $vars['alert'] = !$orgExists;
+                break;
+            case 'member':
+                $vars['memberActive'] = ' active';
+                $vars['dashboard'] = $this->scriptView('MemberList');
+                $vars['alert'] = !$orgExists;
+                break;
+            case 'setting':
+                $vars['settingActive'] = ' active';
+                $vars['dashboard'] = $this->scriptView('SettingList');
+                break;
+            case 'org':
+                $vars['orgActive'] = ' active';
+                $vars['dashboard'] = $this->scriptView('OrgList');
+                break;
+        }
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
         return $template->get();

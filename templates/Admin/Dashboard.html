@@ -1,6 +1,6 @@
 <h2>Trip Track</h2>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs mb-2">
   <li class="nav-item">
     <a class="nav-link<?=$tripActive?>" href="./triptrack/Admin/Trip">Trips</a>
   </li>
@@ -16,3 +16,9 @@
     <a class="nav-link<?=$settingActive?>" href="./triptrack/Admin/Setting">Settings</a>
   </li>
 </ul>
+<?php if ($alert):?>
+<div class="alert alert-warning">Before making a Trip or Member you need to <a class="btn btn-default btn-sm"
+    href="./triptrack/Admin/Organization">Create an organization</a>
+</div>
+<?php endif;?>
+<div class="mt-3"><?=$dashboard?></div>

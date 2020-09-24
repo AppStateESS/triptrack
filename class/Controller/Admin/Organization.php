@@ -8,6 +8,7 @@
 namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
+use triptrack\Factory\OrganizationFactory;
 
 class Organization extends SubController
 {
@@ -23,6 +24,11 @@ class Organization extends SubController
     protected function listHtml()
     {
         return $this->view->listHtml();
+    }
+
+    protected function listJson()
+    {
+        return OrganizationFactory::list();
     }
 
 }
