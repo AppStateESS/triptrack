@@ -17,3 +17,6 @@ define('TRIPTRACK_SYSTEM_SETTINGS',
             'productionMode' => true,
             'friendlyErrors' => true
 ]);
+
+define('TRIPTRACK_ALLOWED_TAGS',
+        ['<p>', '<strong>', '<em>', '<blockquote>', '<ul>', '<ol>', '<li>', '<a>']);
