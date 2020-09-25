@@ -9,6 +9,7 @@ namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
 use triptrack\Factory\OrganizationFactory;
+use Canopy\Request;
 
 class Organization extends SubController
 {
@@ -29,6 +30,12 @@ class Organization extends SubController
     protected function listJson()
     {
         return OrganizationFactory::list();
+    }
+
+    protected function post(Request $request)
+    {
+        OrganizationFactory::post($request);
+        return ['success' => true];
     }
 
 }
