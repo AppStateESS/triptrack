@@ -1,1 +1,4 @@
 /config/defines.php
+**/javascript/dev/
+**/javascript/build/
+**/assets.json
