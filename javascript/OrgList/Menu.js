@@ -2,7 +2,7 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({}) => {
+const Menu = ({showModal}) => {
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -19,7 +19,9 @@ const Menu = ({}) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
             <li className="nav-item active">
-              <button className="btn btn-success">Create organization</button>
+              <button className="btn btn-success" onClick={showModal}>
+                Create organization
+              </button>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="#">
@@ -46,7 +48,7 @@ const Menu = ({}) => {
   )
 }
 
-Menu.propTypes = {}
+Menu.propTypes = {showModal: PropTypes.func}
 
 Menu.defaultProps = {}
 export default Menu
