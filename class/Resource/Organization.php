@@ -7,7 +7,7 @@
 
 namespace triptrack\Resource;
 
-class Organization extends \phpws2\Resource
+class Organization extends AbstractResource
 {
 
     protected $name;
