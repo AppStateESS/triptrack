@@ -6,9 +6,6 @@ import Menu from './Menu'
 const Grid = ({organizations}) => {
   return (
     <div>
-      <div>
-        <Menu />
-      </div>
       <p>Grid</p>
     </div>
   )
