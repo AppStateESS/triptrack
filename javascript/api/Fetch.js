@@ -9,7 +9,8 @@ const getList = async (url) => {
     })
 
     if (response.ok) {
-      return response.json()
+      const json = await response.json()
+      return json
     } else {
       return false
     }
