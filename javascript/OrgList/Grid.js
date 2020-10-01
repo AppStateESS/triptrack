@@ -1,17 +1,35 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Menu from './Menu'
 
-const Grid = ({organizations}) => {
+const Grid = ({organizations, edit}) => {
+  const rows = organizations.map((value, key) => {
+    return (
+      <tr key={key}>
+        <td style={{width: '5%'}}>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={() => {
+              edit(value.id)
+            }}>
+            Edit
+          </button>
+        </td>
+        <td>{value.name}</td>
+      </tr>
+    )
+  })
+
   return (
     <div>
-      <p>Grid</p>
+      <table className="table table-striped">
+        <tbody>{rows}</tbody>
+      </table>
     </div>
   )
 }
 
-Grid.propTypes = {}
+Grid.propTypes = {organizations: PropTypes.array, edit: PropTypes.func}
 
-Grid.defaultProps = {}
 export default Grid

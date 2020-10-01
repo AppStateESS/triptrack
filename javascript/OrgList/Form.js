@@ -1,34 +1,50 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 
-const Form = ({currentOrg, close}) => {
+const Form = ({currentOrg, close, reload}) => {
+  const [id, setId] = useState(0)
   const [name, setName] = useState(currentOrg.name)
-
   const closeForm = () => {
     setName('')
+    reload()
     close()
   }
 
-  const save = () => {
-    const formData = new FormData()
-    formData.append('id', currentOrg.id)
-    formData.append('name', name)
+  useEffect(() => {
+    setId(currentOrg.id)
+    setName(currentOrg.name)
+  }, [currentOrg])
 
-    axios
-      .post('./triptrack/Admin/Organization', formData, {
-        timeout: 3000,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      })
+  const save = () => {
+    let url = './triptrack/Admin/Organization'
+    if (id > 0) {
+      const add = new URLSearchParams()
+      url += '/' + id
+    }
+
+    axios({
+      method: id > 0 ? 'put' : 'post',
+      url,
+      data: {id, name},
+      timeout: 3000,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
       .then((response) => {
         closeForm()
       })
       .catch((error) => {
         console.log('Error:', error)
       })
+  }
+
+  const checkForEnter = (keyPress) => {
+    if (keyPress.keyCode === 13 && name.length > 0) {
+      save()
+    }
   }
 
   return (
@@ -38,6 +54,7 @@ const Form = ({currentOrg, close}) => {
         <input
           className="form-control"
           value={name}
+          onKeyDown={(e) => checkForEnter(e)}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
@@ -62,6 +79,7 @@ const Form = ({currentOrg, close}) => {
 Form.propTypes = {
   currentOrg: PropTypes.object,
   close: PropTypes.func,
+  reload: PropTypes.func,
 }
 
 export default Form

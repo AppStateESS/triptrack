@@ -1,11 +1,12 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
 import getList from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import Form from './Form'
 import Overlay from 'canopy-react-overlay'
+import Message from '../Share/Message'
+
 import 'regenerator-runtime'
 
 const emptyOrg = {id: 0, name: ''}
@@ -14,13 +15,16 @@ const List = () => {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState('danger')
   const [showModal, setShowModal] = useState(false)
   const [currentOrg, setCurrentOrg] = useState(Object.assign({}, emptyOrg))
 
   const load = async () => {
     let response = await getList('./triptrack/Admin/Organization/')
     if (response === false) {
-      console.log('BUSTED!')
+      setMessage('Error: could not load organization list')
+      setMessageType('danger')
+      setLoading(false)
     } else {
       if (response.length > 0) {
         setOrganizations(response)
@@ -34,8 +38,18 @@ const List = () => {
 
   const resetModal = () => {
     setCurrentOrg(Object.assign({}, emptyOrg))
-    console.log(currentOrg)
     setShowModal(false)
+  }
+
+  const update = async (orgId) => {
+    let response = await getList('./triptrack/Admin/Organization/' + orgId)
+    if (response === false) {
+      setMessage('Error: could not load organization')
+      setMessageType('danger')
+    } else {
+      setCurrentOrg(response)
+      setShowModal(true)
+    }
   }
 
   const modal = (
@@ -51,7 +65,7 @@ const List = () => {
         )
       }>
       <div>
-        <Form currentOrg={currentOrg} close={resetModal} />
+        <Form currentOrg={currentOrg} close={resetModal} reload={load} />
       </div>
     </Overlay>
   )
@@ -61,6 +75,7 @@ const List = () => {
   } else if (organizations.length === 0) {
     return (
       <div>
+        <Message message={message} type={messageType} />
         <Menu
           showModal={() => {
             setShowModal(true)
@@ -78,7 +93,8 @@ const List = () => {
             setShowModal(true)
           }}
         />
-        <Grid organizations={organizations} />
+        <Message message={message} type={messageType} />
+        <Grid organizations={organizations} edit={update} />
         {modal}
       </div>
     )
