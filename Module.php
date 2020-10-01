@@ -67,6 +67,7 @@ class Module extends \Canopy\Module implements SettingDefaults
     public function getSettingDefaults()
     {
         $settings = array(
+            'approvalRequired' => true,
             'siteContactName' => '',
             'siteContactEmail' => '',
             'hostLabel' => '',
