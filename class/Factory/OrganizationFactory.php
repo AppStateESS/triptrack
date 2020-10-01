@@ -9,9 +9,16 @@ namespace triptrack\Factory;
 
 use phpws2\Database;
 use Canopy\Request;
+use triptrack\Resource\Organization;
 
-class OrganizationFactory extends \phpws2\ResourceFactory
+class OrganizationFactory extends BaseFactory
 {
+
+    public static function build()
+    {
+        $org = new Organization;
+        return $org;
+    }
 
     public static function exists()
     {
@@ -26,6 +33,7 @@ class OrganizationFactory extends \phpws2\ResourceFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_organization');
+        $tbl->addOrderBy('name');
         return $db->select();
     }
 
@@ -34,6 +42,12 @@ class OrganizationFactory extends \phpws2\ResourceFactory
         $org = new \triptrack\Resource\Organization;
         $org->name = $request->pullPostString('name');
         self::saveResource($org);
+    }
+
+    public static function put(Organization $organization, Request $request)
+    {
+        $organization->name = $request->pullPutString('name');
+        self::saveResource($organization);
     }
 
 }
