@@ -22,6 +22,11 @@ class Organization extends SubController
         $this->view = new \triptrack\View\OrganizationView();
     }
 
+    public function load()
+    {
+        return OrganizationFactory::load(OrganizationFactory::build(), $this->id);
+    }
+
     protected function listHtml()
     {
         return $this->view->listHtml();
@@ -36,6 +41,19 @@ class Organization extends SubController
     {
         OrganizationFactory::post($request);
         return ['success' => true];
+    }
+
+    protected function put(Request $request)
+    {
+        $organization = self::load();
+        OrganizationFactory::put($organization, $request);
+        return ['success' => true];
+    }
+
+    protected function viewJson(Request $request)
+    {
+        $organization = self::load();
+        return $organization->getStringVars();
     }
 
 }
