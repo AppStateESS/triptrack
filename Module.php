@@ -74,6 +74,8 @@ class Module extends \Canopy\Module implements SettingDefaults
             'organizationLabel' => '',
             'allowInternational' => false,
             'allowUpload' => false,
+            'uploadRequired' => false,
+            'uploadInstructions' => '',
             'contactBannerRequired' => true,
             'secondContactBannerRequired' => true);
         return $settings;
