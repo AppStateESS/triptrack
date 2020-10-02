@@ -76,8 +76,7 @@ class Module extends \Canopy\Module implements SettingDefaults
             'allowUpload' => false,
             'uploadRequired' => false,
             'uploadInstructions' => '',
-            'contactBannerRequired' => true,
-            'secondContactBannerRequired' => true);
+            'contactBannerRequired' => true);
         return $settings;
     }
 
