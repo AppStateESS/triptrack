@@ -34,8 +34,6 @@
     "babel-loader": "^8.1.0",
     "browser-sync": "^2.26.12",
     "browser-sync-webpack-plugin": "^2.2.2",
-    "canopy-react-bigcheckbox": "^0.1.9",
-    "canopy-react-overlay": "^0.1.7",
     "css-loader": "^4.3.0",
     "dayjs": "^1.9.1",
     "es6-promise": "^4.2.8",
