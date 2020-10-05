@@ -7,12 +7,15 @@
 
 namespace triptrack\View;
 
+use triptrack\Factory\SettingFactory;
+
 class SettingView extends AbstractView
 {
 
     public function listHtml()
     {
-        return $this->dashboard('setting', 'Settings');
+        return $this->dashboard('setting', 'Settings',
+                        ['settings' => SettingFactory::getAll()]);
     }
 
 }
