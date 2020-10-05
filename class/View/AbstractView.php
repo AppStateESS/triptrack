@@ -96,7 +96,8 @@ EOF;
         return $content;
     }
 
-    protected function dashboard($active, $script)
+    protected function dashboard(string $active, string $script,
+            array $scriptVars = [])
     {
         $vars['tripActive'] = null;
         $vars['orgActive'] = null;
@@ -119,7 +120,8 @@ EOF;
                 break;
             case 'setting':
                 $vars['settingActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('SettingList');
+                $vars['dashboard'] = $this->scriptView('SettingList',
+                        $scriptVars);
                 break;
             case 'org':
                 $vars['orgActive'] = ' active';
