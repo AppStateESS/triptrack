@@ -22,7 +22,7 @@ class SettingFactory
     public static function getAll()
     {
         $settings = [];
-        $settings['approvalRequired'] = Settings::get('triptrack',
+        $settings['approvalRequired'] = (bool) Settings::get('triptrack',
                         'approvalRequired');
         $settings['siteContactName'] = Settings::get('triptrack',
                         'siteContactName');
@@ -31,14 +31,15 @@ class SettingFactory
         $settings['hostLabel'] = Settings::get('triptrack', 'hostLabel');
         $settings['organizationLabel'] = Settings::get('triptrack',
                         'organizationLabel');
-        $settings['allowInternational'] = Settings::get('triptrack',
+        $settings['allowInternational'] = (bool) Settings::get('triptrack',
                         'allowInternational');
-        $settings['allowUpload'] = Settings::get('triptrack', 'allowUpload');
-        $settings['uploadRequired'] = Settings::get('triptrack',
+        $settings['allowUpload'] = (bool) Settings::get('triptrack',
+                        'allowUpload');
+        $settings['uploadRequired'] = (bool) Settings::get('triptrack',
                         'uploadRequired');
         $settings['uploadInstructions'] = Settings::get('triptrack',
                         'uploadInstructions');
-        $settings['contactBannerRequired'] = Settings::get('triptrack',
+        $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
                         'contactBannerRequired');
         return $settings;
     }
