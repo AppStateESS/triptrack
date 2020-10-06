@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom'
 import BigCheckbox from '@essappstate/canopy-react-bigcheckbox'
 import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
-import 'regenerator-runtime'
 import axios from 'axios'
 
 /* global settings */
