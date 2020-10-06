@@ -4,7 +4,7 @@ import getList from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import Form from './Form'
-import Overlay from 'canopy-react-overlay'
+import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 
 import 'regenerator-runtime'
