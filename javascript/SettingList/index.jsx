@@ -1,18 +1,21 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
+import SaveButton from '../Share/SaveButton'
 import ReactDOM from 'react-dom'
-import BigCheckbox from 'canopy-react-bigcheckbox'
+import BigCheckbox from '@essappstate/canopy-react-bigcheckbox'
 import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
+import 'regenerator-runtime'
 import axios from 'axios'
 
 /* global settings */
 
 const saveButtonDefault = {
-  siteContactName: false,
-  siteContactEmail: false,
-  hostLabel: false,
-  organizationLabel: false,
+  uploadInstructions: {disabled: true, saving: false},
+  siteContactName: {disabled: true, saving: false},
+  siteContactEmail: {disabled: true, saving: false},
+  hostLabel: {disabled: true, saving: false},
+  organizationLabel: {disabled: true, saving: false},
 }
 
 const SettingList = ({currentSettings}) => {
@@ -21,40 +24,79 @@ const SettingList = ({currentSettings}) => {
     Object.assign({}, saveButtonDefault)
   )
 
-  const update = (settingName, value) => {
+  useEffect(() => {
+    save('allowInternational')
+  }, [settings.allowInternational])
+
+  useEffect(() => {
+    save('uploadRequired')
+  }, [settings.uploadRequired])
+
+  useEffect(() => {
+    save('contactBannerRequired')
+  }, [settings.contactBannerRequired])
+
+  useEffect(() => {
+    save('approvalRequired')
+  }, [settings.approvalRequired])
+
+  useEffect(() => {
+    save('allowUpload')
+  }, [settings.allowUpload])
+
+  useEffect(() => {
+    save('allowInternational')
+  }, [settings.allowInternational])
+
+  const updateText = (settingName, value) => {
     const current = Object.assign({}, settings)
-    switch (settingName) {
-      case 'allowUpload':
-        if (value === false) {
-          current.uploadRequired = false
-        }
-    }
     current[settingName] = value
     setSettings(current)
-    updateButton(settingName, true)
+    enableButton(settingName)
   }
 
-  const updateButton = (settingName, value) => {
-    console.log('in updateButton with')
-    console.log(settingName)
-    const buttons = Object.assign({}, saveButton)
-    if (buttons[settingName] !== undefined) {
-      console.log('button exist setting to true')
-      buttons[settingName] = value
-      console.log(buttons)
-      setSaveButton(buttons)
+  const updateCheck = (settingName) => {
+    const current = Object.assign({}, settings)
+    current[settingName] = !current[settingName]
+    if (settingName === 'allowUpload' && current.allowUpload === false) {
+      current.uploadRequired = false
     }
+    setSettings(current)
+    save(settingName)
   }
 
-  const resetButton = (settingName) => {
-    console.log('in reset button with')
-    console.log(settingName)
-    updateButton(settingName, false)
+  const enableButton = (settingName) => {
+    const buttons = Object.assign({}, saveButton)
+    buttons[settingName].disabled = false
+    setSaveButton(buttons)
+  }
+
+  const disableButton = (settingName) => {
+    if (saveButton[settingName] === undefined) {
+      return
+    }
+    const buttons = Object.assign({}, saveButton)
+    buttons[settingName].disabled = true
+    setSaveButton(buttons)
+  }
+
+  const savingStatus = (settingName, status) => {
+    if (saveButton[settingName] === undefined) {
+      return
+    }
+    const buttons = Object.assign({}, saveButton)
+    buttons[settingName].saving = status
+    setSaveButton(buttons)
+  }
+
+  const wait = (delay) => {
+    const promise = new Promise((resolve) => setTimeout(resolve, delay))
+    return promise
   }
 
   const save = (settingName) => {
+    savingStatus(settingName, true)
     let url = './triptrack/Admin/Setting/'
-
     axios({
       method: 'post',
       url,
@@ -64,14 +106,15 @@ const SettingList = ({currentSettings}) => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-      .then((response) => {
-        console.log('resetting button')
-        resetButton(settingName)
+      .then(() => {
+        wait(2000).then(() => {
+          savingStatus(settingName, false)
+          disableButton(settingName)
+        })
       })
       .catch((error) => {
         console.log('Error:', error)
       })
-    resetButton(settingName)
   }
 
   const uploadRequiredRow = () => {
@@ -91,7 +134,7 @@ const SettingList = ({currentSettings}) => {
                 label={settings.uploadRequired ? 'Yes' : 'No'}
                 checked={settings.uploadRequired}
                 handle={() => {
-                  update('uploadRequired', !settings.uploadRequired)
+                  updateCheck('uploadRequired', !settings.uploadRequired)
                 }}
               />
             </div>
@@ -109,7 +152,14 @@ const SettingList = ({currentSettings}) => {
               <textarea
                 className="form-control"
                 value={settings.uploadInstructions}
-                onChange={(e) => update('uploadInstructions', e.target.value)}
+                onChange={(e) =>
+                  updateText('uploadInstructions', e.target.value)
+                }
+              />
+              <SaveButton
+                disabled={saveButton.uploadInstructions.disabled}
+                saving={saveButton.uploadInstructions.saving}
+                click={() => save('uploadInstructions')}
               />
             </div>
           </div>
@@ -133,7 +183,7 @@ const SettingList = ({currentSettings}) => {
             label={settings.allowInternational ? 'Yes' : 'No'}
             checked={settings.allowInternational}
             handle={() => {
-              update('allowInternational', !settings.allowInternational)
+              updateCheck('allowInternational')
             }}
           />
         </div>
@@ -152,7 +202,7 @@ const SettingList = ({currentSettings}) => {
             label={settings.contactBannerRequired ? 'Yes' : 'No'}
             checked={settings.contactBannerRequired}
             handle={() => {
-              update('allowInternational', !settings.contactBannerRequired)
+              updateCheck('contactBannerRequired')
             }}
           />
         </div>
@@ -171,7 +221,7 @@ const SettingList = ({currentSettings}) => {
             label={settings.approvalRequired ? 'Yes' : 'No'}
             checked={settings.approvalRequired}
             handle={() => {
-              update('approvalRequired', !settings.approvalRequired)
+              updateCheck('approvalRequired')
             }}
           />
         </div>
@@ -189,7 +239,7 @@ const SettingList = ({currentSettings}) => {
             label={settings.allowUpload ? 'Yes' : 'No'}
             checked={settings.allowUpload}
             handle={() => {
-              update('allowUpload', !settings.allowUpload)
+              updateCheck('allowUpload')
             }}
           />
         </div>
@@ -208,16 +258,14 @@ const SettingList = ({currentSettings}) => {
             <input
               className="form-control"
               value={settings.siteContactName}
-              onChange={(e) => update('siteContactName', e.target.value)}
+              onChange={(e) => updateText('siteContactName', e.target.value)}
             />
             <div className="input-group-append">
-              <button
-                disabled={!saveButton.siteContactName}
-                className="btn btn-success"
-                onClick={() => save('siteContactName')}
-                type="button">
-                Save
-              </button>
+              <SaveButton
+                disabled={saveButton.siteContactName.disabled}
+                saving={saveButton.siteContactName.saving}
+                click={() => save('siteContactName')}
+              />
             </div>
           </div>
         </div>
@@ -235,16 +283,14 @@ const SettingList = ({currentSettings}) => {
             <input
               className="form-control"
               value={settings.siteContactEmail}
-              onChange={(e) => update('siteContactEmail', e.target.value)}
+              onChange={(e) => updateText('siteContactEmail', e.target.value)}
             />
             <div className="input-group-append">
-              <button
-                onClick={() => save('siteContactEmail')}
-                disabled={!saveButton.siteContactEmail}
-                className="btn btn-success"
-                type="button">
-                Save
-              </button>
+              <SaveButton
+                disabled={saveButton.siteContactEmail.disabled}
+                saving={saveButton.siteContactEmail.saving}
+                click={() => save('siteContactEmail')}
+              />
             </div>
           </div>
         </div>
@@ -264,16 +310,14 @@ const SettingList = ({currentSettings}) => {
               placeholder='"Host" used if empty'
               className="form-control"
               value={settings.hostLabel}
-              onChange={(e) => update('hostLabel', e.target.value)}
+              onChange={(e) => updateText('hostLabel', e.target.value)}
             />{' '}
             <div className="input-group-append">
-              <button
-                onClick={() => save('hostLabel')}
-                disabled={!saveButton.hostLabel}
-                className="btn btn-success"
-                type="button">
-                Save
-              </button>
+              <SaveButton
+                disabled={saveButton.hostLabel.disabled}
+                saving={saveButton.hostLabel.saving}
+                click={() => save('hostLabel')}
+              />
             </div>
           </div>
         </div>
@@ -293,16 +337,14 @@ const SettingList = ({currentSettings}) => {
               placeholder='"Organization" used if empty'
               className="form-control"
               value={settings.organizationLabel}
-              onChange={(e) => update('organizationLabel', e.target.value)}
+              onChange={(e) => updateText('organizationLabel', e.target.value)}
             />{' '}
             <div className="input-group-append">
-              <button
-                onClick={() => save('organizationLabel')}
-                disabled={!saveButton.organizationLabel}
-                className="btn btn-success"
-                type="button">
-                Save
-              </button>
+              <SaveButton
+                disabled={saveButton.organizationLabel.disabled}
+                saving={saveButton.organizationLabel.saving}
+                click={() => save('organizationLabel')}
+              />
             </div>
           </div>
         </div>
