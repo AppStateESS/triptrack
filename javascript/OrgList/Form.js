@@ -20,7 +20,6 @@ const Form = ({currentOrg, close, reload}) => {
   const save = () => {
     let url = './triptrack/Admin/Organization'
     if (id > 0) {
-      const add = new URLSearchParams()
       url += '/' + id
     }
 
@@ -33,7 +32,7 @@ const Form = ({currentOrg, close, reload}) => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-      .then((response) => {
+      .then(() => {
         closeForm()
       })
       .catch((error) => {
