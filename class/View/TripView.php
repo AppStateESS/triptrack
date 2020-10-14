@@ -15,4 +15,9 @@ class TripView extends AbstractView
         return $this->dashboard('trip', 'TripList');
     }
 
+    public function form(int $tripId = 0)
+    {
+        return $this->scriptView('Create', ['tripId' => $tripId]);
+    }
+
 }
