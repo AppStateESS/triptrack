@@ -125,7 +125,7 @@ EOF;
                 break;
             case 'org':
                 $vars['orgActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('OrgList');
+                $vars['dashboard'] = $this->scriptView('OrgList', $scriptVars);
                 break;
         }
         $template = new \phpws2\Template($vars);
