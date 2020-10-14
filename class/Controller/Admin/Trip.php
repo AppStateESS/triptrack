@@ -8,6 +8,8 @@
 namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
+use triptrack\Factory\TripFactory;
+use Canopy\Request;
 
 class Trip extends SubController
 {
@@ -23,6 +25,16 @@ class Trip extends SubController
     protected function listHtml()
     {
         return $this->view->listHtml();
+    }
+
+    protected function listJson(Request $request)
+    {
+        return TripFactory::list();
+    }
+
+    protected function createHtml()
+    {
+        return $this->view->form();
     }
 
 }
