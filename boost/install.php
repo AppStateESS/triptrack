@@ -19,6 +19,7 @@ function triptrack_install(&$content)
         $organizationTable = createOrganizationTable();
         $tripTable = createTripTable();
         $memberToTripTable = createMemberToTripTable();
+        $memberToOrgTable = createMemberToOrgTable();
         $documentTable = createDocumentTable();
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
@@ -29,6 +30,9 @@ function triptrack_install(&$content)
         }
         if (isset($memberToTripTable)) {
             $memberToTripTable->drop();
+        }
+        if (isset($memberToOrgTable)) {
+            $memberToOrgTable->drop();
         }
         if (isset($tripTable)) {
             $tripTable->drop();
@@ -85,18 +89,37 @@ function createTripTable()
 function createMemberToTripTable()
 {
     $db = Database::getDB();
-    $orgTable = $db->addTable('trip_organization');
+    $tripTable = $db->addTable('trip_trip');
     $memberToTripTable = $db->buildTable('trip_membertotrip');
-    $orgId = $memberToTripTable->addDataType('organizationId', 'int');
+    $tripId = $memberToTripTable->addDataType('tripId', 'int');
     $memberId = $memberToTripTable->addDataType('memberId', 'int');
     $memberToTripTable->create();
+
+    $unique = new \phpws2\Database\Unique([$tripId, $memberId]);
+    $unique->add();
+
+    $foreign = new ForeignKey($memberToTripTable->getDataType('tripId'),
+            $tripTable->getDataType('id'), ForeignKey::CASCADE);
+    $foreign->add();
+
+    return $memberToTripTable;
+}
+
+function createMemberToOrgTable()
+{
+    $db = Database::getDB();
+    $orgTable = $db->addTable('trip_organization');
+    $memberToOrgTable = $db->buildTable('trip_membertoorg');
+    $orgId = $memberToOrgTable->addDataType('organizationId', 'int');
+    $memberId = $memberToOrgTable->addDataType('memberId', 'int');
+    $memberToOrgTable->create();
 
     $unique = new \phpws2\Database\Unique([$orgId, $memberId]);
     $unique->add();
 
-    $foreign = new ForeignKey($memberToTripTable->getDataType('organizationId'),
+    $foreign = new ForeignKey($memberToOrgTable->getDataType('organizationId'),
             $orgTable->getDataType('id'), ForeignKey::CASCADE);
     $foreign->add();
 
-    return $memberToTripTable;
+    return $memberToOrgTable;
 }
