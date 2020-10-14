@@ -50,4 +50,13 @@ class OrganizationFactory extends BaseFactory
         self::saveResource($organization);
     }
 
+    public static function delete(Organization $organization)
+    {
+        TripFactory::deleteByOrganizationId($organization->id);
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_organization');
+        $tbl->addFieldConditional('id', $organization->id);
+        $db->delete();
+    }
+
 }
