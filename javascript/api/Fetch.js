@@ -1,22 +1,31 @@
+import axios from 'axios'
 import 'regenerator-runtime'
 
-const getList = async (url) => {
+const getList = async (url, options) => {
   try {
-    let response = await fetch(url, {
+    const response = await axios.get(url, {
+      data: options,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-
-    if (response.ok) {
-      const json = await response.json()
-      return json
-    } else {
-      return false
-    }
+    return response.data
   } catch (error) {
     return false
   }
 }
 
-export default getList
+const sendDelete = async (url) => {
+  try {
+    const response = await axios.delete(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    return response
+  } catch (error) {
+    return false
+  }
+}
+
+export {getList, sendDelete}
