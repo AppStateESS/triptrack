@@ -1,20 +1,46 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import Menu from './Menu'
 
-const Grid = ({organizations, edit}) => {
+const Grid = ({organizations, edit, deleteRow, deity = false}) => {
+  const deleteItem = (key) => {
+    if (
+      prompt(
+        'Are you certain you want to delete this organization?\nAll associated trips and members will be deleted as well.\nIf you are sure, type "DELETE" below.'
+      ) === 'DELETE'
+    ) {
+      deleteRow(key)
+    }
+  }
+
+  const deleteButton = (key) => {
+    if (deity === false) {
+      return <span></span>
+    } else {
+      return (
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => {
+            deleteItem(key)
+          }}>
+          Delete
+        </button>
+      )
+    }
+  }
+
   const rows = organizations.map((value, key) => {
     return (
-      <tr key={key}>
-        <td style={{width: '5%'}}>
+      <tr key={'gridrow-' + key}>
+        <td style={{width: '15%'}}>
           <button
-            className="btn btn-sm btn-primary"
+            className="btn btn-sm btn-primary mr-1"
             onClick={() => {
               edit(value.id)
             }}>
             Edit
           </button>
+          {deleteButton(key)}
         </td>
         <td>{value.name}</td>
       </tr>
@@ -30,6 +56,11 @@ const Grid = ({organizations, edit}) => {
   )
 }
 
-Grid.propTypes = {organizations: PropTypes.array, edit: PropTypes.func}
+Grid.propTypes = {
+  organizations: PropTypes.array,
+  edit: PropTypes.func,
+  deleteRow: PropTypes.func,
+  deity: PropTypes.bool,
+}
 
 export default Grid

@@ -1,8 +1,8 @@
 'use strict'
-import React, {useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({showModal}) => {
+const Menu = ({showModal, sendSearch, search, setSearch}) => {
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -23,24 +23,35 @@ const Menu = ({showModal}) => {
                 Create organization
               </button>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Command
-              </a>
-            </li>
           </ul>
           <div className="d-flex justify-content-end">
-            <input
-              className="form-control mr-sm-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <button
-              className="btn btn-outline-success my-2 my-sm-0"
-              type="submit">
-              Search
-            </button>
+            <div className="input-group">
+              <input
+                className="form-control"
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <div className="input-group-append">
+                <button
+                  className="btn btn-outline-success my-2 my-sm-0"
+                  onClick={sendSearch}
+                  type="button">
+                  Search
+                </button>
+                <button
+                  className="btn btn-outline-danger my-2 my-sm-0"
+                  onClick={() => {
+                    setSearch('')
+                    sendSearch()
+                  }}
+                  type="button">
+                  Clear
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
@@ -48,7 +59,12 @@ const Menu = ({showModal}) => {
   )
 }
 
-Menu.propTypes = {showModal: PropTypes.func}
+Menu.propTypes = {
+  showModal: PropTypes.func,
+  sendSearch: PropTypes.func,
+  search: PropTypes.string,
+  setSearch: PropTypes.func,
+}
 
 Menu.defaultProps = {}
 export default Menu
