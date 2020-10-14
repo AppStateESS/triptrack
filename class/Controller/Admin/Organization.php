@@ -32,7 +32,7 @@ class Organization extends SubController
         return $this->view->listHtml();
     }
 
-    protected function listJson()
+    protected function listJson(Request $request)
     {
         return OrganizationFactory::list();
     }
@@ -54,6 +54,13 @@ class Organization extends SubController
     {
         $organization = self::load();
         return $organization->getStringVars();
+    }
+
+    protected function delete(Request $request)
+    {
+        $organization = self::load();
+        OrganizationFactory::delete($organization);
+        return ['success' => 1];
     }
 
 }
