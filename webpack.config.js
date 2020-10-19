@@ -10,18 +10,16 @@ module.exports = (env, argv) => {
     entry: setup.entry,
     output: {
       path: setup.path.join(setup.APP_DIR, 'dev'),
-      filename: '[name].js',
     },
     externals: {
       $: 'jQuery',
       jquery: 'jQuery',
     },
     optimization: {
-      minimizer: [new TerserPlugin()],
       splitChunks: {
         minChunks: 2,
         cacheGroups: {
-          vendors: {
+          defaultVendors: {
             test: /[\\/]node_modules[\\/]/,
             minChunks: 2,
             name: 'vendor',
@@ -38,15 +36,13 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-          loader: 'url-loader?limit=100000',
-        },
-        {
           test: /\.jsx?/,
           include: setup.APP_DIR,
-          loader: 'babel-loader',
-          query: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react'],
+            },
           },
         },
       ],
@@ -64,6 +60,7 @@ module.exports = (env, argv) => {
         proxy: 'localhost/canopy',
       })
     )
+
     settings.devtool = 'inline-source-map'
     settings.output = {
       path: setup.path.join(setup.APP_DIR, 'dev'),
