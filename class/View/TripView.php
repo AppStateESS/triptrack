@@ -7,6 +7,8 @@
 
 namespace triptrack\View;
 
+use triptrack\Factory\SettingFactory;
+
 class TripView extends AbstractView
 {
 
@@ -17,7 +19,11 @@ class TripView extends AbstractView
 
     public function form(int $tripId = 0)
     {
-        return $this->scriptView('Create', ['tripId' => $tripId]);
+        $vars['tripId'] = $tripId;
+        $settings = SettingFactory::getAll();
+        $vars['allowInternational'] = (bool) $settings['allowInternational'];
+        $vars['contactBannerRequired'] = (bool) $settings['contactBannerRequired'];
+        return $this->scriptView('Create', $vars);
     }
 
 }
