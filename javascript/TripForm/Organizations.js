@@ -36,7 +36,12 @@ const Organizations = ({Trip, setFormElement}) => {
         <label>Attending organization</label>
       </div>
       <div className="col-sm-8">
-        <select className="form-control">{options}</select>
+        <select
+          className="form-control"
+          onChange={(e) => setFormElement('organizationId', e)}
+          value={Trip.organizationId}>
+          {options}
+        </select>
       </div>
     </div>
   )
