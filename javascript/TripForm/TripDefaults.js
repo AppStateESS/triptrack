@@ -1,0 +1,26 @@
+const defaultTrip = {
+  additionalMembers: '',
+  fake: 1,
+  contactName: '',
+  contactEmail: '',
+  contactPhone: '',
+  destinationCity: '',
+  destinationCountry: 'United States',
+  destinationState: '',
+  host: '',
+  housingAddress: '',
+  organizationId: 0,
+  secContactName: '',
+  secContactEmail: '',
+  secContactPhone: '',
+  submitDate: 0,
+  submitEmail: '',
+  submitName: '',
+  submitUsername: '',
+  timeDeparting: 0,
+  timeEventStarts: 0,
+  timeReturn: 0,
+  visitPurpose: '',
+}
+
+export {defaultTrip}
