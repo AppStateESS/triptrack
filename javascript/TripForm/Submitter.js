@@ -3,15 +3,21 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import Organizations from './Organizations'
 
-const Submitter = ({Trip, setFormElement}) => {
+const Submitter = ({Trip, setFormElement, ready}) => {
   const [errors, setErrors] = useState({
     submitName: false,
     submitEmail: false,
   })
 
   const errorCheck = (name) => {
-    errors[name] = Trip[name].length === 0
+    if (name === 'submitEmail') {
+      errors.submitEmail =
+        Trip.submitEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
+    } else {
+      errors[name] = Trip[name].length === 0
+    }
     setErrors(Object.assign({}, errors))
+    ready(!errors.submitName && !errors.submitEmail)
   }
 
   const invalid = 'form-control is-invalid'
@@ -52,7 +58,7 @@ const Submitter = ({Trip, setFormElement}) => {
           />
           {errors.submitEmail ? (
             <div className="invalid-feedback">
-              Please provide a valid email.
+              Please provide a valid email address.
             </div>
           ) : null}
         </div>
@@ -61,6 +67,10 @@ const Submitter = ({Trip, setFormElement}) => {
   )
 }
 
-Submitter.propTypes = {Trip: PropTypes.object, setFormElement: PropTypes.func}
+Submitter.propTypes = {
+  Trip: PropTypes.object,
+  setFormElement: PropTypes.func,
+  ready: PropTypes.func,
+}
 
 export default Submitter

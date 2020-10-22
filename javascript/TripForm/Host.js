@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {states} from '../Share/States'
 import {countries} from '../Share/Countries'
@@ -12,9 +12,25 @@ const createOptions = (options) => {
   return inputs
 }
 
-const Host = ({Trip, setFormElement, allowInternational}) => {
-  const [stateList, setStateList] = useState(createOptions(states))
-  const [countryList, setCountryList] = useState(createOptions(countries))
+const Host = ({Trip, setFormElement, allowInternational, ready}) => {
+  // const [stateList, setStateList] = useState(createOptions(states))
+  // const [countryList, setCountryList] = useState(createOptions(countries))
+  const stateList = createOptions(states)
+  const countryList = createOptions(countries)
+
+  const [errors, setErrors] = useState({
+    host: false,
+    destinationCity: false,
+  })
+
+  const errorCheck = (name) => {
+    errors[name] = Trip[name].length === 0
+    setErrors(Object.assign({}, errors))
+    ready(!errors.host && !errors.destinationCity)
+  }
+
+  const invalid = 'form-control is-invalid'
+  const valid = 'form-control'
 
   const stateSelect = (
     <div className="row form-group">
@@ -78,13 +94,17 @@ const Host = ({Trip, setFormElement, allowInternational}) => {
         <div className="col-sm-8">
           <input
             type="text"
-            className="form-control"
+            className={errors.host ? invalid : valid}
             placeholder="Enter the name of facility, team, group, etc. you are visiting"
+            onBlur={() => errorCheck('host')}
             value={Trip.host}
             onChange={(e) => {
               setFormElement('host', e.target.value)
             }}
           />
+          {errors.host ? (
+            <div className="invalid-feedback">Please provide a valid host.</div>
+          ) : null}
         </div>
       </div>
       <div className="row form-group">
@@ -94,12 +114,16 @@ const Host = ({Trip, setFormElement, allowInternational}) => {
         <div className="col-sm-8">
           <input
             type="text"
-            className="form-control"
+            onBlur={() => errorCheck('destinationCity')}
+            className={errors.destinationCity ? invalid : valid}
             value={Trip.destinationCity}
             onChange={(e) => {
               setFormElement('destinationCity', e.target.value)
             }}
           />
+          {errors.destinationCity ? (
+            <div className="invalid-feedback">Please provide a valid city.</div>
+          ) : null}
         </div>
       </div>
       {showStates()}
@@ -112,6 +136,7 @@ Host.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
   allowInternational: PropTypes.bool,
+  ready: PropTypes.func,
 }
 
 export default Host
