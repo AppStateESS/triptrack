@@ -1,22 +1,17 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {states} from '../Share/States'
 import {countries} from '../Share/Countries'
-
-const createOptions = (options) => {
-  const inputs = []
-  options.forEach((element) => {
-    inputs.push(<option key={element}>{element}</option>)
-  })
-  return inputs
-}
+import {createOptions} from '../Share/CreateOptions'
 
 const Host = ({Trip, setFormElement, allowInternational, ready}) => {
-  // const [stateList, setStateList] = useState(createOptions(states))
-  // const [countryList, setCountryList] = useState(createOptions(countries))
   const stateList = createOptions(states)
   const countryList = createOptions(countries)
+
+  useEffect(() => {
+    sendReady()
+  }, [])
 
   const [errors, setErrors] = useState({
     host: false,
@@ -26,6 +21,10 @@ const Host = ({Trip, setFormElement, allowInternational, ready}) => {
   const errorCheck = (name) => {
     errors[name] = Trip[name].length === 0
     setErrors(Object.assign({}, errors))
+    sendReady()
+  }
+
+  const sendReady = () => {
     ready(!errors.host && !errors.destinationCity)
   }
 

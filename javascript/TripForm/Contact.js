@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 
 const Contact = ({Trip, setFormElement, ready}) => {
@@ -12,6 +12,10 @@ const Contact = ({Trip, setFormElement, ready}) => {
     secContactPhone: false,
   })
 
+  useEffect(() => {
+    sendReady()
+  }, [])
+
   const errorCheck = (name) => {
     switch (name) {
       case 'contactPhone':
@@ -23,12 +27,12 @@ const Contact = ({Trip, setFormElement, ready}) => {
         break
 
       case 'contactEmail':
-        error.contactEmail =
+        errors.contactEmail =
           Trip.contactEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
         break
 
       case 'secContactEmail':
-        error.secContactEmail =
+        errors.secContactEmail =
           Trip.secContactEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) ===
           null
         break
@@ -36,8 +40,11 @@ const Contact = ({Trip, setFormElement, ready}) => {
       default:
         errors[name] = Trip[name].length === 0
     }
-
     setErrors(Object.assign({}, errors))
+    sendReady()
+  }
+
+  const sendReady = () => {
     ready(
       !errors.contactName &&
         !errors.contactEmail &&

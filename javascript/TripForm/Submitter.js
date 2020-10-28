@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import Organizations from './Organizations'
 
@@ -9,6 +9,10 @@ const Submitter = ({Trip, setFormElement, ready}) => {
     submitEmail: false,
   })
 
+  useEffect(() => {
+    sendReady()
+  }, [])
+
   const errorCheck = (name) => {
     if (name === 'submitEmail') {
       errors.submitEmail =
@@ -17,6 +21,10 @@ const Submitter = ({Trip, setFormElement, ready}) => {
       errors[name] = Trip[name].length === 0
     }
     setErrors(Object.assign({}, errors))
+    sendReady()
+  }
+
+  const sendReady = () => {
     ready(!errors.submitName && !errors.submitEmail)
   }
 
