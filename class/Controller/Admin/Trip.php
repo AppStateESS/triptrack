@@ -37,4 +37,11 @@ class Trip extends SubController
         return $this->view->form();
     }
 
+    protected function post(Request $request)
+    {
+        $trip = TripFactory::post($request);
+        TripFactory::save($trip);
+        return ['success' => true];
+    }
+
 }
