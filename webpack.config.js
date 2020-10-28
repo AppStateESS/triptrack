@@ -1,6 +1,5 @@
 const webpack = require('webpack')
 const setup = require('./exports.js')
-const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = (env, argv) => {
   const inProduction = argv.mode === 'production'
