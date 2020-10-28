@@ -1,11 +1,13 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import SaveButton from '../Share/SaveButton'
 import ReactDOM from 'react-dom'
 import BigCheckbox from '@essappstate/canopy-react-bigcheckbox'
 import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
 import axios from 'axios'
+import {countries} from '../Share/Countries'
+import {createOptions} from '../Share/CreateOptions'
 
 /* global settings */
 
@@ -22,46 +24,68 @@ const SettingList = ({currentSettings}) => {
   const [saveButton, setSaveButton] = useState(
     Object.assign({}, saveButtonDefault)
   )
+  const rendered = useRef(false)
+  const countryList = createOptions(countries)
 
   useEffect(() => {
-    save('allowInternational')
+    if (rendered.current) {
+      save('allowInternational')
+    }
   }, [settings.allowInternational])
 
   useEffect(() => {
-    save('uploadRequired')
+    if (rendered.current) {
+      save('uploadRequired')
+    }
   }, [settings.uploadRequired])
 
   useEffect(() => {
-    save('contactBannerRequired')
+    if (rendered.current) {
+      save('contactBannerRequired')
+    }
   }, [settings.contactBannerRequired])
 
   useEffect(() => {
-    save('approvalRequired')
+    if (rendered.current) {
+      save('approvalRequired')
+    }
   }, [settings.approvalRequired])
 
   useEffect(() => {
-    save('allowUpload')
+    if (rendered.current) {
+      save('allowUpload')
+    }
   }, [settings.allowUpload])
 
   useEffect(() => {
-    save('allowInternational')
-  }, [settings.allowInternational])
+    if (rendered.current) {
+      save('defaultCountry')
+    }
+  }, [settings.defaultCountry])
 
   const updateText = (settingName, value) => {
+    rendered.current = true
     const current = Object.assign({}, settings)
     current[settingName] = value
     setSettings(current)
     enableButton(settingName)
   }
 
+  const updateSelect = (settingName, value) => {
+    rendered.current = true
+    const current = Object.assign({}, settings)
+    current[settingName] = value
+    setSettings(current)
+  }
+
   const updateCheck = (settingName) => {
+    rendered.current = true
     const current = Object.assign({}, settings)
     current[settingName] = !current[settingName]
     if (settingName === 'allowUpload' && current.allowUpload === false) {
       current.uploadRequired = false
     }
     setSettings(current)
-    save(settingName)
   }
 
   const enableButton = (settingName) => {
@@ -106,7 +130,7 @@ const SettingList = ({currentSettings}) => {
       },
     })
       .then(() => {
-        wait(2000).then(() => {
+        wait(1000).then(() => {
           savingStatus(settingName, false)
           disableButton(settingName)
         })
@@ -185,6 +209,22 @@ const SettingList = ({currentSettings}) => {
               updateCheck('allowInternational')
             }}
           />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Default country</strong>
+          <small className="form-text text-muted">
+            If international, this country will be chosen by default.
+          </small>
+        </div>
+        <div className="col-sm-6">
+          <select
+            className="form-control"
+            value={settings.defaultCountry}
+            onChange={(e) => updateSelect('defaultCountry', e.target.value)}>
+            {countryList}
+          </select>
         </div>
       </div>
 
