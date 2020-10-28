@@ -24,6 +24,8 @@ class SettingFactory
         $settings = [];
         $settings['approvalRequired'] = (bool) Settings::get('triptrack',
                         'approvalRequired');
+        $settings['defaultCountry'] = Settings::get('triptrack',
+                        'defaultCountry');
         $settings['siteContactName'] = Settings::get('triptrack',
                         'siteContactName');
         $settings['siteContactEmail'] = Settings::get('triptrack',
@@ -107,6 +109,7 @@ class SettingFactory
             case 'siteContactName':
             case 'hostLabel':
             case 'organizationLabel':
+            case 'defaultCountry':
             case 'uploadInstructions':
                 Settings::set('triptrack', $varName,
                         filter_var($value, FILTER_SANITIZE_STRING));
