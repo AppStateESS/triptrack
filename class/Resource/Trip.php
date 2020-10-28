@@ -7,10 +7,9 @@
 
 namespace triptrack\Resource;
 
-class Trip extends \phpws2\Resource
+class Trip extends AbstractResource
 {
 
-    protected $additionalMembers;
     protected $approved;
     protected $contactName;
     protected $contactEmail;
@@ -36,9 +35,6 @@ class Trip extends \phpws2\Resource
 
     public function __construct()
     {
-        $this->additionalMembers = new \phpws2\Variable\TextOnly(null,
-                'additionalMembers');
-        $this->additionalMembers->allowNull(true);
         $this->approved = new \phpws2\Variable\BooleanVar(false, 'approved');
         $this->host = new \phpws2\Variable\TextOnly(null, 'host', 255);
         $this->contactName = new \phpws2\Variable\TextOnly(null, 'contactName',
@@ -49,7 +45,7 @@ class Trip extends \phpws2\Resource
         $this->destinationCity = new \phpws2\Variable\TextOnly(null,
                 'destinationCity', 80);
         $this->destinationCountry = new \phpws2\Variable\TextOnly(null,
-                'destinationCountry', 2);
+                'destinationCountry', 100);
         $this->destinationState = new \phpws2\Variable\TextOnly(null,
                 'destinationState', 20);
         $this->housingAddress = new \phpws2\Variable\TextOnly(null,
