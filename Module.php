@@ -76,6 +76,7 @@ class Module extends \Canopy\Module implements SettingDefaults
             'allowUpload' => false,
             'uploadRequired' => false,
             'uploadInstructions' => '',
+            'defaultCountry' => 'United States',
             'contactBannerRequired' => true);
         return $settings;
     }
