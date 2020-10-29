@@ -60,7 +60,7 @@ const Contact = ({Trip, setFormElement, ready}) => {
 
   return (
     <fieldset className="mb-4">
-      <legend className="border-bottom">Contact information</legend>
+      <legend className="border-bottom mb-3">Contact information</legend>
       <p>In case we need to reach a trip participant, fill out the below.</p>
       <a id="contact-info"></a>
       <div className="row">
