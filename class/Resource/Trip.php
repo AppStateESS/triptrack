@@ -31,6 +31,7 @@ class Trip extends AbstractResource
     protected $timeEventStarts;
     protected $timeReturn;
     protected $visitPurpose;
+    protected $memberCount;
     protected $table = 'trip_trip';
 
     public function __construct()
@@ -41,7 +42,7 @@ class Trip extends AbstractResource
                 255);
         $this->contactEmail = new \phpws2\Variable\Email(null, 'contactEmail');
         $this->contactPhone = new \phpws2\Variable\PhoneNumber(null,
-                'contactPhone');
+                'contactPhone', 30);
         $this->destinationCity = new \phpws2\Variable\TextOnly(null,
                 'destinationCity', 80);
         $this->destinationCountry = new \phpws2\Variable\TextOnly(null,
@@ -53,11 +54,11 @@ class Trip extends AbstractResource
         $this->organizationId = new \phpws2\Variable\IntegerVar(0,
                 'organizationId');
         $this->secContactName = new \phpws2\Variable\TextOnly(null,
-                'contactName', 255);
+                'secContactName', 255);
         $this->secContactEmail = new \phpws2\Variable\Email(null,
                 'secContactEmail');
         $this->secContactPhone = new \phpws2\Variable\PhoneNumber(null,
-                'contactPhone');
+                'secContactPhone', 30);
         $this->submitDate = new \phpws2\Variable\DateTime(0, 'submitDate');
         $this->submitEmail = new \phpws2\Variable\Email(null, 'submitEmail');
         $this->submitUsername = new \phpws2\Variable\TextOnly(null,
@@ -69,6 +70,8 @@ class Trip extends AbstractResource
         $this->timeReturn = new \phpws2\Variable\DateTime(0, 'timeReturn');
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null,
                 'visitPurpose', 255);
+        $this->memberCount = new \phpws2\Variable\SmallInteger(0, 'memberCount');
+        $this->memberCount->setIsTableColumn(false);
         parent::__construct();
         $this->submitDate->stamp();
     }
