@@ -1,11 +1,11 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
 import ReactDOM from 'react-dom'
 import Grid from './Grid'
 import Menu from './Menu'
 import Message from '../Share/Message'
 import {getList} from '../api/Fetch'
+import axios from 'axios'
 
 const TripList = () => {
   const [trips, setTrips] = useState([])
@@ -25,7 +25,6 @@ const TripList = () => {
       setMessageType('danger')
       setLoading(false)
     } else {
-      console.log(response)
       if (response.length > 0) {
         setTrips(response)
       }
@@ -36,7 +35,24 @@ const TripList = () => {
     load()
   }
 
-  const deleteRow = () => {}
+  const deleteRow = (key) => {
+    const trip = trips[key]
+    const url = 'triptrack/Admin/Trip/' + trip.id
+    axios({
+      method: 'delete',
+      url,
+      timeout: 3000,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+      .then(() => {
+        load()
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }
 
   const update = () => {}
 
@@ -45,29 +61,17 @@ const TripList = () => {
   } else if (trips.length === 0) {
     return (
       <div>
+        <Menu search={search} setSearch={setSearch} sendSearch={sendSearch} />
         <Message message={message} type={messageType} />
-        <Menu
-          showModal={() => {
-            setShowModal(true)
-          }}
-        />
-        <p>No organizations found.</p>
+        <p>No trips found.</p>
       </div>
     )
   } else {
     return (
       <div>
-        <Menu
-          search={search}
-          setSearch={setSearch}
-          sendSearch={sendSearch}
-          showModal={() => {
-            setShowModal(true)
-          }}
-        />
+        <Menu search={search} setSearch={setSearch} sendSearch={sendSearch} />
         <Message message={message} type={messageType} />
         <Grid trips={trips} edit={update} deleteRow={deleteRow} />
-        {modal}
       </div>
     )
   }
