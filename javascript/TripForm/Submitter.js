@@ -33,13 +33,14 @@ const Submitter = ({Trip, setFormElement, ready}) => {
 
   return (
     <fieldset>
-      <legend className="border-bottom">Submitter information</legend>
+      <legend className="border-bottom mb-3">Submitter information</legend>
       <Organizations Trip={Trip} setFormElement={setFormElement} />
       <div className="row form-group">
         <div className="col-sm-4">Your name</div>
         <div className="col-sm-8">
           <input
             type="text"
+            name="submitName"
             className={errors.submitName ? invalid : valid}
             value={Trip.submitName}
             onBlur={() => errorCheck('submitName')}
@@ -57,6 +58,7 @@ const Submitter = ({Trip, setFormElement, ready}) => {
         <div className="col-sm-8">
           <input
             type="text"
+            name="submitEmail"
             className={errors.submitEmail ? invalid : valid}
             value={Trip.submitEmail}
             onBlur={() => errorCheck('submitEmail')}
