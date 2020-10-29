@@ -1,6 +1,4 @@
 const defaultTrip = {
-  additionalMembers: '',
-  fake: 1,
   contactName: '',
   contactEmail: '',
   contactPhone: '',
@@ -13,7 +11,6 @@ const defaultTrip = {
   secContactName: '',
   secContactEmail: '',
   secContactPhone: '',
-  submitDate: 0,
   submitEmail: '',
   submitName: '',
   submitUsername: '',
@@ -21,6 +18,30 @@ const defaultTrip = {
   timeEventStarts: 0,
   timeReturn: 0,
   visitPurpose: '',
+  memberCount: 0,
 }
 
-export {defaultTrip}
+const testTrip = {
+  contactName: 'Doug Dale',
+  contactEmail: 'doug@aol.com',
+  contactPhone: '555-123-4567',
+  destinationCity: 'New York',
+  destinationCountry: 'United States',
+  destinationState: 'New York',
+  host: 'Academy of Visits',
+  housingAddress: '123 Elm Street, New York, NY, 12304',
+  organizationId: 1,
+  secContactName: 'Eddy Brick',
+  secContactEmail: 'brick@aol.com',
+  secContactPhone: '555-555-1525',
+  submitEmail: 'iamsubmitting@gmail.com',
+  submitName: 'Sammy Submitter',
+  submitUsername: 'submitsg',
+  timeDeparting: 1603374481,
+  timeEventStarts: 1603384481,
+  timeReturn: 1603394481,
+  visitPurpose: 'Attending big event',
+  memberCount: 0,
+}
+
+export {defaultTrip, testTrip}
