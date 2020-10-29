@@ -37,6 +37,23 @@ class Trip extends SubController
         return $this->view->form();
     }
 
+    protected function editHtml()
+    {
+        return $this->view->form($this->id);
+    }
+
+    protected function viewJson()
+    {
+        return $this->view->json($this->id);
+    }
+
+    protected function delete(Request $request)
+    {
+        TripFactory::removeAllMembers($this->id);
+        TripFactory::delete($this->id);
+        return ['success' => true];
+    }
+
     protected function post(Request $request)
     {
         $trip = TripFactory::post($request);
