@@ -35,6 +35,10 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
           test: /\.jsx?/,
           include: setup.APP_DIR,
           use: {
