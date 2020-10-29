@@ -32,19 +32,12 @@ const Host = ({Trip, setFormElement, allowInternational, ready}) => {
   const valid = 'form-control'
 
   const stateSelect = (
-    <div className="row form-group">
-      <div className="col-sm-4">
-        <label>State</label>
-      </div>
-      <div className="col-sm-4">
-        <select
-          className="form-control"
-          value={Trip.destinationState}
-          onChange={(e) => setFormElement('destinationState', e.target.value)}>
-          {stateList}
-        </select>
-      </div>
-    </div>
+    <select
+      className="form-control"
+      value={Trip.destinationState}
+      onChange={(e) => setFormElement('destinationState', e.target.value)}>
+      {stateList}
+    </select>
   )
 
   const international = () => {
@@ -84,7 +77,7 @@ const Host = ({Trip, setFormElement, allowInternational, ready}) => {
 
   return (
     <fieldset className="mb-4">
-      <legend className="border-bottom">Host information</legend>
+      <legend className="border-bottom mb-3">Host information</legend>
       <p>Enter information about the host for your trip.</p>
       <div className="row form-group">
         <div className="col-sm-4">
@@ -108,9 +101,9 @@ const Host = ({Trip, setFormElement, allowInternational, ready}) => {
       </div>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label>City</label>
+          <label>Host City, State</label>
         </div>
-        <div className="col-sm-8">
+        <div className="col-sm-5">
           <input
             type="text"
             onBlur={() => errorCheck('destinationCity')}
@@ -124,8 +117,8 @@ const Host = ({Trip, setFormElement, allowInternational, ready}) => {
             <div className="invalid-feedback">Please provide a valid city.</div>
           ) : null}
         </div>
+        <div className="col-sm-3">{showStates()}</div>
       </div>
-      {showStates()}
       {international()}
     </fieldset>
   )
