@@ -29,7 +29,8 @@ class Trip extends SubController
 
     protected function listJson(Request $request)
     {
-        return TripFactory::list();
+        $options = ['memberCount' => true];
+        return TripFactory::list($options);
     }
 
     protected function createHtml()

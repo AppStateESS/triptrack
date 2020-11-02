@@ -51,7 +51,7 @@ const Grid = ({trips, deleteRow}) => {
             <td></td>
             <th>Submitter</th>
             <th>Destination city</th>
-            <th>Participants</th>
+            <th>Members</th>
           </tr>
           {rows}
         </tbody>

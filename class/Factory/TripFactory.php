@@ -39,7 +39,15 @@ class TripFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_trip');
-        $tbl->addOrderBy('destinationCity');
+        $tbl->addOrderBy('submitName');
+        if (!empty($options['memberCount'])) {
+            $tbl2 = $db->addTable('trip_membertotrip');
+            $counter = $tbl2->addField('memberId', 'memberCount');
+            $counter->showCount();
+            $joinConditional = $db->createConditional($tbl->getField('id'),
+                    $tbl2->getField('tripId'));
+            $db->joinResources($tbl, $tbl2, $joinConditional, 'left');
+        }
         return $db->select();
     }
 
