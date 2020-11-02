@@ -19,11 +19,11 @@ const Schedule = ({Trip, setFormElement}) => {
     eventStarts = new Date()
   }
 
-  let departTime
-  if (Trip.timeDeparting) {
-    departTime = new Date(Trip.timeDeparting * 1000)
+  let returning
+  if (Trip.timeReturn) {
+    returning = new Date(Trip.timeReturn * 1000)
   } else {
-    departTime = new Date()
+    returning = new Date()
   }
 
   return (
@@ -58,9 +58,9 @@ const Schedule = ({Trip, setFormElement}) => {
           <div className="col-sm-4">
             <label className="d-block">Returning</label>
             <DatePicker
-              selected={eventStarts}
+              selected={returning}
               onChange={(value) => {
-                setFormElement('timeDeparting', value.getTime() / 1000)
+                setFormElement('timeReturn', value.getTime() / 1000)
               }}
               showTimeSelect
               className="form-control"
