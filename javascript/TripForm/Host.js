@@ -1,32 +1,19 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {states} from '../Share/States'
 import {countries} from '../Share/Countries'
 import {createOptions} from '../Share/CreateOptions'
 
-const Host = ({Trip, setFormElement, allowInternational, ready}) => {
+const Host = ({
+  Trip,
+  setFormElement,
+  allowInternational,
+  errorCheck,
+  errors,
+}) => {
   const stateList = createOptions(states)
   const countryList = createOptions(countries)
-
-  useEffect(() => {
-    sendReady()
-  }, [])
-
-  const [errors, setErrors] = useState({
-    host: false,
-    destinationCity: false,
-  })
-
-  const errorCheck = (name) => {
-    errors[name] = Trip[name].length === 0
-    setErrors(Object.assign({}, errors))
-    sendReady()
-  }
-
-  const sendReady = () => {
-    ready(!errors.host && !errors.destinationCity)
-  }
 
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
@@ -128,7 +115,9 @@ Host.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
   allowInternational: PropTypes.bool,
-  ready: PropTypes.func,
+  errorCheck: PropTypes.func,
+  errors: PropTypes.object,
+  touched: PropTypes.object,
 }
 
 export default Host

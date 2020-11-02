@@ -1,33 +1,9 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import Organizations from './Organizations'
 
-const Submitter = ({Trip, setFormElement, ready}) => {
-  const [errors, setErrors] = useState({
-    submitName: false,
-    submitEmail: false,
-  })
-
-  useEffect(() => {
-    sendReady()
-  }, [])
-
-  const errorCheck = (name) => {
-    if (name === 'submitEmail') {
-      errors.submitEmail =
-        Trip.submitEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
-    } else {
-      errors[name] = Trip[name].length === 0
-    }
-    setErrors(Object.assign({}, errors))
-    sendReady()
-  }
-
-  const sendReady = () => {
-    ready(!errors.submitName && !errors.submitEmail)
-  }
-
+const Submitter = ({Trip, setFormElement, errorCheck, errors}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
 
@@ -80,7 +56,9 @@ const Submitter = ({Trip, setFormElement, ready}) => {
 Submitter.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
-  ready: PropTypes.func,
+  errorCheck: PropTypes.func,
+  errors: PropTypes.object,
+  touched: PropTypes.object,
 }
 
 export default Submitter

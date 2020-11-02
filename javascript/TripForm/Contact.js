@@ -1,60 +1,8 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
-const Contact = ({Trip, setFormElement, ready}) => {
-  const [errors, setErrors] = useState({
-    contactName: false,
-    contactEmail: false,
-    contactPhone: false,
-    secContactName: false,
-    secContactEmail: false,
-    secContactPhone: false,
-  })
-
-  useEffect(() => {
-    sendReady()
-  }, [])
-
-  const errorCheck = (name) => {
-    switch (name) {
-      case 'contactPhone':
-        errors.contactPhone = Trip.contactPhone.length < 7
-        break
-
-      case 'secContactPhone':
-        errors.secContactPhone = Trip.secContactPhone.length < 7
-        break
-
-      case 'contactEmail':
-        errors.contactEmail =
-          Trip.contactEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
-        break
-
-      case 'secContactEmail':
-        errors.secContactEmail =
-          Trip.secContactEmail.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) ===
-          null
-        break
-
-      default:
-        errors[name] = Trip[name].length === 0
-    }
-    setErrors(Object.assign({}, errors))
-    sendReady()
-  }
-
-  const sendReady = () => {
-    ready(
-      !errors.contactName &&
-        !errors.contactEmail &&
-        !errors.contactPhone &&
-        !errors.secContactName &&
-        !errors.secContactEmail &&
-        !errors.secContactPhone
-    )
-  }
-
+const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
 
@@ -212,7 +160,8 @@ const Contact = ({Trip, setFormElement, ready}) => {
 Contact.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
-  ready: PropTypes.func,
+  errorCheck: PropTypes.func,
+  errors: PropTypes.object,
 }
 
 export default Contact

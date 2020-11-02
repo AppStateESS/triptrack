@@ -6,17 +6,45 @@ import Host from '../TripForm/Host'
 import Contact from '../TripForm/Contact'
 import Submitter from '../TripForm/Submitter'
 import Schedule from '../TripForm/Schedule'
+import Message from '../Share/Message'
 import {defaultTrip, testTrip} from '../TripForm/TripDefaults'
 import axios from 'axios'
 
 /* global allowInternational, contactBannerRequired, tripId */
 
+const tripSettings = {
+  yes: {
+    submitName: true,
+    submitEmail: true,
+    host: true,
+    destinationCity: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    secContactName: true,
+    secContactEmail: true,
+    secContactPhone: true,
+  },
+  no: {
+    submitName: false,
+    submitEmail: false,
+    host: false,
+    destinationCity: false,
+    contactName: false,
+    contactEmail: false,
+    contactPhone: false,
+    secContactName: false,
+    secContactEmail: false,
+    secContactPhone: false,
+  },
+}
+
 const Create = ({allowInternational, contactBannerRequired, tripId}) => {
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
   //const [Trip, setTrip] = useState(Object.assign({}, testTrip))
-  const [submitterReady, setSubmitterReady] = useState(false)
-  const [contactReady, setContactReady] = useState(false)
-  const [hostReady, setHostReady] = useState(false)
+  const [message, setMessage] = useState(null)
+  const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
+  const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
 
   const setFormElement = (key, value) => {
     Trip[key] = value
@@ -57,22 +85,70 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
       })
   }
 
-  const saveReady = submitterReady && contactReady && hostReady
+  const saveReady = () => {
+    return (
+      ready.submitName &&
+      ready.submitEmail &&
+      ready.host &&
+      ready.destinationCity &&
+      ready.contactName &&
+      ready.contactEmail &&
+      ready.contactPhone &&
+      ready.secContactName &&
+      ready.secContactEmail &&
+      ready.secContactPhone
+    )
+  }
+
+  const errorCheck = (name) => {
+    const emailMatch = (valueName) => {
+      return Trip[valueName].match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
+    }
+
+    const phoneMatch = (valueName) => {
+      return Trip[valueName].length < 7
+    }
+    let errorFound = false
+    switch (name) {
+      case 'contactPhone':
+      case 'secContactPhone':
+        errorFound = phoneMatch(name)
+        break
+
+      case 'contactEmail':
+      case 'secContactEmail':
+      case 'submitEmail':
+        errorFound = emailMatch(name)
+        break
+
+      default:
+        errorFound = Trip[name].length === 0
+    }
+    errors[name] = errorFound
+    setErrors(Object.assign({}, errors))
+    ready[name] = !errorFound
+    setReady(Object.assign({}, ready))
+  }
+
   return (
     <div>
       <h3>Create Trip</h3>
+      <p>Please enter all requested, required information below:</p>
+      <Message message={message} />
       <a id="submitter-info"></a>
       <Submitter
         Trip={Trip}
         setFormElement={setFormElement}
-        ready={setSubmitterReady}
+        errorCheck={errorCheck}
+        errors={errors}
       />
       <a id="host-info"></a>
       <Host
         Trip={Trip}
         setFormElement={setFormElement}
         allowInternational={allowInternational}
-        ready={setHostReady}
+        errorCheck={errorCheck}
+        errors={errors}
       />
       <a id="schedule-info"></a>
       <Schedule Trip={Trip} setFormElement={setFormElement} />
@@ -81,7 +157,8 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
         Trip={Trip}
         setFormElement={setFormElement}
         contactBannerRequired={contactBannerRequired}
-        ready={setContactReady}
+        errorCheck={errorCheck}
+        errors={errors}
       />
       <div className="text-center">
         <button
@@ -89,8 +166,8 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
           onClick={() => {
             postTrip()
           }}
-          disabled={!saveReady}>
-          {saveReady ? 'Save and continue' : 'Fill in all fields above'}
+          disabled={!saveReady()}>
+          {saveReady() ? 'Save and continue' : 'Fill in all fields above'}
         </button>
       </div>
     </div>
