@@ -8,6 +8,8 @@
 namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
+use Canopy\Request;
+use triptrack\Factory\MemberFactory;
 
 class Member extends SubController
 {
@@ -23,6 +25,12 @@ class Member extends SubController
     protected function listHtml()
     {
         return $this->view->listHtml();
+    }
+
+    protected function listJson(Request $request)
+    {
+        $options = [];
+        return MemberFactory::list($options);
     }
 
 }
