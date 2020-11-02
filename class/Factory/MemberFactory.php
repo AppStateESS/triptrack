@@ -22,4 +22,22 @@ class MemberFactory
         return $db->delete();
     }
 
+    public static function list(array $options = [])
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        if (!empty($options['orderBy'])) {
+            $orderBy = $options['orderBy'];
+        } else {
+            $orderBy = 'lastName';
+        }
+        if (isset($options['dir'])) {
+            $direction = (int) $options['dir'] ? 'asc' : 'desc';
+        } else {
+            $direction = 'asc';
+        }
+        $tbl->addOrderBy($orderBy, $direction);
+        return $db->select();
+    }
+
 }
