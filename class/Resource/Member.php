@@ -20,7 +20,7 @@ class Member extends \phpws2\Resource
 
     public function __construct()
     {
-        $this->bannerId = new \phpws2\Variable\IntegerVar(0, 'bannerId');
+        $this->bannerId = new \phpws2\Variable\Alphanumeric(null, 'bannerId');
         $this->email = new \phpws2\Variable\Email(null, 'email', 100);
         $this->firstName = new \ phpws2\Variable\TextOnly(null, 'firstName', 50);
         $this->phone = new \ phpws2\Variable\TextOnly(null, 'phone', 15);
