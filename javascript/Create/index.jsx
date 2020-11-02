@@ -78,7 +78,7 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
       },
     })
       .then(() => {
-        console.log('posted')
+        location.href = 'triptrack/Admin/Trip'
       })
       .catch((error) => {
         console.log('Error:', error)
@@ -108,6 +108,7 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
     const phoneMatch = (valueName) => {
       return Trip[valueName].length < 7
     }
+
     let errorFound = false
     switch (name) {
       case 'contactPhone':
@@ -150,8 +151,6 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
         errorCheck={errorCheck}
         errors={errors}
       />
-      <a id="schedule-info"></a>
-      <Schedule Trip={Trip} setFormElement={setFormElement} />
       <a id="contact-info"></a>
       <Contact
         Trip={Trip}
@@ -160,6 +159,8 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
         errorCheck={errorCheck}
         errors={errors}
       />
+      <a id="schedule-info"></a>
+      <Schedule Trip={Trip} setFormElement={setFormElement} />
       <div className="text-center">
         <button
           className="btn btn-success"
