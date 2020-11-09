@@ -5,8 +5,9 @@ import {getList, sendDelete} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
-import ImportForm from './ImportForm'
 import Overlay from '@essappstate/canopy-react-overlay'
+import Message from '../Share/Message'
+import OrgTripSelect from '../Share/OrgTripSelect'
 import 'regenerator-runtime'
 
 const emptyMember = {
@@ -22,21 +23,44 @@ const emptyMember = {
 const MemberList = () => {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
-  const [showModal, setShowModal] = useState(false)
-  const [modalFormType, setModalFormType] = useState('member')
   const [currentMember, setCurrentMember] = useState(
     Object.assign({}, emptyMember)
   )
+  const urlParams = new URLSearchParams(window.location.search)
+
+  const [orgId, setOrgId] = useState(
+    urlParams.get('orgId') === null ? 0 : parseInt(urlParams.get('orgId'))
+  )
+  const [tripId, setTripId] = useState(
+    urlParams.get('tripId') === null ? 0 : parseInt(urlParams.get('tripId'))
+  )
+
   const [search, setSearch] = useState('')
 
   useEffect(() => {
     load()
   }, [])
 
+  useEffect(() => {
+    if (orgId === 0) {
+      setTripId(0)
+    }
+    updateUrl()
+  }, [orgId, tripId])
+
   const load = async () => {
-    let response = await getList('./triptrack/Admin/Member/', {search})
+    const options = {}
+    if (orgId > 0) {
+      options.orgId = orgId
+    }
+    if (tripId > 0) {
+      options.tripId = tripId
+    }
+
+    let response = await getList('./triptrack/Admin/Member/', options)
     if (response === false) {
       setMessage('Error: could not load member list')
       setMessageType('danger')
@@ -49,6 +73,19 @@ const MemberList = () => {
     }
   }
 
+  const updateUrl = () => {
+    let url = './triptrack/Admin/Member/'
+
+    if (orgId > 0) {
+      url += `?orgId=${orgId}`
+      if (tripId > 0) {
+        url += `&tripId=${tripId}`
+      }
+    }
+
+    window.history.pushState('stateObj', 'new page', url)
+  }
+
   const saveMember = () => {
     console.log(currentMember)
   }
@@ -56,11 +93,6 @@ const MemberList = () => {
   const resetModal = () => {
     setCurrentMember(Object.assign({}, emptyMember))
     setShowModal(false)
-  }
-
-  const showModalForm = (formType) => {
-    setShowModal(true)
-    setModalFormType(formType)
   }
 
   const update = (varName, value) => {
@@ -86,24 +118,18 @@ const MemberList = () => {
   } else if (members.length === 0) {
     content = <div>No members found.</div>
   } else {
-    content = (
-      <Grid members={members} edit={edit} deity={deity} deleteRow={deleteRow} />
-    )
+    content = <Grid members={members} edit={edit} deleteRow={deleteRow} />
   }
 
   const getModalForm = () => {
-    if (modalFormType === 'form') {
-      return (
-        <MemberForm
-          update={update}
-          member={currentMember}
-          close={resetModal}
-          save={saveMember}
-        />
-      )
-    } else {
-      return <ImportForm />
-    }
+    return (
+      <MemberForm
+        update={update}
+        member={currentMember}
+        close={resetModal}
+        save={saveMember}
+      />
+    )
   }
 
   const modal = (
@@ -111,15 +137,21 @@ const MemberList = () => {
       <div>{getModalForm()}</div>
     </Overlay>
   )
-
   return (
     <div>
       <Menu
         search={search}
         setSearch={setSearch}
         sendSearch={load}
-        showModal={showModalForm}
+        showModal={() => setShowModal(true)}
       />
+      <OrgTripSelect
+        setOrgId={setOrgId}
+        setTripId={setTripId}
+        orgId={orgId}
+        tripId={tripId}
+      />
+      <Message message={message} type={messageType} />
       {content}
       {modal}
     </div>
