@@ -67,17 +67,20 @@ class Module extends \Canopy\Module implements SettingDefaults
     public function getSettingDefaults()
     {
         $settings = array(
-            'approvalRequired' => true,
-            'siteContactName' => '',
-            'siteContactEmail' => '',
-            'hostLabel' => '',
-            'organizationLabel' => '',
             'allowInternational' => false,
             'allowUpload' => false,
-            'uploadRequired' => false,
-            'uploadInstructions' => '',
+            'approvalRequired' => true,
+            'bannerImport' => false,
+            'contactBannerRequired' => true,
             'defaultCountry' => 'United States',
-            'contactBannerRequired' => true);
+            'defaultState' => 'North Carolina',
+            'hostLabel' => '',
+            'organizationLabel' => '',
+            'siteContactName' => '',
+            'siteContactEmail' => '',
+            'uploadRequired' => false,
+            'uploadInstructions' => ''
+        );
         return $settings;
     }
 
