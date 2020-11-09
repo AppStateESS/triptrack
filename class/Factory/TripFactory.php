@@ -47,7 +47,18 @@ class TripFactory extends BaseFactory
             $joinConditional = $db->createConditional($tbl->getField('id'),
                     $tbl2->getField('tripId'));
             $db->joinResources($tbl, $tbl2, $joinConditional, 'left');
+            $db->setGroupBy([$tbl->getField('id')]);
         }
+        if (!empty($options['order'])) {
+            $orderBy = $options['order'];
+            if (!empty($options['dir'])) {
+                $dir = 'asc';
+            }
+        } else {
+            $orderBy = 'timeDeparting';
+            $dir = 'desc';
+        }
+        $tbl->addOrderBy($orderBy, $dir);
         return $db->select();
     }
 
