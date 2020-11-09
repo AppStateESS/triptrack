@@ -7,6 +7,7 @@ import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import {countries} from '../Share/Countries'
+import {states} from '../Share/States'
 import {createOptions} from '../Share/CreateOptions'
 
 /* global settings */
@@ -26,6 +27,14 @@ const SettingList = ({currentSettings}) => {
   )
   const rendered = useRef(false)
   const countryList = createOptions(countries)
+  const stateList = createOptions(states)
+  const [duration, setDuration] = useState(1000)
+
+  useEffect(() => {
+    if (settings.allowUpload) {
+      setDuration(0)
+    }
+  }, [])
 
   useEffect(() => {
     if (rendered.current) {
@@ -47,6 +56,9 @@ const SettingList = ({currentSettings}) => {
 
   useEffect(() => {
     if (rendered.current) {
+      if (duration == 0) {
+        setDuration(1000)
+      }
       save('approvalRequired')
     }
   }, [settings.approvalRequired])
@@ -62,6 +74,12 @@ const SettingList = ({currentSettings}) => {
       save('defaultCountry')
     }
   }, [settings.defaultCountry])
+
+  useEffect(() => {
+    if (rendered.current) {
+      save('defaultState')
+    }
+  }, [settings.defaultState])
 
   const updateText = (settingName, value) => {
     rendered.current = true
@@ -143,7 +161,7 @@ const SettingList = ({currentSettings}) => {
   const uploadRequiredRow = () => {
     if (settings.allowUpload) {
       return (
-        <Slide direction="down">
+        <Slide direction="down" duration={duration}>
           <div className="row py-2 border-bottom mb-3">
             <div className="col-sm-6 mb-2 pl-5">
               <strong>Upload required</strong>
@@ -224,6 +242,23 @@ const SettingList = ({currentSettings}) => {
             value={settings.defaultCountry}
             onChange={(e) => updateSelect('defaultCountry', e.target.value)}>
             {countryList}
+          </select>
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Default state</strong>
+          <small className="form-text text-muted">
+            The state option will not show if the country is not the United
+            States.
+          </small>
+        </div>
+        <div className="col-sm-6">
+          <select
+            className="form-control"
+            value={settings.defaultState}
+            onChange={(e) => updateSelect('defaultState', e.target.value)}>
+            {stateList}
           </select>
         </div>
       </div>
@@ -377,7 +412,7 @@ const SettingList = ({currentSettings}) => {
               className="form-control"
               value={settings.organizationLabel}
               onChange={(e) => updateText('organizationLabel', e.target.value)}
-            />{' '}
+            />
             <div className="input-group-append">
               <SaveButton
                 disabled={saveButton.organizationLabel.disabled}
