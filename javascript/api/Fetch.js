@@ -4,7 +4,7 @@ import 'regenerator-runtime'
 const getList = async (url, options) => {
   try {
     const response = await axios.get(url, {
-      data: options,
+      params: options,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
       },
