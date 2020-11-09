@@ -20,17 +20,17 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
             <li className="nav-item">
               <button
-                className="btn btn-primary mr-2"
-                onClick={() => showModal('form')}>
+                className="btn btn-primary btn-sm mr-2"
+                onClick={showModal}>
                 Add member
               </button>
             </li>
             <li className="nav-item">
-              <button
-                className="btn btn-success"
-                onClick={() => showModal('upload')}>
+              <a
+                className="btn btn-success btn-sm"
+                href="triptrack/Admin/Member/import">
                 Upload members
-              </button>
+              </a>
             </li>
           </ul>
           <div className="d-flex justify-content-end">
@@ -45,13 +45,13 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
               />
               <div className="input-group-append">
                 <button
-                  className="btn btn-outline-success my-2 my-sm-0"
+                  className="btn btn-success btn-sm my-2 my-sm-0"
                   onClick={sendSearch}
                   type="button">
                   Search
                 </button>
                 <button
-                  className="btn btn-outline-danger my-2 my-sm-0"
+                  className="btn btn-danger my-2 my-sm-0"
                   onClick={() => {
                     setSearch('')
                     sendSearch()
