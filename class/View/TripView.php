@@ -25,6 +25,8 @@ class TripView extends AbstractView
         $settings = SettingFactory::getAll();
         $vars['allowInternational'] = (bool) $settings['allowInternational'];
         $vars['contactBannerRequired'] = (bool) $settings['contactBannerRequired'];
+        $vars['defaultState'] = $settings['defaultState'];
+        $vars['defaultCountry'] = $settings['defaultCountry'];
         $tpl['dashboard'] = $this->scriptView('Create', $vars);
         $orgExists = \triptrack\Factory\OrganizationFactory::exists();
         $tpl['tripActive'] = ' active';
