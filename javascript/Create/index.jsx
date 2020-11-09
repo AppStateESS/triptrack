@@ -10,7 +10,7 @@ import Message from '../Share/Message'
 import {defaultTrip, testTrip} from '../TripForm/TripDefaults'
 import axios from 'axios'
 
-/* global allowInternational, contactBannerRequired, tripId */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry */
 
 const tripSettings = {
   yes: {
@@ -39,7 +39,18 @@ const tripSettings = {
   },
 }
 
-const Create = ({allowInternational, contactBannerRequired, tripId}) => {
+const Create = ({
+  allowInternational,
+  contactBannerRequired,
+  tripId,
+  defaultState,
+  defaultCountry,
+}) => {
+  defaultTrip.destinationState = defaultState
+  defaultTrip.destinationCountry = defaultCountry
+  testTrip.destinationState = defaultState
+  testTrip.destinationCountry = defaultCountry
+
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
   //const [Trip, setTrip] = useState(Object.assign({}, testTrip))
   const [message, setMessage] = useState(null)
@@ -77,7 +88,7 @@ const Create = ({allowInternational, contactBannerRequired, tripId}) => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-      .then(() => {
+      .then((response) => {
         location.href = 'triptrack/Admin/Trip'
       })
       .catch((error) => {
@@ -179,6 +190,8 @@ Create.propTypes = {
   allowInternational: PropTypes.bool,
   contactBannerRequired: PropTypes.bool,
   tripId: PropTypes.number,
+  defaultState: PropTypes.string,
+  defaultCountry: PropTypes.string,
 }
 
 ReactDOM.render(
@@ -186,6 +199,8 @@ ReactDOM.render(
     allowInternational={allowInternational}
     contactBannerRequired={contactBannerRequired}
     tripId={tripId}
+    defaultState={defaultState}
+    defaultCountry={defaultCountry}
   />,
   document.getElementById('Create')
 )
