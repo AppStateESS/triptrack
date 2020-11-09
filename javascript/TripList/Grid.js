@@ -1,6 +1,7 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
+import dayjs from 'dayjs'
 
 const Grid = ({trips, deleteRow}) => {
   const deleteItem = (key) => {
@@ -28,15 +29,23 @@ const Grid = ({trips, deleteRow}) => {
   const rows = trips.map((value, key) => {
     return (
       <tr key={'gridrow-' + key}>
-        <td style={{width: '15%'}}>
+        <td style={{width: '20%'}}>
           <a
             className="btn btn-sm btn-primary mr-1"
             href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
             Edit
           </a>
+          <a
+            className="btn btn-success btn-sm mr-1"
+            href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}>
+            Members
+          </a>
           {deleteButton(key)}
         </td>
         <td>{value.submitName}</td>
+        <td>
+          {dayjs(value.timeDeparting * 1000).format('h:mma, MMM D, YYYY ')}
+        </td>
         <td>{value.destinationCity}</td>
         <td>{value.memberCount}</td>
       </tr>
@@ -50,6 +59,7 @@ const Grid = ({trips, deleteRow}) => {
           <tr>
             <td></td>
             <th>Submitter</th>
+            <th>Departure date</th>
             <th>Destination city</th>
             <th>Members</th>
           </tr>
