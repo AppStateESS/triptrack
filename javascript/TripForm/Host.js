@@ -18,14 +18,20 @@ const Host = ({
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
 
-  const stateSelect = (
-    <select
-      className="form-control"
-      value={Trip.destinationState}
-      onChange={(e) => setFormElement('destinationState', e.target.value)}>
-      {stateList}
-    </select>
-  )
+  const statesShown =
+    (allowInternational && Trip.destinationCountry == 'United States') ||
+    !allowInternational
+
+  const stateSelect = () => {
+    return (
+      <select
+        className="form-control"
+        value={Trip.destinationState}
+        onChange={(e) => setFormElement('destinationState', e.target.value)}>
+        {stateList}
+      </select>
+    )
+  }
 
   const international = () => {
     if (allowInternational) {
@@ -52,11 +58,8 @@ const Host = ({
   }
 
   const showStates = () => {
-    if (
-      (allowInternational && Trip.destinationCountry == 'United States') ||
-      !allowInternational
-    ) {
-      return stateSelect
+    if (statesShown) {
+      return stateSelect()
     } else {
       return null
     }
@@ -73,6 +76,7 @@ const Host = ({
         <div className="col-sm-8">
           <input
             type="text"
+            name="host"
             className={errors.host ? invalid : valid}
             placeholder="Enter the name of facility, team, group, etc. you are visiting"
             onBlur={() => errorCheck('host')}
@@ -88,11 +92,12 @@ const Host = ({
       </div>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label>Host City, State</label>
+          <label>{'Host City' + (statesShown ? ', State' : '')}</label>
         </div>
         <div className="col-sm-5">
           <input
             type="text"
+            name="destinationCity"
             onBlur={() => errorCheck('destinationCity')}
             className={errors.destinationCity ? invalid : valid}
             value={Trip.destinationCity}
