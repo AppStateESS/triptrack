@@ -23,6 +23,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="contactName"
                     className={errors.contactName ? invalid : valid}
                     onBlur={() => errorCheck('contactName')}
                     value={Trip.contactName}
@@ -42,6 +43,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="contactEmail"
                     className={errors.contactEmail ? invalid : valid}
                     onBlur={() => errorCheck('contactEmail')}
                     value={Trip.contactEmail}
@@ -61,6 +63,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="contactPhone"
                     className={errors.contactPhone ? invalid : valid}
                     value={Trip.contactPhone}
                     placeholder="###-###-####"
@@ -93,6 +96,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="secContactName"
                     className={errors.secContactName ? invalid : valid}
                     value={Trip.secContactName}
                     onBlur={() => errorCheck('secContactName')}
@@ -112,6 +116,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="secContactEmail"
                     className={errors.secContactEmail ? invalid : valid}
                     value={Trip.secContactEmail}
                     onBlur={() => errorCheck('secContactEmail')}
@@ -131,6 +136,7 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 <div className="col-sm-8">
                   <input
                     type="text"
+                    name="secContactPhone"
                     className={errors.secContactPhone ? invalid : valid}
                     placeholder="###-###-####"
                     value={Trip.secContactPhone}
