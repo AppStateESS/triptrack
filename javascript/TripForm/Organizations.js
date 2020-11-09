@@ -38,7 +38,7 @@ const Organizations = ({Trip, setFormElement}) => {
       <div className="col-sm-8">
         <select
           className="form-control"
-          onChange={(e) => setFormElement('organizationId', e)}
+          onChange={(e) => setFormElement('organizationId', e.target.value)}
           value={Trip.organizationId}>
           {options}
         </select>
