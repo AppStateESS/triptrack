@@ -47,7 +47,9 @@ const MemberList = () => {
   }, [filter])
 
   const load = async () => {
-    let response = await getList('./triptrack/Admin/Member/', filter)
+    const data = Object.assign({}, filter)
+    data.search = encodeURIComponent(search)
+    let response = await getList('./triptrack/Admin/Member/', data)
     if (response === false) {
       setMessage('Error: could not load member list')
       setMessageType('danger')
@@ -55,6 +57,8 @@ const MemberList = () => {
     } else {
       if (response.length > 0) {
         setMembers(response)
+      } else {
+        setMembers([])
       }
       setLoading(false)
     }
@@ -93,8 +97,10 @@ const MemberList = () => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-      .then((response) => {
-        console.log(response)
+      .then(() => {
+        setShowModal(false)
+        setCurrentMember(Object.assign({}, emptyMember))
+        load()
       })
       .catch((error) => {
         console.log('Error:', error)
@@ -125,11 +131,21 @@ const MemberList = () => {
     }
   }
 
+  const emptyMessage = () => {
+    if (tripId > 0) {
+      return 'No members found in this trip.'
+    } else if (orgId > 0) {
+      return 'No members found in this organization.'
+    } else {
+      return 'No members found.'
+    }
+  }
+
   let content = <div></div>
   if (loading) {
     content = <div>Loading members...</div>
   } else if (members.length === 0) {
-    content = <div>No members found.</div>
+    content = <div>{emptyMessage()}</div>
   } else {
     content = <Grid members={members} edit={edit} deleteRow={deleteRow} />
   }
