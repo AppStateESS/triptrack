@@ -15,4 +15,9 @@ class MemberView extends AbstractView
         return $this->dashboard('member', 'MemberList');
     }
 
+    public function importForm()
+    {
+        return $this->dashboard('member', 'ImportForm');
+    }
+
 }
