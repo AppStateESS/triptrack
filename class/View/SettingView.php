@@ -14,7 +14,7 @@ class SettingView extends AbstractView
 
     public function listHtml()
     {
-        return $this->dashboard('setting', 'Settings',
+        return $this->dashboard('setting', 'SettingList',
                         ['settings' => SettingFactory::getAll()]);
     }
 
