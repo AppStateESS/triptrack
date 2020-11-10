@@ -5,7 +5,7 @@ import {getList} from '../api/Fetch'
 import {createOptions} from '../Share/CreateOptions'
 import 'regenerator-runtime'
 
-const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
+const OrgTripSelect = ({filter, setFilter}) => {
   const [organizations, setOrganizations] = useState([])
   const [trips, setTrips] = useState([])
   const [tripOptions, setTripOptions] = useState([])
@@ -40,6 +40,10 @@ const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
     setOrganizations(response)
   }, [])
 
+  const updateFilter = (orgId, tripId) => {
+    setFilter({orgId, tripId})
+  }
+
   let content
   if (organizations.length === 0) {
     content = (
@@ -52,11 +56,10 @@ const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
       <div className="col-sm-4">
         <select
           name="orgId"
-          value={orgId}
+          value={filter.orgId}
           className="form-control"
           onChange={(e) => {
-            const orgId = parseInt(e.target.value)
-            setOrgId(orgId)
+            updateFilter(parseInt(e.target.value), 0)
           }}>
           <option value="0">Select organization below</option>
           {orgOptions}
@@ -70,8 +73,10 @@ const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
           <select
             name="tripId"
             className="form-control"
-            value={tripId}
-            onChange={(e) => setTripId(parseInt(e.target.value))}>
+            value={filter.tripId}
+            onChange={(e) =>
+              updateFilter(filter.orgId, parseInt(e.target.value))
+            }>
             <option value="0">Select trip below</option>
             {tripOptions}
           </select>
@@ -83,6 +88,13 @@ const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
         <div className="col-sm-2">Search by:</div>
         {orgSelect}
         {tripSelect}
+        <button
+          className="btn btn-danger"
+          onClick={() => {
+            updateFilter(0, 0)
+          }}>
+          Show all
+        </button>
       </div>
     )
   }
@@ -91,10 +103,8 @@ const OrgTripSelect = ({orgId, tripId, setOrgId, setTripId}) => {
 }
 
 OrgTripSelect.propTypes = {
-  orgId: PropTypes.number,
-  tripId: PropTypes.number,
-  setOrgId: PropTypes.func,
-  setTripId: PropTypes.func,
+  setFilter: PropTypes.func,
+  filter: PropTypes.object,
 }
 
 export default OrgTripSelect

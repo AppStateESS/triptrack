@@ -9,6 +9,7 @@ import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 import OrgTripSelect from '../Share/OrgTripSelect'
 import 'regenerator-runtime'
+import axios from 'axios'
 
 const emptyMember = {
   id: 0,
@@ -31,36 +32,22 @@ const MemberList = () => {
   )
   const urlParams = new URLSearchParams(window.location.search)
 
-  const [orgId, setOrgId] = useState(
-    urlParams.get('orgId') === null ? 0 : parseInt(urlParams.get('orgId'))
-  )
-  const [tripId, setTripId] = useState(
+  const tripId =
     urlParams.get('tripId') === null ? 0 : parseInt(urlParams.get('tripId'))
-  )
+
+  const orgId =
+    urlParams.get('orgId') === null ? 0 : parseInt(urlParams.get('orgId'))
+
+  const [filter, setFilter] = useState({orgId, tripId})
 
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    load()
-  }, [])
-
-  useEffect(() => {
-    if (orgId === 0) {
-      setTripId(0)
-    }
     updateUrl()
-  }, [orgId, tripId])
+  }, [filter])
 
   const load = async () => {
-    const options = {}
-    if (orgId > 0) {
-      options.orgId = orgId
-    }
-    if (tripId > 0) {
-      options.tripId = tripId
-    }
-
-    let response = await getList('./triptrack/Admin/Member/', options)
+    let response = await getList('./triptrack/Admin/Member/', filter)
     if (response === false) {
       setMessage('Error: could not load member list')
       setMessageType('danger')
@@ -76,18 +63,34 @@ const MemberList = () => {
   const updateUrl = () => {
     let url = './triptrack/Admin/Member/'
 
-    if (orgId > 0) {
-      url += `?orgId=${orgId}`
-      if (tripId > 0) {
-        url += `&tripId=${tripId}`
+    if (filter.orgId > 0) {
+      url += `?orgId=${filter.orgId}`
+      if (filter.tripId > 0) {
+        url += `&tripId=${filter.tripId}`
       }
     }
 
     window.history.pushState('stateObj', 'new page', url)
+    load()
   }
 
   const saveMember = () => {
-    console.log(currentMember)
+    let method = currentMember.id > 0 ? 'put' : 'post'
+    axios({
+      method,
+      url,
+      data: currentMember,
+      timeout: 3000,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
   }
 
   const resetModal = () => {
@@ -145,12 +148,7 @@ const MemberList = () => {
         sendSearch={load}
         showModal={() => setShowModal(true)}
       />
-      <OrgTripSelect
-        setOrgId={setOrgId}
-        setTripId={setTripId}
-        orgId={orgId}
-        tripId={tripId}
-      />
+      <OrgTripSelect setFilter={setFilter} filter={filter} />
       <Message message={message} type={messageType} />
       {content}
       {modal}
