@@ -6,6 +6,7 @@ exports.entry = {
   Create: exports.APP_DIR + '/Create/index.jsx',
   OrgList: exports.APP_DIR + '/OrgList/index.jsx',
   TripList: exports.APP_DIR + '/TripList/index.jsx',
+  ImportForm: exports.APP_DIR + '/ImportForm/index.jsx',
   MemberList: exports.APP_DIR + '/MemberList/index.jsx',
   SettingList: exports.APP_DIR + '/SettingList/index.jsx',
 }
