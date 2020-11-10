@@ -42,7 +42,7 @@ const Grid = ({trips, deleteRow}) => {
           </a>
           {deleteButton(key)}
         </td>
-        <td>{value.submitName}</td>
+        <td>{value.host}</td>
         <td>
           {dayjs(value.timeDeparting * 1000).format('h:mma, MMM D, YYYY ')}
         </td>
@@ -58,7 +58,7 @@ const Grid = ({trips, deleteRow}) => {
         <tbody>
           <tr>
             <td></td>
-            <th>Submitter</th>
+            <th>Host</th>
             <th>Departure date</th>
             <th>Destination city</th>
             <th>Members</th>
