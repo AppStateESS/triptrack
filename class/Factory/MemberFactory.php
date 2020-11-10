@@ -11,7 +11,7 @@ use phpws2\Database;
 use Canopy\Request;
 use triptrack\Resource\Member;
 
-class MemberFactory
+class MemberFactory extends BaseFactory
 {
 
     public static function unlinkTrip(int $tripId)
@@ -38,6 +38,31 @@ class MemberFactory
         }
         $tbl->addOrderBy($orderBy, $direction);
         return $db->select();
+    }
+
+    public static function post(Request $request)
+    {
+        $member = new Member;
+        $member->bannerId = (string) $request->pullPostInteger('bannerId');
+        $member->email = $request->pullPostString('email');
+        $member->firstName = $request->pullPostString('firstName');
+        $member->lastName = $request->pullPostString('lastName');
+        $member->phone = $request->pullPostString('phone');
+        $member->username = $request->pullPostString('username');
+        self::saveResource($member);
+    }
+
+    public static function put(int $id, Request $request)
+    {
+        $member = new Member;
+        self::load($member, $id);
+        $member->bannerId = (string) $request->pullPutInteger('bannerId');
+        $member->email = $request->pullPutString('email');
+        $member->firstName = $request->pullPutString('firstName');
+        $member->lastName = $request->pullPutString('lastName');
+        $member->phone = $request->pullPutString('phone');
+        $member->username = $request->pullPutString('username');
+        self::saveResource($member);
     }
 
 }

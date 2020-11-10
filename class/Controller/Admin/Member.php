@@ -33,4 +33,16 @@ class Member extends SubController
         return MemberFactory::list($options);
     }
 
+    protected function post(Request $request)
+    {
+        MemberFactory::post($request);
+        return ['success' => true];
+    }
+
+    protected function put(Request $request)
+    {
+        MemberFactory::put($this->id, $request);
+        return ['success' => true];
+    }
+
 }
