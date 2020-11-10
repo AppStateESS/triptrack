@@ -12,7 +12,7 @@ class OrganizationView extends AbstractView
 
     public function listHtml()
     {
-        return $this->dashboard('org', 'OrganizationList',
+        return $this->dashboard('org', 'OrgList',
                         ['deity' => (bool) \Current_User::isDeity()]);
     }
 
