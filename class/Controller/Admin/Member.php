@@ -30,6 +30,9 @@ class Member extends SubController
     protected function listJson(Request $request)
     {
         $options = [];
+        $options['orgId'] = $request->pullGetString('orgId', true);
+        $options['tripId'] = $request->pullGetString('tripId', true);
+        $options['search'] = $request->pullGetString('search', true);
         return MemberFactory::list($options);
     }
 
@@ -43,6 +46,11 @@ class Member extends SubController
     {
         MemberFactory::put($this->id, $request);
         return ['success' => true];
+    }
+
+    protected function importHtml()
+    {
+        return $this->view->importForm();
     }
 
 }
