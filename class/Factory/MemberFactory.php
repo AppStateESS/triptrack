@@ -36,6 +36,15 @@ class MemberFactory extends BaseFactory
         } else {
             $direction = 'asc';
         }
+
+        if (!empty($options['orgId'])) {
+            $orgId = (int) $options['orgId'];
+            $tbl2 = $db->addTable('trip_membertoorg', null, false);
+            $tbl2->addFieldConditional('organizationId', $orgId);
+            $joinCond = new Database\Conditional($db, $tbl->getField('id'),
+                    $tbl2->getField('memberId'), '=');
+            $db->joinResources($tbl, $tbl2, $joinCond, 'left');
+        }
         $tbl->addOrderBy($orderBy, $direction);
         return $db->select();
     }
