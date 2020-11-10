@@ -110,24 +110,20 @@ EOF;
         switch ($active) {
             case 'trip':
                 $vars['tripActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('TripList');
                 $vars['alert'] = !$orgExists;
                 break;
             case 'member':
                 $vars['memberActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('MemberList');
                 $vars['alert'] = !$orgExists;
                 break;
             case 'setting':
                 $vars['settingActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('SettingList',
-                        $scriptVars);
                 break;
             case 'org':
                 $vars['orgActive'] = ' active';
-                $vars['dashboard'] = $this->scriptView('OrgList', $scriptVars);
                 break;
         }
+        $vars['dashboard'] = $this->scriptView($script, $scriptVars);
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
         return $template->get();
