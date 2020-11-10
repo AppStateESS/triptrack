@@ -88,6 +88,33 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
+    public static function put(int $id, Request $request)
+    {
+        $trip = new Trip;
+        self::load($trip, $id);
+        $trip->host = $request->pullPutString('host');
+        $trip->contactName = $request->pullPutString('contactName');
+        $trip->contactEmail = $request->pullPutString('contactEmail');
+        $trip->contactPhone = $request->pullPutString('contactPhone');
+        $trip->destinationCity = $request->pullPutString('destinationCity');
+        $trip->destinationCountry = $request->pullPutString('destinationCountry');
+        $trip->destinationState = $request->pullPutString('destinationState');
+        $trip->housingAddress = $request->pullPutString('housingAddress');
+        $trip->organizationId = $request->pullPutInteger('organizationId');
+        $trip->secContactName = $request->pullPutString('secContactName');
+        $trip->secContactEmail = $request->pullPutString('secContactEmail');
+        $trip->secContactPhone = $request->pullPutString('secContactPhone');
+        $trip->submitEmail = $request->pullPutString('submitEmail');
+        $trip->submitName = $request->pullPutString('submitName');
+        $trip->submitUsername = $request->pullPutString('submitUsername');
+        $trip->timeDeparting = $request->pullPutString('timeDeparting');
+        $trip->timeEventStarts = $request->pullPutString('timeEventStarts');
+        $trip->timeReturn = $request->pullPutString('timeReturn');
+        $trip->visitPurpose = $request->pullPutString('visitPurpose');
+
+        return $trip;
+    }
+
     public static function removeAllMembers(int $tripId)
     {
         $db = Database::getDB();

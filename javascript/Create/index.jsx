@@ -72,15 +72,21 @@ const Create = ({
         },
       }).then((response) => {
         setTrip(response.data)
+        setReady(Object.assign({}, tripSettings.yes))
       })
     }
   }, [])
 
   const postTrip = () => {
     let url = './triptrack/Admin/Trip'
+    let method = 'post'
+    if (Trip.id > 0) {
+      url += '/' + Trip.id
+      method = 'put'
+    }
 
     axios({
-      method: 'post',
+      method,
       url,
       data: Trip,
       timeout: 3000,
@@ -142,9 +148,16 @@ const Create = ({
     setReady(Object.assign({}, ready))
   }
 
+  let title
+  if (Trip.id > 0) {
+    title = <h3>Update trip</h3>
+  } else {
+    title = <h3>Create trip</h3>
+  }
+
   return (
     <div>
-      <h3>Create Trip</h3>
+      {title}
       <p>Please enter all requested, required information below:</p>
       <Message message={message} />
       <a id="submitter-info"></a>

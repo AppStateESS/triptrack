@@ -62,4 +62,11 @@ class Trip extends SubController
         return ['success' => true];
     }
 
+    protected function put(Request $request)
+    {
+        $trip = TripFactory::put($this->id, $request);
+        TripFactory::save($trip);
+        return ['success' => true];
+    }
+
 }
