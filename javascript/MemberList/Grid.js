@@ -38,7 +38,13 @@ const Grid = ({members, edit, deleteRow}) => {
           </button>
           {deleteButton(key)}
         </td>
-        <td>{value.name}</td>
+        <td>
+          {value.lastName}, {value.firstName}
+        </td>
+        <td>
+          <a href={`mailto:${value.email}`}>{value.email}</a>
+        </td>
+        <td>{value.phone}</td>
       </tr>
     )
   })
@@ -46,7 +52,15 @@ const Grid = ({members, edit, deleteRow}) => {
   return (
     <div>
       <table className="table table-striped">
-        <tbody>{rows}</tbody>
+        <tbody>
+          <tr>
+            <td>&nbsp;</td>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+          </tr>
+          {rows}
+        </tbody>
       </table>
     </div>
   )

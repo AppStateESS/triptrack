@@ -75,7 +75,15 @@ const MemberList = () => {
   }
 
   const saveMember = () => {
-    let method = currentMember.id > 0 ? 'put' : 'post'
+    let method
+    let url = 'triptrack/Admin/Member'
+    if (currentMember.id > 0) {
+      method = 'put'
+      url += '/' + currentMember.id
+    } else {
+      method = 'post'
+    }
+
     axios({
       method,
       url,
@@ -103,6 +111,8 @@ const MemberList = () => {
     member[varName] = value
     setCurrentMember(member)
   }
+
+  const deleteRow = () => {}
 
   const edit = async (memberId) => {
     let response = await getList('./triptrack/Admin/Member/' + memberId)
