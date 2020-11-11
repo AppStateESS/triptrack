@@ -39,6 +39,9 @@ class TripFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_trip');
+        if (!empty($options['orgId'])) {
+            $tbl->addFieldConditional('organizationId', $options['orgId']);
+        }
         $tbl->addOrderBy('submitName');
         if (!empty($options['memberCount'])) {
             $tbl2 = $db->addTable('trip_membertotrip');
