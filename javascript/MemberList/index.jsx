@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import {getList, sendDelete} from '../api/Fetch'
+import {getList, getItem, addMember} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
@@ -27,6 +27,8 @@ const MemberList = () => {
   const [showModal, setShowModal] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
+  const [trip, setTrip] = useState(null)
+  const [organization, setOrganization] = useState(null)
   const [currentMember, setCurrentMember] = useState(
     Object.assign({}, emptyMember)
   )
@@ -44,7 +46,27 @@ const MemberList = () => {
 
   useEffect(() => {
     updateUrl()
+    if (tripId === 0) {
+      setTrip(null)
+    } else {
+      loadTrip()
+    }
+    loadOrganization()
   }, [filter])
+
+  const loadTrip = async () => {
+    if (tripId > 0) {
+      const response = await getItem('Trip', tripId)
+      setTrip(response)
+    }
+  }
+
+  const loadOrganization = async () => {
+    if (orgId > 0) {
+      const response = await getItem('Organization', orgId)
+      setOrganization(response)
+    }
+  }
 
   const load = async () => {
     const data = Object.assign({}, filter)
@@ -78,7 +100,7 @@ const MemberList = () => {
     load()
   }
 
-  const saveMember = () => {
+  const saveMember = (saveType) => {
     let method
     let url = 'triptrack/Admin/Member'
     if (currentMember.id > 0) {
@@ -97,7 +119,13 @@ const MemberList = () => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     })
-      .then(() => {
+      .then((resource) => {
+        const memberId = resource.data.memberId
+        if (saveType == 1) {
+          addMember(memberId, orgId, 0)
+        } else if (saveType == 2) {
+          addMember(memberId, orgId, tripId)
+        }
         setShowModal(false)
         setCurrentMember(Object.assign({}, emptyMember))
         load()
@@ -157,6 +185,8 @@ const MemberList = () => {
         member={currentMember}
         close={resetModal}
         save={saveMember}
+        organization={organization}
+        trip={trip}
       />
     )
   }
@@ -166,6 +196,7 @@ const MemberList = () => {
       <div>{getModalForm()}</div>
     </Overlay>
   )
+
   return (
     <div>
       <Menu
