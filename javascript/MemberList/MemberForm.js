@@ -2,7 +2,39 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 
-const MemberForm = ({member, update, close, save}) => {
+const MemberForm = ({member, update, close, save, organization, trip}) => {
+  const [saveType, setSaveType] = useState(0)
+
+  const selectAssociation = () => {
+    const options = []
+    options.push(
+      <option key="no-opt" value="0">
+        No association
+      </option>
+    )
+    if (organization !== null) {
+      options.push(
+        <option
+          key="org-opt"
+          value="1">{`Associate to ${organization.name} organization`}</option>
+      )
+    }
+    if (trip !== null) {
+      options.push(
+        <option
+          key="trip-opt"
+          value="2">{`Associate to ${trip.host} trip`}</option>
+      )
+    }
+    return (
+      <select
+        className="form-control"
+        onChange={(e) => setSaveType(e.target.value)}>
+        {options}
+      </select>
+    )
+  }
+
   return (
     <div className="container">
       <h3 className="border-bottom pb-2 mb-3">
@@ -74,13 +106,19 @@ const MemberForm = ({member, update, close, save}) => {
           />
         </div>
       </div>
-      <div className="text-center">
-        <button className="btn btn-primary mr-2" onClick={save}>
-          Save
-        </button>
-        <button className="btn btn-danger" onClick={close}>
-          Cancel
-        </button>
+      <div className="row">
+        <div className="col-sm-8">{selectAssociation()}</div>
+        <div className="col-sm-4">
+          <button
+            className="btn btn-primary mr-2"
+            onClick={() => save(saveType)}>
+            Save
+          </button>
+
+          <button className="btn btn-danger" onClick={close}>
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -91,6 +129,8 @@ MemberForm.propTypes = {
   update: PropTypes.func,
   save: PropTypes.func,
   close: PropTypes.func,
+  organization: PropTypes.object,
+  trip: PropTypes.object,
 }
 
 export default MemberForm
