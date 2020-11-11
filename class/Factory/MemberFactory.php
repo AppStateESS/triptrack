@@ -59,6 +59,7 @@ class MemberFactory extends BaseFactory
         $member->phone = $request->pullPostString('phone');
         $member->username = $request->pullPostString('username');
         self::saveResource($member);
+        return $member;
     }
 
     public static function put(int $id, Request $request)
@@ -72,6 +73,7 @@ class MemberFactory extends BaseFactory
         $member->phone = $request->pullPutString('phone');
         $member->username = $request->pullPutString('username');
         self::saveResource($member);
+        return $member;
     }
 
 }
