@@ -29,7 +29,7 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
               <a
                 className="btn btn-success btn-sm"
                 href="triptrack/Admin/Member/import">
-                Upload members
+                Import members
               </a>
             </li>
           </ul>
