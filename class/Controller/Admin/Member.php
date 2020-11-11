@@ -38,19 +38,25 @@ class Member extends SubController
 
     protected function post(Request $request)
     {
-        MemberFactory::post($request);
-        return ['success' => true];
+        $member = MemberFactory::post($request);
+        return ['success' => true, 'memberId' => $member->id];
     }
 
     protected function put(Request $request)
     {
-        MemberFactory::put($this->id, $request);
-        return ['success' => true];
+        $member = MemberFactory::put($this->id, $request);
+        return ['success' => true, 'memberId' => $member->id];
     }
 
     protected function importHtml()
     {
         return $this->view->importForm();
+    }
+
+    protected function add(Request $request)
+    {
+        $orgId = $request->pullPatchInteger('orgId');
+        $tripId = $request->pullPatchInteger('tripId', true);
     }
 
 }
