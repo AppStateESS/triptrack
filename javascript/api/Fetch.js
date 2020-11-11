@@ -28,4 +28,33 @@ const sendDelete = async (url) => {
   }
 }
 
-export {getList, sendDelete}
+const getItem = async (itemName, id) => {
+  const url = `triptrack/Admin/${itemName}/${id}`
+  try {
+    const response = await axios.get(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    return response.data
+  } catch (error) {
+    return false
+  }
+}
+
+const addMember = async (memberId, orgId, tripId) => {
+  const url = `triptrack/Admin/Member/${memberId}/add`
+  try {
+    const response = await axios.patch(url, {
+      data: {orgId, tripId},
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+    return response.data
+  } catch (error) {
+    return false
+  }
+}
+
+export {getList, sendDelete, getItem, addMember}
