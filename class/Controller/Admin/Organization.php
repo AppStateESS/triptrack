@@ -66,4 +66,14 @@ class Organization extends SubController
         return ['success' => 1];
     }
 
+    protected function assignmentJson(Request $request)
+    {
+        $orgId = $request->pullGetInteger('orgId');
+        $tripId = $request->pullGetInteger('tripId');
+        $organization = OrganizationFactory::load(OrganizationFactory::build(),
+                        $this->id);
+        $trip = OrganizationFactory::load(OrganizationFactory::build(),
+                        $this->id);
+    }
+
 }
