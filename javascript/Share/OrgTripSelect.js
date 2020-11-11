@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {getList} from '../api/Fetch'
 import {createOptions} from '../Share/CreateOptions'
@@ -16,9 +16,13 @@ const OrgTripSelect = ({filter, setFilter}) => {
     setOrganizations(response)
     loadTrips()
   }
-  const loadTrips = async () => {
-    const response = await getList('./triptrack/Admin/Trip')
-    setTrips(response)
+  const loadTrips = async (orgId) => {
+    if (orgId > 0) {
+      const response = await getList('./triptrack/Admin/Trip', {
+        orgId,
+      })
+      setTrips(response)
+    }
   }
 
   useEffect(() => {
@@ -42,6 +46,7 @@ const OrgTripSelect = ({filter, setFilter}) => {
 
   const updateFilter = (orgId, tripId) => {
     setFilter({orgId, tripId})
+    loadTrips(orgId)
   }
 
   let content
