@@ -46,7 +46,7 @@ const MemberList = () => {
 
   useEffect(() => {
     updateUrl()
-    if (tripId === 0) {
+    if (filter.tripId === 0) {
       setTrip(null)
     } else {
       loadTrip()
@@ -55,15 +55,15 @@ const MemberList = () => {
   }, [filter])
 
   const loadTrip = async () => {
-    if (tripId > 0) {
-      const response = await getItem('Trip', tripId)
+    if (filter.tripId > 0) {
+      const response = await getItem('Trip', filter.tripId)
       setTrip(response)
     }
   }
 
   const loadOrganization = async () => {
-    if (orgId > 0) {
-      const response = await getItem('Organization', orgId)
+    if (filter.orgId > 0) {
+      const response = await getItem('Organization', filter.orgId)
       setOrganization(response)
     }
   }
@@ -122,9 +122,9 @@ const MemberList = () => {
       .then((resource) => {
         const memberId = resource.data.memberId
         if (saveType == 1) {
-          addMember(memberId, orgId, 0)
+          addMember(memberId, filter.orgId, 0)
         } else if (saveType == 2) {
-          addMember(memberId, orgId, tripId)
+          addMember(memberId, filter.orgId, filter.tripId)
         }
         setShowModal(false)
         setCurrentMember(Object.assign({}, emptyMember))
@@ -160,9 +160,9 @@ const MemberList = () => {
   }
 
   const emptyMessage = () => {
-    if (tripId > 0) {
+    if (filter.tripId > 0) {
       return 'No members found in this trip.'
-    } else if (orgId > 0) {
+    } else if (filter.orgId > 0) {
       return 'No members found in this organization.'
     } else {
       return 'No members found.'
@@ -191,11 +191,13 @@ const MemberList = () => {
     )
   }
 
-  const modal = (
-    <Overlay show={showModal} close={resetModal} width="80%">
-      <div>{getModalForm()}</div>
-    </Overlay>
-  )
+  const modal = () => {
+    return (
+      <Overlay show={showModal} close={resetModal} width="80%">
+        <div>{getModalForm()}</div>
+      </Overlay>
+    )
+  }
 
   return (
     <div>
@@ -208,7 +210,7 @@ const MemberList = () => {
       <OrgTripSelect setFilter={setFilter} filter={filter} />
       <Message message={message} type={messageType} />
       {content}
-      {modal}
+      {modal()}
     </div>
   )
 }
