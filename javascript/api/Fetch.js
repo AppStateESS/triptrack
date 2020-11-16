@@ -45,12 +45,15 @@ const getItem = async (itemName, id) => {
 const addMember = async (memberId, orgId, tripId) => {
   const url = `triptrack/Admin/Member/${memberId}/add`
   try {
-    const response = await axios.patch(url, {
-      data: {orgId, tripId},
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
+    const response = await axios.patch(
+      url,
+      {orgId, tripId},
+      {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      }
+    )
     return response.data
   } catch (error) {
     return false
