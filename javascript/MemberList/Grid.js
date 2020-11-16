@@ -9,7 +9,7 @@ const Grid = ({members, edit, deleteRow}) => {
         'Are you certain you want to delete this member?\nTheir membership in all trips will also be removed.\nIf you are sure, type "DELETE" below.'
       ) === 'DELETE'
     ) {
-      deleteRow(key)
+      deleteRow(members[key].id)
     }
   }
 
