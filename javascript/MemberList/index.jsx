@@ -146,7 +146,22 @@ const MemberList = () => {
     setCurrentMember(member)
   }
 
-  const deleteRow = () => {}
+  const deleteRow = (id) => {
+    axios({
+      method: 'delete',
+      url: './triptrack/Admin/Member/' + id,
+      timeout: 3000,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    })
+      .then(() => {
+        load()
+      })
+      .catch((error) => {
+        console.log('Error:', error)
+      })
+  }
 
   const edit = async (memberId) => {
     let response = await getList('./triptrack/Admin/Member/' + memberId)
