@@ -22,6 +22,28 @@ class Member extends SubController
         $this->view = new \triptrack\View\MemberView();
     }
 
+    protected function addPatch(Request $request)
+    {
+        $orgId = $request->pullPatchInteger('orgId');
+        $tripId = $request->pullPatchInteger('tripId', true);
+        MemberFactory::addToOrganization($this->id, $orgId);
+        if ($tripId) {
+            MemberFactory::addToTrip($this->id, $tripId);
+        }
+        return ['success' => true];
+    }
+
+    protected function delete(Request $request)
+    {
+        MemberFactory::delete($this->id);
+        return ['success' => true];
+    }
+
+    protected function importHtml()
+    {
+        return $this->view->importForm();
+    }
+
     protected function listHtml()
     {
         return $this->view->listHtml();
@@ -46,28 +68,6 @@ class Member extends SubController
     {
         $member = MemberFactory::put($this->id, $request);
         return ['success' => true, 'memberId' => $member->id];
-    }
-
-    protected function importHtml()
-    {
-        return $this->view->importForm();
-    }
-
-    protected function addPatch(Request $request)
-    {
-        $orgId = $request->pullPatchInteger('orgId');
-        $tripId = $request->pullPatchInteger('tripId', true);
-        MemberFactory::addToOrganization($this->id, $orgId);
-        if ($tripId) {
-            MemberFactory::addToTrip($this->id, $tripId);
-        }
-        return ['success' => true];
-    }
-
-    protected function delete(Request $request)
-    {
-        MemberFactory::delete($this->id);
-        return ['success' => true];
     }
 
 }
