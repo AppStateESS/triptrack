@@ -76,4 +76,58 @@ class MemberFactory extends BaseFactory
         return $member;
     }
 
+    public static function unlinkAllTrips(int $memberId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertotrip');
+        $tbl->addFieldConditional('memberId', $memberId);
+        $db->delete();
+    }
+
+    public static function unlinkAllOrganizations(int $memberId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertoorg');
+        $tbl->addFieldConditional('memberId', $memberId);
+        $db->delete();
+    }
+
+    public static function delete(int $memberId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        $tbl->addFieldConditional('id', $memberId);
+        $db->delete();
+        self::unlinkAllTrips($memberId);
+        self::unlinkAllOrganizations($memberId);
+    }
+
+    public static function addToOrganization($memberId, $orgId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertoorg');
+        $tbl->addFieldConditional('memberId', $memberId);
+        $tbl->addFieldConditional('organizationId', $orgId);
+        $check = $db->selectOneRow();
+        if (!$check) {
+            $tbl->addValue('memberId', $memberId);
+            $tbl->addValue('organizationId', $orgId);
+            $db->insert();
+        }
+    }
+
+    public static function addToTrip($memberId, $tripId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertotrip');
+        $tbl->addFieldConditional('memberId', $memberId);
+        $tbl->addFieldConditional('tripId', $tripId);
+        $check = $db->selectOneRow();
+        if (!$check) {
+            $tbl->addValue('memberId', $memberId);
+            $tbl->addValue('tripId', $tripId);
+            $db->insert();
+        }
+    }
+
 }
