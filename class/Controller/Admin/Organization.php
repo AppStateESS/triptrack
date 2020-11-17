@@ -34,7 +34,7 @@ class Organization extends SubController
 
     protected function listJson(Request $request)
     {
-        return OrganizationFactory::list();
+        return OrganizationFactory::list(['memberCount' => true]);
     }
 
     protected function post(Request $request)
