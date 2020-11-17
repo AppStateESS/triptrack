@@ -43,6 +43,7 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
           {deleteButton(key)}
         </td>
         <td>{value.name}</td>
+        <td>{value.memberCount}</td>
       </tr>
     )
   })
@@ -50,7 +51,14 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
   return (
     <div>
       <table className="table table-striped">
-        <tbody>{rows}</tbody>
+        <tbody>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Name</th>
+            <th>Members</th>
+          </tr>
+          {rows}
+        </tbody>
       </table>
     </div>
   )
