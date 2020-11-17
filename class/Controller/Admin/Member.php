@@ -70,4 +70,11 @@ class Member extends SubController
         return ['success' => true, 'memberId' => $member->id];
     }
 
+    protected function viewJson(Request $request)
+    {
+        $member = new \triptrack\Resource\Member;
+        MemberFactory::load($member, $this->id);
+        return $member->getStringVars();
+    }
+
 }
