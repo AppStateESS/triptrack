@@ -42,7 +42,7 @@ class TripFactory extends BaseFactory
         if (!empty($options['orgId'])) {
             $tbl->addFieldConditional('organizationId', $options['orgId']);
         }
-        $tbl->addOrderBy('submitName');
+
         if (!empty($options['memberCount'])) {
             $tbl2 = $db->addTable('trip_membertotrip');
             $counter = $tbl2->addField('memberId', 'memberCount');
@@ -52,6 +52,26 @@ class TripFactory extends BaseFactory
             $db->joinResources($tbl, $tbl2, $joinConditional, 'left');
             $db->setGroupBy([$tbl->getField('id')]);
         }
+
+        if (!empty($options['search'])) {
+            $search = '%' . $options['search'] . '%';
+            $searchCond1 = $db->createConditional($tbl->getField('host'),
+                    $search, 'like');
+            $searchCond2 = $db->createConditional($tbl->getField('contactName'),
+                    $search, 'like');
+            $searchCond3 = $db->createConditional($tbl->getField('secContactName'),
+                    $search, 'like');
+            $searchCond4 = $db->createConditional($tbl->getField('submitName'),
+                    $search, 'like');
+            $searchCond5 = $db->createConditional($searchCond1, $searchCond2,
+                    'or');
+            $searchCond6 = $db->createConditional($searchCond3, $searchCond4,
+                    'or');
+            $searchCond7 = $db->createConditional($searchCond5, $searchCond6,
+                    'or');
+            $db->addConditional($searchCond7);
+        }
+
         if (!empty($options['order'])) {
             $orderBy = $options['order'];
             if (!empty($options['dir'])) {
