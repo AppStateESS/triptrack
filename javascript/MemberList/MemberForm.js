@@ -6,33 +6,35 @@ const MemberForm = ({member, update, close, save, organization, trip}) => {
   const [saveType, setSaveType] = useState(0)
 
   const selectAssociation = () => {
-    const options = []
-    options.push(
-      <option key="no-opt" value="0">
-        No association
-      </option>
-    )
-    if (organization !== null) {
+    if (member.id === 0) {
+      const options = []
       options.push(
-        <option
-          key="org-opt"
-          value="1">{`Associate to ${organization.name} organization`}</option>
+        <option key="no-opt" value="0">
+          No association
+        </option>
+      )
+      if (organization !== null) {
+        options.push(
+          <option
+            key="org-opt"
+            value="1">{`Associate to ${organization.name} organization`}</option>
+        )
+      }
+      if (trip !== null) {
+        options.push(
+          <option
+            key="trip-opt"
+            value="2">{`Associate to ${trip.host} trip`}</option>
+        )
+      }
+      return (
+        <select
+          className="form-control"
+          onChange={(e) => setSaveType(e.target.value)}>
+          {options}
+        </select>
       )
     }
-    if (trip !== null) {
-      options.push(
-        <option
-          key="trip-opt"
-          value="2">{`Associate to ${trip.host} trip`}</option>
-      )
-    }
-    return (
-      <select
-        className="form-control"
-        onChange={(e) => setSaveType(e.target.value)}>
-        {options}
-      </select>
-    )
   }
 
   return (
