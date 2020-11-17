@@ -33,6 +33,15 @@ class OrganizationFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_organization');
+        if (!empty($options['memberCount'])) {
+            $tbl2 = $db->addTable('trip_membertoorg');
+            $counter = $tbl2->addField('memberId', 'memberCount');
+            $counter->showCount();
+            $joinConditional = $db->createConditional($tbl->getField('id'),
+                    $tbl2->getField('organizationId'));
+            $db->joinResources($tbl, $tbl2, $joinConditional, 'left');
+            $db->setGroupBy([$tbl->getField('id')]);
+        }
         $tbl->addOrderBy('name');
         return $db->select();
     }
