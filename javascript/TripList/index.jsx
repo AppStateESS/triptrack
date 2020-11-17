@@ -18,21 +18,25 @@ const TripList = () => {
     load()
   }, [])
 
-  const load = async () => {
-    let response = await getList('./triptrack/Admin/Trip/', {search})
+  const load = async (useSearch = true) => {
+    const options = {search: useSearch ? search : ''}
+    let response = await getList('./triptrack/Admin/Trip/', options)
     if (response === false) {
       setMessage('Error: could not load trip list')
       setMessageType('danger')
       setLoading(false)
     } else {
-      if (response.length > 0) {
-        setTrips(response)
-      }
+      setTrips(response)
       setLoading(false)
     }
   }
   const sendSearch = () => {
     load()
+  }
+
+  const resetSearch = () => {
+    setSearch('')
+    load(false)
   }
 
   const deleteRow = (key) => {
@@ -59,17 +63,35 @@ const TripList = () => {
   if (loading) {
     return <div>Loading trips...</div>
   } else if (trips.length === 0) {
+    let emptyMessage = 'No trips found.'
+    if (search.length > 0) {
+      emptyMessage = (
+        <span>
+          No trips found with for search query: <strong>{search}</strong>.
+        </span>
+      )
+    }
     return (
       <div>
-        <Menu search={search} setSearch={setSearch} sendSearch={sendSearch} />
+        <Menu
+          search={search}
+          setSearch={setSearch}
+          sendSearch={sendSearch}
+          resetSearch={resetSearch}
+        />
         <Message message={message} type={messageType} />
-        <p>No trips found.</p>
+        <p>{emptyMessage}</p>
       </div>
     )
   } else {
     return (
       <div>
-        <Menu search={search} setSearch={setSearch} sendSearch={sendSearch} />
+        <Menu
+          search={search}
+          setSearch={setSearch}
+          sendSearch={sendSearch}
+          resetSearch={resetSearch}
+        />
         <Message message={message} type={messageType} />
         <Grid trips={trips} edit={update} deleteRow={deleteRow} />
       </div>

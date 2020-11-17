@@ -2,7 +2,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({sendSearch, search, setSearch}) => {
+const Menu = ({sendSearch, search, setSearch, resetSearch}) => {
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -46,8 +46,7 @@ const Menu = ({sendSearch, search, setSearch}) => {
                 <button
                   className="btn btn-outline-danger my-2 my-sm-0"
                   onClick={() => {
-                    setSearch('')
-                    sendSearch()
+                    resetSearch()
                   }}
                   type="button">
                   Clear
