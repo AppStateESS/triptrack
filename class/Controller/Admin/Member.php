@@ -77,4 +77,28 @@ class Member extends SubController
         return $member->getStringVars();
     }
 
+    protected function uploadPost(Request $request)
+    {
+        // forces a json response
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+        if (!isset($_FILES['file'])) {
+            return ['success' => false, 'error' => 'no upload file received.'];
+        }
+
+        $fileType = $_FILES['file']['type'];
+        if ($fileType !== 'text/csv') {
+            return ['success' => false, 'error' => "incorrect file type [$fileType]"];
+        }
+
+        $file = $_FILES['file'];
+        $tsFilename = MemberFactory::storeFile($file);
+        $savedPath = MemberFactory::createPath($tsFilename);
+        if (MemberFactory::testFile($savedPath)) {
+            return ['success' => true, 'file' => $tsFilename];
+        } else {
+            unlink($savedPath);
+            return ['success' => false, 'error' => 'file was not correctly formatted.'];
+        }
+    }
+
 }
