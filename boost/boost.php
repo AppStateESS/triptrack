@@ -13,4 +13,4 @@ $version_http = '';
 $about = false;
 $priority = 50;
 $dependency = false;
-$image_dir = true;
+$file_dir = true;
