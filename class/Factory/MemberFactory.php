@@ -130,4 +130,33 @@ class MemberFactory extends BaseFactory
         }
     }
 
+    public static function storeFile($fileArray)
+    {
+        $fileName = str_replace('.', '', (string) microtime(true)) . '.csv';
+        $path = self::createPath($fileName);
+        move_uploaded_file($fileArray['tmp_name'], $path);
+        return $fileName;
+    }
+
+    public static function createPath($fileName)
+    {
+        $destinationDir = PHPWS_HOME_DIR . 'files/triptrack/';
+        return $destinationDir . $fileName;
+    }
+
+    public static function testFile($filename)
+    {
+        $handle = fopen($filename, 'r');
+        $header = fgetcsv($handle);
+        if (!is_array($header)) {
+            return false;
+        }
+        $testResult = in_array('first name', $header) && in_array('last name',
+                        $header) && in_array('email', $header) && in_array('phone',
+                        $header) && in_array('banner id', $header) && in_array('username',
+                        $header);
+        fclose($handle);
+        return $testResult;
+    }
+
 }

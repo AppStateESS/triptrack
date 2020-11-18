@@ -1,38 +1,28 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
+import Form from './Form'
 
 const ImportForm = () => {
+  const [formReady, setFormReady] = useState(false)
+  const [successFile, setSuccessFile] = useState('')
+  let content
+  if (formReady) {
+    content = (
+      <div className="text-center">
+        <p>Import file formatted correctly.</p>
+        <button className="btn btn-success btn-lg" onClick={() => {}}>
+          Import members from uploaded file
+        </button>
+      </div>
+    )
+  } else {
+    content = <Form {...{setFormReady, setSuccessFile}} />
+  }
   return (
     <div>
-      <h2>Import members</h2>
-      <p>
-        To import members to TripTrack, you must upload a CSV file with the
-        following column headers:
-      </p>
-      <table className="table table-bordered">
-        <tbody>
-          <tr>
-            <td>firstName</td>
-            <td>lastName</td>
-            <td>email</td>
-            <td>phone</td>
-            <td>bannerId</td>
-            <td>username</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>A file without these headers will be refused.</p>
-      <div className="row">
-        <div className="col-sm-6">
-          <input type="file" className="form-control" />
-        </div>
-        <div className="col-sm-6">
-          <button className="btn btn-outline-dark" onClick={() => {}}>
-            Upload CSV file
-          </button>
-        </div>
-      </div>
+      <h3>Import members</h3>
+      {content}
     </div>
   )
 }
