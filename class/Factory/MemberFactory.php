@@ -14,6 +14,8 @@ use triptrack\Resource\Member;
 class MemberFactory extends BaseFactory
 {
 
+    static $fileDirectory = PHPWS_HOME_DIR . 'files/triptrack/';
+
     public static function unlinkTrip(int $tripId)
     {
         $db = Database::getDB();
@@ -140,23 +142,111 @@ class MemberFactory extends BaseFactory
 
     public static function createPath($fileName)
     {
-        $destinationDir = PHPWS_HOME_DIR . 'files/triptrack/';
+        $destinationDir = self::$fileDirectory;
         return $destinationDir . $fileName;
     }
 
     public static function testFile($filename)
     {
+
         $handle = fopen($filename, 'r');
         $header = fgetcsv($handle);
         if (!is_array($header)) {
             return false;
         }
-        $testResult = in_array('first name', $header) && in_array('last name',
-                        $header) && in_array('email', $header) && in_array('phone',
-                        $header) && in_array('banner id', $header) && in_array('username',
-                        $header);
+        if (is_numeric($header[0])) {
+            $testResult = true;
+        } elseif (preg_match('/banner(id|_id|\sid)/', $header[0])) {
+            $testRow = fgetcsv($handle);
+            $testResult = is_numeric($testRow[0]);
+        } else {
+            $testResult = in_array('firstName', $header) && in_array('lastName',
+                            $header) && in_array('email', $header) && in_array('phone',
+                            $header) && in_array('bannerId', $header) && in_array('username',
+                            $header);
+        }
         fclose($handle);
         return $testResult;
+    }
+
+    public static function importFile($fileName)
+    {
+        if (!preg_match('/^\d+\.csv$/', $fileName)) {
+            throw new \Exception('Bad file name');
+        }
+        $path = self::$fileDirectory . $fileName;
+        if (!is_file($path)) {
+            throw new \Exception('File missing');
+        }
+
+        $handle = fopen($path, 'r');
+        $header = fgetcsv($handle);
+        fclose($handle);
+        if (is_numeric($header[0]) || preg_match('/banner(id|_id|\sid)/',
+                        $header[0])) {
+            self::bannerImport($path);
+        } else {
+            self::csvImport($path);
+        }
+    }
+
+    private static function bannerImport(string $path)
+    {
+        $handle = fopen($path, 'r');
+    }
+
+    private static function csvImport(string $path)
+    {
+        $handle = fopen($path, 'r');
+        $header = fgetcsv($handle);
+        $errorRow = [];
+        $badRow = 0;
+        $previousMember = 0;
+        $added = 0;
+        $counting = 0;
+
+        while ($row = fgetcsv($handle)) {
+            $counting++;
+            if (count($row) !== 6) {
+                $badRow++;
+                continue;
+            }
+            $insertRow = array_combine($header, $row);
+            if (self::checkRowValues($insertRow)) {
+                if (self::importFullRow($insertRow)) {
+                    $added++;
+                } else {
+                    $previousMember++;
+                }
+            } else {
+                $badRow++;
+                $errorRow[] = $counting;
+            }
+        }
+        fclose($handle);
+    }
+
+    private static function importFullRow(array $insertRow)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        $tbl->addFieldConditional('bannerId', $insertRow['bannerId']);
+        if ($db->selectOneRow()) {
+            return false;
+        }
+        $tbl->addValueArray($insertRow);
+        return $db->insert();
+    }
+
+    private static function checkRowValues(array $insertRow)
+    {
+        return preg_match('/[\w\s]+/', $insertRow['firstName']) &&
+                preg_match('/[\w\s]+/', $insertRow['lastName']) &&
+                preg_match('/^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9.\-]+$/',
+                        $insertRow['email']) &&
+                preg_match('/\d{9}/', $insertRow['bannerId']) &&
+                strlen(preg_replace('/\D/', '', $insertRow['phone']) > 6) &&
+                preg_match('/\w+/', $insertRow['username']);
     }
 
 }
