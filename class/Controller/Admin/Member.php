@@ -101,4 +101,11 @@ class Member extends SubController
         }
     }
 
+    protected function importFilePost(Request $request)
+    {
+        $fileName = $request->pullPostString('fileName');
+        MemberFactory::importFile($fileName);
+        return ['success' => true, 'file' => $fileName];
+    }
+
 }
