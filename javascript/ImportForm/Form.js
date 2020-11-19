@@ -39,8 +39,8 @@ const Form = ({setFormReady, setSuccessFile}) => {
   return (
     <div>
       <p>
-        To import members to TripTrack, you must upload a CSV file with the
-        following column headers:
+        To import members to TripTrack, you must upload a CSV file with either
+        the following column headers (note the capitalization):
       </p>
       {message.length > 0 ? (
         <div className="alert alert-danger">{message}</div>
@@ -48,16 +48,17 @@ const Form = ({setFormReady, setSuccessFile}) => {
       <table className="table table-bordered">
         <tbody>
           <tr>
-            <td>first name</td>
-            <td>last name</td>
+            <td>firstName</td>
+            <td>lastName</td>
             <td>email</td>
             <td>phone</td>
-            <td>banner id</td>
+            <td>bannerId</td>
             <td>username</td>
           </tr>
         </tbody>
       </table>
-      <p>A file without these headers will be refused.</p>
+      <p>or, a CSV file with Banner ID numbers only (header not necessary).</p>
+      <p>Any other file type or format will be rejected.</p>
       <div className="row">
         <div className="col-sm-6">
           <input
