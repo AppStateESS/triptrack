@@ -10,6 +10,7 @@ namespace triptrack\Factory;
 use phpws2\Database;
 use Canopy\Request;
 use triptrack\Resource\Member;
+use triptrack\BannerAPI;
 
 class MemberFactory extends BaseFactory
 {
@@ -182,48 +183,101 @@ class MemberFactory extends BaseFactory
         $handle = fopen($path, 'r');
         $header = fgetcsv($handle);
         fclose($handle);
-        if (is_numeric($header[0]) || preg_match('/banner(id|_id|\sid)/',
-                        $header[0])) {
-            self::bannerImport($path);
+        if (is_numeric($header[0])) {
+            self::bannerImport($path, 0);
+        } elseif (preg_match('/banner(id|_id|\sid)/', $header[0])) {
+            self::bannerImport($path, 1);
         } else {
             self::csvImport($path);
         }
     }
 
-    private static function bannerImport(string $path)
+    private static function bannerImport(string $path, int $startRow)
     {
+        $stats['errorRow'] = [];
+        $stats['badRow'] = 0;
+        $stats['previousMember'] = 0;
+        $stats['added'] = 0;
+        $stats['counting'] = 0;
+
         $handle = fopen($path, 'r');
+        if ($startRow === 1) {
+            // first row is the header, skipping
+            fgetcsv($handle);
+        }
+        while ($row = fgetcsv($handle)) {
+            $stats['counting']++;
+            $bannerId = $row[0];
+            if (!is_numeric($bannerId) || strlen($bannerId) !== 9) {
+                $badRow++;
+                $stats['errorRow'][] = $stats['counting'];
+            } elseif (self::isCurrentByBannerId($bannerId)) {
+                $stats['previousMember']++;
+            } else {
+                if ($result = BannerAPI::getStudent($bannerId)) {
+                    $member = self::buildMemberFromBannerData($result);
+                    self::saveResource($member);
+                    $stats['added']++;
+                } else {
+                    $stats['badRow']++;
+                    $stats['errorRow'][] = $stats['counting'];
+                }
+            }
+        }
+        return $stats;
+    }
+
+    private static function buildMemberFromBannerData(\stdClass $valueObj)
+    {
+        $member = new Member();
+        $member->bannerId = $valueObj->ID;
+        $member->email = $valueObj->emailAddress;
+        $member->firstName = $valueObj->preferredName ?? $valueObj->firstName;
+        $member->lastName = $valueObj->lastName;
+        $member->phone = $valueObj->phoneNumber;
+        $member->username = $valueObj->userName;
+        return $member;
+    }
+
+    public static function isCurrentByBannerId($bannerId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        $tbl->addFieldConditional('bannerId', $bannerId);
+        return (bool) $db->selectOneRow();
     }
 
     private static function csvImport(string $path)
     {
         $handle = fopen($path, 'r');
         $header = fgetcsv($handle);
-        $errorRow = [];
-        $badRow = 0;
-        $previousMember = 0;
-        $added = 0;
-        $counting = 0;
+        $stats['errorRow'] = [];
+        $stats['badRow'] = 0;
+        $stats['previousMember'] = 0;
+        $stats['added'] = 0;
+        $stats['counting'] = 0;
 
         while ($row = fgetcsv($handle)) {
-            $counting++;
+            $stats['counting']++;
             if (count($row) !== 6) {
-                $badRow++;
+                $stats['badRow']++;
+                $stats['errorRow'][] = $stats['counting'];
                 continue;
             }
             $insertRow = array_combine($header, $row);
             if (self::checkRowValues($insertRow)) {
                 if (self::importFullRow($insertRow)) {
-                    $added++;
+                    $stats['added']++;
                 } else {
-                    $previousMember++;
+                    $stats['previousMember']++;
                 }
             } else {
-                $badRow++;
-                $errorRow[] = $counting;
+                $stats['badRow']++;
+                $stats['errorRow'][] = $stats['counting'];
             }
         }
         fclose($handle);
+        return $stats;
     }
 
     private static function importFullRow(array $insertRow)
