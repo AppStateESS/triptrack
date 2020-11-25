@@ -2,7 +2,15 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 
-const MemberForm = ({member, update, close, save, organization, trip}) => {
+const MemberForm = ({
+  member,
+  update,
+  close,
+  save,
+  organization,
+  trip,
+  loadMember,
+}) => {
   const [saveType, setSaveType] = useState(0)
 
   const selectAssociation = () => {
@@ -37,12 +45,41 @@ const MemberForm = ({member, update, close, save, organization, trip}) => {
     }
   }
 
+  const checkAndLoad = (bannerId) => {
+    if (bannerId.length === 9) {
+      loadMember(bannerId)
+    }
+    if (bannerId.length < 10) {
+      update('bannerId', bannerId)
+    }
+  }
+
   return (
     <div className="container">
       <h3 className="border-bottom pb-2 mb-3">
         {member.id > 0 ? 'Update' : 'Add'} member
       </h3>
       <div className="row mb-3 form-group">
+        <div className="col-6">
+          <label>Banner ID</label>
+          <input
+            type="text"
+            name="bannerId"
+            className="form-control"
+            value={member.bannerId}
+            onChange={(e) => checkAndLoad(e.target.value)}
+          />
+        </div>
+        <div className="col-6">
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            value={member.username}
+            onChange={(e) => update('username', e.target.value)}
+          />
+        </div>
         <div className="col-6">
           <label>First name</label>
           <input
@@ -63,8 +100,6 @@ const MemberForm = ({member, update, close, save, organization, trip}) => {
             onChange={(e) => update('lastName', e.target.value)}
           />
         </div>
-      </div>
-      <div className="row mb-3">
         <div className="col-6">
           <label>Email</label>
           <input
@@ -86,28 +121,7 @@ const MemberForm = ({member, update, close, save, organization, trip}) => {
           />
         </div>
       </div>
-      <div className="row mb-3">
-        <div className="col-6">
-          <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            className="form-control"
-            value={member.username}
-            onChange={(e) => update('username', e.target.value)}
-          />
-        </div>
-        <div className="col-6">
-          <label>Banner ID</label>
-          <input
-            type="text"
-            name="bannerId"
-            className="form-control"
-            value={member.bannerId}
-            onChange={(e) => update('bannerId', e.target.value)}
-          />
-        </div>
-      </div>
+
       <div className="row">
         <div className="col-sm-8">{selectAssociation()}</div>
         <div className="col-sm-4">
@@ -133,6 +147,7 @@ MemberForm.propTypes = {
   close: PropTypes.func,
   organization: PropTypes.object,
   trip: PropTypes.object,
+  loadMember: PropTypes.func,
 }
 
 export default MemberForm
