@@ -32,7 +32,12 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
   const rows = organizations.map((value, key) => {
     return (
       <tr key={'gridrow-' + key}>
-        <td style={{width: '15%'}}>
+        <td style={{width: '20%'}}>
+          <a
+            href={`./triptrack/Admin/Member/?orgId=${value.id}`}
+            className="btn btn-sm mr-1 btn-success">
+            Members
+          </a>
           <button
             className="btn btn-sm btn-primary mr-1"
             onClick={() => {
