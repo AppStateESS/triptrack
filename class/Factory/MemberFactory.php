@@ -184,12 +184,13 @@ class MemberFactory extends BaseFactory
         $header = fgetcsv($handle);
         fclose($handle);
         if (is_numeric($header[0])) {
-            self::bannerImport($path, 0);
+            $stats = self::bannerImport($path, 0);
         } elseif (preg_match('/banner(id|_id|\sid)/', $header[0])) {
-            self::bannerImport($path, 1);
+            $stats = self::bannerImport($path, 1);
         } else {
-            self::csvImport($path);
+            $stats = self::csvImport($path);
         }
+        return $stats;
     }
 
     private static function bannerImport(string $path, int $startRow)
@@ -241,10 +242,15 @@ class MemberFactory extends BaseFactory
 
     public static function isCurrentByBannerId($bannerId)
     {
+        return (bool) self::pullByBannerId($bannerId);
+    }
+
+    public static function pullByBannerId($bannerId)
+    {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('bannerId', $bannerId);
-        return (bool) $db->selectOneRow();
+        return $db->selectOneRow();
     }
 
     private static function csvImport(string $path)
