@@ -5,29 +5,15 @@ import {getList} from '../api/Fetch'
 import {createOptions} from '../Share/CreateOptions'
 import 'regenerator-runtime'
 
-const OrgTripSelect = ({filter, setFilter}) => {
-  const [organizations, setOrganizations] = useState([])
-  const [trips, setTrips] = useState([])
+const OrgTripSelect = ({
+  filter,
+  setFilter,
+  organizations,
+  trips,
+  loadTrips,
+}) => {
   const [tripOptions, setTripOptions] = useState([])
   const [orgOptions, setOrgOptions] = useState([])
-
-  const loadOrganizations = async () => {
-    const response = await getList('./triptrack/Admin/Organization')
-    setOrganizations(response)
-    loadTrips()
-  }
-  const loadTrips = async (orgId) => {
-    if (orgId > 0) {
-      const response = await getList('./triptrack/Admin/Trip', {
-        orgId,
-      })
-      setTrips(response)
-    }
-  }
-
-  useEffect(() => {
-    loadOrganizations()
-  }, [])
 
   useEffect(() => {
     if (organizations.length > 0) {
@@ -38,11 +24,6 @@ const OrgTripSelect = ({filter, setFilter}) => {
   useEffect(() => {
     setOrgOptions(createOptions(organizations, 'id', 'name'))
   }, [organizations])
-
-  useEffect(() => {
-    const response = getList('./triptrack/Admin/Organization')
-    setOrganizations(response)
-  }, [])
 
   const updateFilter = (orgId, tripId) => {
     setFilter({orgId, tripId})
@@ -110,6 +91,9 @@ const OrgTripSelect = ({filter, setFilter}) => {
 OrgTripSelect.propTypes = {
   setFilter: PropTypes.func,
   filter: PropTypes.object,
+  organizations: PropTypes.array,
+  trips: PropTypes.array,
+  loadTrips: PropTypes.func,
 }
 
 export default OrgTripSelect
