@@ -104,8 +104,19 @@ class Member extends SubController
     protected function importFilePost(Request $request)
     {
         $fileName = $request->pullPostString('fileName');
-        MemberFactory::importFile($fileName);
-        return ['success' => true, 'file' => $fileName];
+        $stats = MemberFactory::importFile($fileName);
+        return ['success' => true, 'stats' => $stats];
+    }
+
+    protected function getByBannerIdJson(Request $request)
+    {
+        $bannerId = $request->pullGetInteger('bannerId');
+        $member = MemberFactory::pullByBannerId($bannerId);
+        if (empty($member)) {
+            return ['success' => false];
+        } else {
+            return ['success' => true, 'member' => $member];
+        }
     }
 
 }
