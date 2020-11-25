@@ -7,6 +7,8 @@ import axios from 'axios'
 const ImportForm = () => {
   const [formReady, setFormReady] = useState(false)
   const [successFile, setSuccessFile] = useState('')
+  const [importComplete, setImportComplete] = useState(false)
+  const [importStats, setImportStats] = useState({errorRow: []})
 
   const importFile = () => {
     axios
@@ -18,12 +20,54 @@ const ImportForm = () => {
         }
       )
       .then((response) => {
-        console.log(response.data)
+        setImportComplete(true)
+        setImportStats(response.data.stats)
       })
   }
 
   let content
-  if (formReady) {
+
+  let errorRowOutput = 'No errors'
+  if (importStats.errorRow.length > 0) {
+    return importStats.errorRow.map((value) => {
+      return `${value}, `
+    })
+  }
+
+  if (importComplete) {
+    content = (
+      <div>
+        <div className="text-center alert alert-success lead">
+          Import complete!
+        </div>
+        <h4>Stats</h4>
+        <table className="table w-50">
+          <tbody>
+            <tr>
+              <th>Total rows:</th>
+              <td>{importStats.counting}</td>
+            </tr>
+            <tr>
+              <th>Members added:</th>
+              <td>{importStats.added}</td>
+            </tr>
+            <tr>
+              <th>Previous members:</th>
+              <td>{importStats.previousMember}</td>
+            </tr>
+            <tr>
+              <th>Bad rows:</th>
+              <td>{importStats.badRow}</td>
+            </tr>
+            <tr>
+              <th>Rows with errors:</th>
+              <td>{errorRowOutput}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    )
+  } else if (formReady) {
     content = (
       <div className="text-center">
         <p>Import file formatted correctly.</p>
