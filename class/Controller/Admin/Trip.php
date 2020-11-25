@@ -30,7 +30,7 @@ class Trip extends SubController
     protected function listJson(Request $request)
     {
         $options = ['memberCount' => true, 'orgId' => $request->pullGetInteger('orgId',
-                    true), 'search' => $request->pullGetString('search')];
+                    true), 'search' => $request->pullGetString('search', true)];
 
         return TripFactory::list($options);
     }
