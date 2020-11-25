@@ -31,14 +31,14 @@ const Grid = ({trips, deleteRow}) => {
       <tr key={'gridrow-' + key}>
         <td style={{width: '20%'}}>
           <a
-            className="btn btn-sm btn-primary mr-1"
-            href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
-            Edit
-          </a>
-          <a
             className="btn btn-success btn-sm mr-1"
             href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}>
             Members
+          </a>
+          <a
+            className="btn btn-sm btn-primary mr-1"
+            href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
+            Edit
           </a>
           {deleteButton(key)}
         </td>
