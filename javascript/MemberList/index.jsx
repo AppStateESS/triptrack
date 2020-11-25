@@ -5,6 +5,7 @@ import {getList, getItem, addMember} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
+import AddMember from './AddMember'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 import OrgTripSelect from '../Share/OrgTripSelect'
@@ -22,9 +23,12 @@ const emptyMember = {
 }
 
 const MemberList = () => {
+  const [organizationList, setOrganizationList] = useState([])
+  const [tripList, setTripList] = useState([])
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [modalType, setModalType] = useState('member')
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
   const [trip, setTrip] = useState(null)
@@ -45,6 +49,11 @@ const MemberList = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
+    loadOrganizationList()
+    //loadTripList()
+  }, [])
+
+  useEffect(() => {
     updateUrl()
     if (filter.tripId === 0) {
       setTrip(null)
@@ -52,7 +61,28 @@ const MemberList = () => {
       loadTrip()
     }
     loadOrganization()
-  }, [filter])
+  }, [filter.tripId])
+
+  useEffect(() => {
+    updateUrl()
+    loadOrganization()
+    loadTripList(filter.orgId)
+  }, [filter.orgId])
+
+  const loadOrganizationList = async () => {
+    const response = await getList('./triptrack/Admin/Organization')
+    setOrganizationList(response)
+    //loadTripList()
+  }
+
+  const loadTripList = async (orgId) => {
+    if (orgId > 0) {
+      const response = await getList('./triptrack/Admin/Trip', {
+        orgId,
+      })
+      setTripList(response)
+    }
+  }
 
   const loadTrip = async () => {
     if (filter.tripId > 0) {
@@ -135,9 +165,22 @@ const MemberList = () => {
       })
   }
 
+  const loadMember = (bannerId) => {
+    axios
+      .get(`./triptrack/Admin/Member/getByBannerId/?bannerId=${bannerId}`, {
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+      })
+      .then((response) => {
+        if (response.data.success) {
+          setCurrentMember(response.data.member)
+        }
+      })
+  }
+
   const resetModal = () => {
     setCurrentMember(Object.assign({}, emptyMember))
     setShowModal(false)
+    setModalType('member')
   }
 
   const update = (varName, value) => {
@@ -184,26 +227,51 @@ const MemberList = () => {
     }
   }
 
+  const assignMember = (key) => {
+    setShowModal(true)
+    setModalType('add')
+    setCurrentMember(Object.assign({}, members[key]))
+  }
+
   let content = <div></div>
   if (loading) {
     content = <div>Loading members...</div>
   } else if (members.length === 0) {
     content = <div>{emptyMessage()}</div>
   } else {
-    content = <Grid members={members} edit={edit} deleteRow={deleteRow} />
+    content = (
+      <Grid
+        members={members}
+        edit={edit}
+        add={assignMember}
+        deleteRow={deleteRow}
+        filter={filter}
+      />
+    )
   }
 
   const getModalForm = () => {
-    return (
-      <MemberForm
-        update={update}
-        member={currentMember}
-        close={resetModal}
-        save={saveMember}
-        organization={organization}
-        trip={trip}
-      />
-    )
+    if (modalType === 'member') {
+      return (
+        <MemberForm
+          update={update}
+          member={currentMember}
+          close={resetModal}
+          save={saveMember}
+          organization={organization}
+          loadMember={loadMember}
+          trip={trip}
+        />
+      )
+    } else {
+      return (
+        <AddMember
+          member={currentMember}
+          organizationList={organizationList}
+          tripList={tripList}
+        />
+      )
+    }
   }
 
   const modal = () => {
@@ -222,7 +290,13 @@ const MemberList = () => {
         sendSearch={load}
         showModal={() => setShowModal(true)}
       />
-      <OrgTripSelect setFilter={setFilter} filter={filter} />
+      <OrgTripSelect
+        setFilter={setFilter}
+        filter={filter}
+        organizations={organizationList}
+        trips={tripList}
+        loadTrips={loadTripList}
+      />
       <Message message={message} type={messageType} />
       {content}
       {modal()}
