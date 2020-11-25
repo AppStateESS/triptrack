@@ -2,7 +2,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Grid = ({members, edit, deleteRow}) => {
+const Grid = ({members, edit, deleteRow, filter, add}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -16,7 +16,7 @@ const Grid = ({members, edit, deleteRow}) => {
   const deleteButton = (key) => {
     return (
       <button
-        className="btn btn-sm btn-danger"
+        className="btn btn-sm btn-danger mr-1"
         onClick={() => {
           deleteItem(key)
         }}>
@@ -26,9 +26,29 @@ const Grid = ({members, edit, deleteRow}) => {
   }
 
   const rows = members.map((value, key) => {
+    let addMember
+    if (filter.tripId === 0) {
+      if (filter.orgId == 0) {
+        addMember = (
+          <button className="btn btn-success btn-sm" onClick={() => add(key)}>
+            Add to Org
+          </button>
+        )
+      } else {
+        addMember = (
+          <button
+            className="btn btn-success btn-sm"
+            onClick={() => {
+              add(key)
+            }}>
+            Add to trip
+          </button>
+        )
+      }
+    }
     return (
       <tr key={'gridrow-' + key}>
-        <td style={{width: '15%'}}>
+        <td style={{width: '25%'}}>
           <button
             className="btn btn-sm btn-primary mr-1"
             onClick={() => {
@@ -37,6 +57,7 @@ const Grid = ({members, edit, deleteRow}) => {
             Edit
           </button>
           {deleteButton(key)}
+          {addMember}
         </td>
         <td>
           {value.lastName}, {value.firstName}
@@ -70,6 +91,8 @@ Grid.propTypes = {
   members: PropTypes.array,
   edit: PropTypes.func,
   deleteRow: PropTypes.func,
+  filter: PropTypes.object,
+  add: PropTypes.func,
 }
 
 export default Grid
