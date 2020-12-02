@@ -16,32 +16,37 @@ const Grid = ({members, edit, deleteRow, filter, add}) => {
   const deleteButton = (key) => {
     return (
       <button
+        title="Delete member"
         className="btn btn-sm btn-danger mr-1"
         onClick={() => {
           deleteItem(key)
         }}>
-        Delete
+        <i className="fas fa-trash"></i>
       </button>
     )
   }
 
   const rows = members.map((value, key) => {
-    let addMember
+    let addMemberButton
     if (filter.tripId === 0) {
       if (filter.orgId == 0) {
-        addMember = (
-          <button className="btn btn-success btn-sm" onClick={() => add(key)}>
-            Add to Org
+        addMemberButton = (
+          <button
+            className="btn btn-success btn-sm"
+            title="Add to organization"
+            onClick={() => add(key)}>
+            <i className="fas fa-plus"></i>
           </button>
         )
       } else {
-        addMember = (
+        addMemberButton = (
           <button
             className="btn btn-success btn-sm"
+            title="Add to trip"
             onClick={() => {
               add(key)
             }}>
-            Add to trip
+            <i className="fas fa-plus"></i>
           </button>
         )
       }
@@ -50,14 +55,15 @@ const Grid = ({members, edit, deleteRow, filter, add}) => {
       <tr key={'gridrow-' + key}>
         <td style={{width: '25%'}}>
           <button
+            title="Edit member"
             className="btn btn-sm btn-primary mr-1"
             onClick={() => {
               edit(value.id)
             }}>
-            Edit
+            <i className="fas fa-edit"></i>
           </button>
           {deleteButton(key)}
-          {addMember}
+          {addMemberButton}
         </td>
         <td>
           {value.lastName}, {value.firstName}
