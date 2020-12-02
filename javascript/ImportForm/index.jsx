@@ -1,25 +1,71 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
 import Form from './Form'
+import OrgTripSelect from '../Share/OrgTripSelect'
+import {getList} from '../api/Fetch'
 import axios from 'axios'
+import 'regenerator-runtime'
+
+const loadOrganizationList = async () => {
+  const response = await getList('./triptrack/Admin/Organization')
+  return response
+}
+
+const loadTrips = async (orgId) => {
+  if (orgId > 0) {
+    const response = await getList('./triptrack/Admin/Trip', {
+      orgId,
+    })
+    return response
+  }
+}
 
 const ImportForm = () => {
   const [formReady, setFormReady] = useState(false)
   const [successFile, setSuccessFile] = useState('')
   const [importComplete, setImportComplete] = useState(false)
   const [importStats, setImportStats] = useState({errorRow: []})
+  const [filter, setFilter] = useState({orgId: 0, tripId: 0})
+  const [organizations, setOrganizations] = useState([])
+  const [trips, setTrips] = useState([])
+
+  useEffect(async () => {
+    const response = await loadOrganizationList()
+    setOrganizations(response)
+  }, [])
+
+  const listener = (e) => {
+    e.preventDefault()
+    e.returnValue = ''
+  }
+
+  // useEffect(() => {
+  //   if (formReady) {
+  //     window.addEventListener('beforeunload', listener)
+  //   } else {
+  //     window.removeEventListener('beforeunload', listener)
+  //   }
+  // }, [formReady])
+
+  useEffect(async () => {
+    if (filter.orgId > 0) {
+      const response = await loadTrips(filter.orgId)
+      setTrips(response)
+    }
+  }, [filter.orgId])
 
   const importFile = () => {
     axios
       .post(
         './triptrack/Admin/Member/importFile',
-        {fileName: successFile},
+        {fileName: successFile, orgId: filter.orgId, tripId: filter.tripId},
         {
           headers: {'X-Requested-With': 'XMLHttpRequest'},
         }
       )
       .then((response) => {
+        //window.removeEventListener('beforeunload', listener)
         setImportComplete(true)
         setImportStats(response.data.stats)
       })
@@ -28,9 +74,11 @@ const ImportForm = () => {
   let content
 
   let errorRowOutput = 'No errors'
-  if (importStats.errorRow.length > 0) {
-    return importStats.errorRow.map((value) => {
-      return `${value}, `
+  const errorsFound = importStats.errorRow.length
+  if (errorsFound > 0) {
+    errorRowOutput = importStats.errorRow.map((value, key) => {
+      const comma = key > 0 ? ', ' : ''
+      return `${value}${comma} `
     })
   }
 
@@ -65,12 +113,32 @@ const ImportForm = () => {
             </tr>
           </tbody>
         </table>
+        <p>
+          <a
+            href="./triptrack/Admin/Member/"
+            className="btn btn-outline-success mr-2">
+            Back to member list
+          </a>
+          <a
+            href="./triptrack/Admin/Member/import"
+            className="btn btn-outline-primary">
+            Import more members
+          </a>
+        </p>
       </div>
     )
   } else if (formReady) {
     content = (
       <div className="text-center">
-        <p>Import file formatted correctly.</p>
+        <p className="alert alert-success lead">
+          Import file formatted correctly!
+        </p>
+
+        <p>Upload the students into a specific organization or trip below.</p>
+        <OrgTripSelect
+          {...{filter, setFilter, organizations, trips, loadTrips}}
+        />
+
         <button className="btn btn-success btn-lg" onClick={importFile}>
           Import members from uploaded file
         </button>
