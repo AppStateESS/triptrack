@@ -17,11 +17,12 @@ const Grid = ({trips, deleteRow}) => {
   const deleteButton = (key) => {
     return (
       <button
+        title="Delete trip"
         className="btn btn-sm btn-danger"
         onClick={() => {
           deleteItem(key)
         }}>
-        Delete
+        <i className="fas fa-trash"></i>
       </button>
     )
   }
@@ -31,14 +32,16 @@ const Grid = ({trips, deleteRow}) => {
       <tr key={'gridrow-' + key}>
         <td style={{width: '20%'}}>
           <a
+            title="View members"
             className="btn btn-success btn-sm mr-1"
             href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}>
-            Members
+            <i className="fas fa-users"></i>
           </a>
           <a
+            title="Edit trip"
             className="btn btn-sm btn-primary mr-1"
             href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
-            Edit
+            <i className="fas fa-edit"></i>
           </a>
           {deleteButton(key)}
         </td>
@@ -47,7 +50,7 @@ const Grid = ({trips, deleteRow}) => {
           {dayjs(value.timeDeparting * 1000).format('h:mma, MMM D, YYYY ')}
         </td>
         <td>{value.destinationCity}</td>
-        <td>{value.memberCount}</td>
+        <td className="text-right">{value.memberCount}</td>
       </tr>
     )
   })
@@ -61,7 +64,7 @@ const Grid = ({trips, deleteRow}) => {
             <th>Host</th>
             <th>Departure date</th>
             <th>Destination city</th>
-            <th>Members</th>
+            <th className="text-right">Members</th>
           </tr>
           {rows}
         </tbody>
