@@ -104,7 +104,9 @@ class Member extends SubController
     protected function importFilePost(Request $request)
     {
         $fileName = $request->pullPostString('fileName');
-        $stats = MemberFactory::importFile($fileName);
+        $orgId = $request->pullPostInteger('orgId', true) ?? 0;
+        $tripId = $request->pullPostInteger('tripId', true) ?? 0;
+        $stats = MemberFactory::importFile($fileName, $orgId, $tripId);
         return ['success' => true, 'stats' => $stats];
     }
 
