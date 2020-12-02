@@ -19,11 +19,12 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
     } else {
       return (
         <button
+          title="Delete organization"
           className="btn btn-sm btn-danger"
           onClick={() => {
             deleteItem(key)
           }}>
-          Delete
+          <i className="fas fa-trash"></i>
         </button>
       )
     }
@@ -34,16 +35,18 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
       <tr key={'gridrow-' + key}>
         <td style={{width: '20%'}}>
           <a
+            title="Members list"
             href={`./triptrack/Admin/Member/?orgId=${value.id}`}
             className="btn btn-sm mr-1 btn-success">
-            Members
+            <i className="fas fa-users"></i>
           </a>
           <button
+            title="Edit organization"
             className="btn btn-sm btn-primary mr-1"
             onClick={() => {
               edit(value.id)
             }}>
-            Edit
+            <i className="fas fa-edit"></i>
           </button>
           {deleteButton(key)}
         </td>
