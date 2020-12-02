@@ -45,7 +45,7 @@ const Form = ({setFormReady, setSuccessFile}) => {
       {message.length > 0 ? (
         <div className="alert alert-danger">{message}</div>
       ) : null}
-      <table className="table table-bordered">
+      <table className="table">
         <tbody>
           <tr>
             <td>firstName</td>
@@ -57,7 +57,11 @@ const Form = ({setFormReady, setSuccessFile}) => {
           </tr>
         </tbody>
       </table>
-      <p>or, a CSV file with Banner ID numbers only (header not necessary).</p>
+      <hr />
+      <p>
+        Alternatively, you may upload a CSV file with Banner ID numbers only
+        (header not necessary).
+      </p>
       <p>Any other file type or format will be rejected.</p>
       <div className="row">
         <div className="col-sm-6">
