@@ -1,23 +1,15 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {getList} from '../api/Fetch'
 import {createOptions} from '../Share/CreateOptions'
-import 'regenerator-runtime'
 
-const OrgTripSelect = ({
-  filter,
-  setFilter,
-  organizations,
-  trips,
-  loadTrips,
-}) => {
+const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
   const [tripOptions, setTripOptions] = useState([])
   const [orgOptions, setOrgOptions] = useState([])
 
   useEffect(() => {
     if (organizations.length > 0) {
-      setTripOptions(createOptions(trips, 'id', 'host'))
+      setTripOptions(createOptions(trips, 'id', ['host', 'timeEventStarts']))
     }
   }, [trips])
 
@@ -27,7 +19,6 @@ const OrgTripSelect = ({
 
   const updateFilter = (orgId, tripId) => {
     setFilter({orgId, tripId})
-    loadTrips(orgId)
   }
 
   let content
@@ -70,16 +61,15 @@ const OrgTripSelect = ({
       )
     }
     content = (
-      <div className="row border border-primary p-2 mb-3">
-        <div className="col-sm-2">Search by:</div>
+      <div className="row p-2 mb-3">
         {orgSelect}
         {tripSelect}
         <button
-          className="btn btn-danger"
+          className="btn btn-default"
           onClick={() => {
             updateFilter(0, 0)
           }}>
-          Show all
+          Reset
         </button>
       </div>
     )
