@@ -170,7 +170,7 @@ class MemberFactory extends BaseFactory
         return $testResult;
     }
 
-    public static function importFile($fileName)
+    public static function importFile(string $fileName, int $orgId, int $tripId)
     {
         if (!preg_match('/^\d+\.csv$/', $fileName)) {
             throw new \Exception('Bad file name');
@@ -184,16 +184,17 @@ class MemberFactory extends BaseFactory
         $header = fgetcsv($handle);
         fclose($handle);
         if (is_numeric($header[0])) {
-            $stats = self::bannerImport($path, 0);
+            $stats = self::bannerImport($path, 0, $orgId, $tripId);
         } elseif (preg_match('/banner(id|_id|\sid)/', $header[0])) {
-            $stats = self::bannerImport($path, 1);
+            $stats = self::bannerImport($path, 1, $orgId, $tripId);
         } else {
-            $stats = self::csvImport($path);
+            $stats = self::csvImport($path, $orgId, $tripId);
         }
         return $stats;
     }
 
-    private static function bannerImport(string $path, int $startRow)
+    private static function bannerImport(string $path, int $startRow,
+            int $orgId, int $tripId)
     {
         $stats['errorRow'] = [];
         $stats['badRow'] = 0;
@@ -212,12 +213,18 @@ class MemberFactory extends BaseFactory
             if (!is_numeric($bannerId) || strlen($bannerId) !== 9) {
                 $badRow++;
                 $stats['errorRow'][] = $stats['counting'];
-            } elseif (self::isCurrentByBannerId($bannerId)) {
+            } elseif ($member = self::pullByBannerId($bannerId)) {
                 $stats['previousMember']++;
             } else {
                 if ($result = BannerAPI::getStudent($bannerId)) {
                     $member = self::buildMemberFromBannerData($result);
                     self::saveResource($member);
+                    if ($tripId) {
+                        self::addToTrip($member->id, $tripId);
+                    }
+                    if ($orgId) {
+                        self::addToOrganization($member->id, $orgId);
+                    }
                     $stats['added']++;
                 } else {
                     $stats['badRow']++;
@@ -240,11 +247,6 @@ class MemberFactory extends BaseFactory
         return $member;
     }
 
-    public static function isCurrentByBannerId($bannerId)
-    {
-        return (bool) self::pullByBannerId($bannerId);
-    }
-
     public static function pullByBannerId($bannerId)
     {
         $db = Database::getDB();
@@ -253,7 +255,7 @@ class MemberFactory extends BaseFactory
         return $db->selectOneRow();
     }
 
-    private static function csvImport(string $path)
+    private static function csvImport(string $path, int $orgId, int $tripId)
     {
         $handle = fopen($path, 'r');
         $header = fgetcsv($handle);
@@ -272,10 +274,18 @@ class MemberFactory extends BaseFactory
             }
             $insertRow = array_combine($header, $row);
             if (self::checkRowValues($insertRow)) {
-                if (self::importFullRow($insertRow)) {
-                    $stats['added']++;
-                } else {
+                $member = self::loadByBannerId($insertRow['bannerId']);
+                if ($member) {
                     $stats['previousMember']++;
+                } else {
+                    $member = self::importFullRow($insertRow);
+                    $stats['added']++;
+                }
+                if ($tripId) {
+                    self::addToTrip($member->id, $tripId);
+                }
+                if ($orgId) {
+                    self::addToOrganization($member->id, $orgId);
                 }
             } else {
                 $stats['badRow']++;
@@ -286,16 +296,27 @@ class MemberFactory extends BaseFactory
         return $stats;
     }
 
-    private static function importFullRow(array $insertRow)
+    public static function loadByBannerId(int $bannerId)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
-        $tbl->addFieldConditional('bannerId', $insertRow['bannerId']);
-        if ($db->selectOneRow()) {
+        $tbl->addFieldConditional('bannerId', $bannerId);
+        $result = $db->selectOneRow();
+        if (empty($result)) {
             return false;
+        } else {
+            $member = new Member();
+            $member->setVars($result);
+            return $member;
         }
-        $tbl->addValueArray($insertRow);
-        return $db->insert();
+    }
+
+    private static function importFullRow(array $insertRow)
+    {
+        $member = new Member();
+        $member->setVars($insertRow);
+        self::save($member);
+        return $member;
     }
 
     private static function checkRowValues(array $insertRow)
