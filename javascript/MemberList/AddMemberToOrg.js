@@ -3,9 +3,8 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {createOptions} from '../Share/CreateOptions'
 
-const AddMember = ({member, organizationList, tripList}) => {
+const AddMemberToOrg = ({member, organizationList, addMember}) => {
   const [orgId, setOrgId] = useState(0)
-  const [tripId, setTripId] = useState(0)
   const orgOptions = createOptions(organizationList, 'id', 'name')
   return (
     <div className="container">
@@ -27,10 +26,8 @@ const AddMember = ({member, organizationList, tripList}) => {
           </select>
         </div>
         <div className="col-sm-6">
-          <button
-            className="btn btn-primary"
-            onClick={() => addMember(orgId, tripId)}>
-            Join {tripId > 0 ? 'trip' : 'organization'}
+          <button className="btn btn-primary" onClick={() => addMember(orgId)}>
+            Join organization
           </button>
         </div>
       </div>
@@ -38,6 +35,10 @@ const AddMember = ({member, organizationList, tripList}) => {
   )
 }
 
-AddMember.propTypes = {member: PropTypes.object}
+AddMemberToOrg.propTypes = {
+  member: PropTypes.object,
+  organizationList: PropTypes.array,
+  addMember: PropTypes.function,
+}
 
-export default AddMember
+export default AddMemberToOrg
