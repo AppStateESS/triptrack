@@ -5,7 +5,8 @@ import {getList, getItem, addMember} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
-import AddMember from './AddMember'
+import AddMemberToOrg from './AddMemberToOrg'
+import AddMemberToTrip from './AddMemberToTrip'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 import OrgTripSelect from '../Share/OrgTripSelect'
@@ -50,29 +51,28 @@ const MemberList = () => {
 
   useEffect(() => {
     loadOrganizationList()
-    //loadTripList()
   }, [])
 
   useEffect(() => {
-    updateUrl()
     if (filter.tripId === 0) {
       setTrip(null)
     } else {
       loadTrip()
     }
-    loadOrganization()
   }, [filter.tripId])
 
   useEffect(() => {
-    updateUrl()
     loadOrganization()
     loadTripList(filter.orgId)
   }, [filter.orgId])
 
+  useEffect(() => {
+    updateUrl()
+  }, [filter.orgId, filter.tripId])
+
   const loadOrganizationList = async () => {
     const response = await getList('./triptrack/Admin/Organization')
     setOrganizationList(response)
-    //loadTripList()
   }
 
   const loadTripList = async (orgId) => {
@@ -92,9 +92,19 @@ const MemberList = () => {
   }
 
   const loadOrganization = async () => {
-    if (filter.orgId > 0) {
-      const response = await getItem('Organization', filter.orgId)
-      setOrganization(response)
+    if (organizationList.length > 0) {
+      organizationList.every((element) => {
+        if (element.id === filter.orgId) {
+          setOrganization(Object.assign({}, element))
+          return false
+        }
+        return true
+      })
+    } else {
+      if (filter.orgId > 0) {
+        const response = await getItem('Organization', filter.orgId)
+        setOrganization(response)
+      }
     }
   }
 
@@ -161,7 +171,7 @@ const MemberList = () => {
         load()
       })
       .catch((error) => {
-        console.log('Error:', error)
+        //console.log('Error:', error)
       })
   }
 
@@ -202,7 +212,7 @@ const MemberList = () => {
         load()
       })
       .catch((error) => {
-        console.log('Error:', error)
+        //console.log('Error:', error)
       })
   }
 
@@ -263,12 +273,20 @@ const MemberList = () => {
           trip={trip}
         />
       )
+    } else if (filter.orgId > 0) {
+      return (
+        <AddMemberToTrip
+          member={currentMember}
+          tripList={tripList}
+          addMember={addMember}
+        />
+      )
     } else {
       return (
-        <AddMember
+        <AddMemberToOrg
           member={currentMember}
           organizationList={organizationList}
-          tripList={tripList}
+          addMember={addMember}
         />
       )
     }
@@ -290,13 +308,17 @@ const MemberList = () => {
         sendSearch={load}
         showModal={() => setShowModal(true)}
       />
-      <OrgTripSelect
-        setFilter={setFilter}
-        filter={filter}
-        organizations={organizationList}
-        trips={tripList}
-        loadTrips={loadTripList}
-      />
+      <div className="row">
+        <div className="col-sm-2 align-self-center">Search by:</div>
+        <div className="col-sm-10">
+          <OrgTripSelect
+            setFilter={setFilter}
+            filter={filter}
+            organizations={organizationList}
+            trips={tripList}
+          />
+        </div>
+      </div>
       <Message message={message} type={messageType} />
       {content}
       {modal()}
