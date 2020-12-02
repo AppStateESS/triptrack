@@ -26,6 +26,9 @@ class Member extends SubController
     {
         $orgId = $request->pullPatchInteger('orgId');
         $tripId = $request->pullPatchInteger('tripId', true);
+        if ($orgId) {
+            throw new \Exception('Missing organization id');
+        }
         MemberFactory::addToOrganization($this->id, $orgId);
         if ($tripId) {
             MemberFactory::addToTrip($this->id, $tripId);
