@@ -26,7 +26,7 @@ class Member extends SubController
     {
         $orgId = $request->pullPatchInteger('orgId');
         $tripId = $request->pullPatchInteger('tripId', true);
-        if ($orgId) {
+        if (!$orgId) {
             throw new \Exception('Missing organization id');
         }
         MemberFactory::addToOrganization($this->id, $orgId);
@@ -118,9 +118,15 @@ class Member extends SubController
         $bannerId = $request->pullGetInteger('bannerId');
         $member = MemberFactory::pullByBannerId($bannerId);
         if (empty($member)) {
-            return ['success' => false];
+            $bannerMember = \triptrack\BannerAPI::getStudent($bannerId);
+            if (empty($bannerMember)) {
+                return ['success' => false];
+            } else {
+                $member = MemberFactory::buildMemberFromBannerData($bannerMember);
+                return ['success' => true, 'member' => $member->getStringVars(), 'status' => 'banner'];
+            }
         } else {
-            return ['success' => true, 'member' => $member];
+            return ['success' => true, 'member' => $member, 'status' => 'system'];
         }
     }
 

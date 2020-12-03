@@ -235,7 +235,7 @@ class MemberFactory extends BaseFactory
         return $stats;
     }
 
-    private static function buildMemberFromBannerData(\stdClass $valueObj)
+    public static function buildMemberFromBannerData(\stdClass $valueObj)
     {
         $member = new Member();
         $member->bannerId = $valueObj->ID;
