@@ -38,21 +38,19 @@ const Schedule = ({Trip, setFormElement}) => {
               onChange={(value) => {
                 setFormElement('timeDeparting', value.getTime() / 1000)
               }}
-              showTimeSelect
               className="form-control"
-              dateFormat="MMM d, yyyy hh:mm"
+              dateFormat="MMM d, yyyy"
             />
           </div>
           <div className="col-sm-4">
-            <label className="d-block">Event start</label>
+            <label className="d-block">Event</label>
             <DatePicker
               selected={eventStarts}
               onChange={(value) => {
                 setFormElement('timeEventStarts', value.getTime() / 1000)
               }}
-              showTimeSelect
               className="form-control"
-              dateFormat="MMM d, yyyy hh:mm"
+              dateFormat="MMM d, yyyy"
             />
           </div>
           <div className="col-sm-4">
@@ -62,9 +60,8 @@ const Schedule = ({Trip, setFormElement}) => {
               onChange={(value) => {
                 setFormElement('timeReturn', value.getTime() / 1000)
               }}
-              showTimeSelect
               className="form-control"
-              dateFormat="MMM d, yyyy hh:mm"
+              dateFormat="MMM d, yyyy"
             />
           </div>
         </div>
