@@ -59,7 +59,7 @@ class Trip extends SubController
 
     protected function post(Request $request)
     {
-        $trip = TripFactory::post($request);
+        $trip = TripFactory::post($request, true);
         TripFactory::save($trip);
         return ['success' => true];
     }

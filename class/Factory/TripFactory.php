@@ -85,9 +85,10 @@ class TripFactory extends BaseFactory
         return $db->select();
     }
 
-    public static function post(Request $request)
+    public static function post(Request $request, bool $approved = false)
     {
         $trip = new Trip;
+        $trip->approved = $approved;
         $trip->host = $request->pullPostString('host');
         $trip->contactName = $request->pullPostString('contactName');
         $trip->contactEmail = $request->pullPostString('contactEmail');
@@ -107,7 +108,6 @@ class TripFactory extends BaseFactory
         $trip->timeEventStarts = $request->pullPostString('timeEventStarts');
         $trip->timeReturn = $request->pullPostString('timeReturn');
         $trip->visitPurpose = $request->pullPostString('visitPurpose');
-
         return $trip;
     }
 
