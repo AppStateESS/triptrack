@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 
 const createOptions = (options, idName = null, labelName = null) => {
   const dash = (key) => {
@@ -13,7 +14,13 @@ const createOptions = (options, idName = null, labelName = null) => {
         let labelValue
         if (typeof labelName === 'object') {
           labelValue = labelName.map((value, key) => {
-            return dash(key) + element[value]
+            let labelStr
+            if (typeof element[value] === 'number') {
+              labelStr = dayjs(element[value] * 1000).format('MMM D, YYYY')
+            } else {
+              labelStr = element[value]
+            }
+            return dash(key) + labelStr
           })
         } else {
           labelValue = element[labelName]
