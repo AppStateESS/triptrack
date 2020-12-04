@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import {getList, getItem, addMember} from '../api/Fetch'
+import {getList, addMember} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
@@ -32,8 +32,7 @@ const MemberList = () => {
   const [modalType, setModalType] = useState('member')
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
-  const [trip, setTrip] = useState(null)
-  const [organization, setOrganization] = useState(null)
+  const [formMessage, setFormMessage] = useState(null)
   const [currentMember, setCurrentMember] = useState(
     Object.assign({}, emptyMember)
   )
@@ -54,15 +53,6 @@ const MemberList = () => {
   }, [])
 
   useEffect(() => {
-    if (filter.tripId === 0) {
-      setTrip(null)
-    } else {
-      loadTrip()
-    }
-  }, [filter.tripId])
-
-  useEffect(() => {
-    loadOrganization()
     loadTripList(filter.orgId)
   }, [filter.orgId])
 
@@ -81,30 +71,6 @@ const MemberList = () => {
         orgId,
       })
       setTripList(response)
-    }
-  }
-
-  const loadTrip = async () => {
-    if (filter.tripId > 0) {
-      const response = await getItem('Trip', filter.tripId)
-      setTrip(response)
-    }
-  }
-
-  const loadOrganization = async () => {
-    if (organizationList.length > 0) {
-      organizationList.every((element) => {
-        if (element.id === filter.orgId) {
-          setOrganization(Object.assign({}, element))
-          return false
-        }
-        return true
-      })
-    } else {
-      if (filter.orgId > 0) {
-        const response = await getItem('Organization', filter.orgId)
-        setOrganization(response)
-      }
     }
   }
 
@@ -140,7 +106,7 @@ const MemberList = () => {
     load()
   }
 
-  const saveMember = (saveType) => {
+  const saveMember = (orgId = 0) => {
     let method
     let url = 'triptrack/Admin/Member'
     if (currentMember.id > 0) {
@@ -161,10 +127,8 @@ const MemberList = () => {
     })
       .then((resource) => {
         const memberId = resource.data.memberId
-        if (saveType == 1) {
-          addMember(memberId, filter.orgId, 0)
-        } else if (saveType == 2) {
-          addMember(memberId, filter.orgId, filter.tripId)
+        if (orgId > 0) {
+          addMember(memberId, parseInt(orgId), 0)
         }
         setShowModal(false)
         setCurrentMember(Object.assign({}, emptyMember))
@@ -182,7 +146,31 @@ const MemberList = () => {
       })
       .then((response) => {
         if (response.data.success) {
+          if (response.data.status === 'banner') {
+            setFormMessage(
+              <span>
+                Student in Banner but <strong>not saved</strong> to the system.
+              </span>
+            )
+          } else if (response.data.status === 'system') {
+            setFormMessage(
+              <span>
+                Student already in the system. Update their info and save or
+                cancel.
+              </span>
+            )
+          }
           setCurrentMember(response.data.member)
+        } else {
+          setCurrentMember({
+            id: 0,
+            bannerId,
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            username: '',
+          })
         }
       })
   }
@@ -191,6 +179,7 @@ const MemberList = () => {
     setCurrentMember(Object.assign({}, emptyMember))
     setShowModal(false)
     setModalType('member')
+    setFormMessage(null)
   }
 
   const update = (varName, value) => {
@@ -253,6 +242,7 @@ const MemberList = () => {
       <Grid
         members={members}
         edit={edit}
+        tripsExist={tripList.length > 0}
         add={assignMember}
         deleteRow={deleteRow}
         filter={filter}
@@ -267,18 +257,23 @@ const MemberList = () => {
           update={update}
           member={currentMember}
           close={resetModal}
-          save={saveMember}
-          organization={organization}
+          saveMember={saveMember}
+          formMessage={formMessage}
+          organizationList={organizationList}
           loadMember={loadMember}
-          trip={trip}
         />
       )
     } else if (filter.orgId > 0) {
       return (
         <AddMemberToTrip
           member={currentMember}
+          organizationId={filter.orgId}
           tripList={tripList}
-          addMember={addMember}
+          addMember={(tripId) => {
+            addMember(currentMember.id, filter.orgId, tripId)
+            resetModal()
+          }}
+          close={resetModal}
         />
       )
     } else {
@@ -286,7 +281,11 @@ const MemberList = () => {
         <AddMemberToOrg
           member={currentMember}
           organizationList={organizationList}
-          addMember={addMember}
+          addMember={(orgId) => {
+            addMember(currentMember.id, orgId, 0)
+            resetModal()
+          }}
+          close={resetModal}
         />
       )
     }
