@@ -46,9 +46,7 @@ const Grid = ({trips, deleteRow}) => {
           {deleteButton(key)}
         </td>
         <td>{value.host}</td>
-        <td>
-          {dayjs(value.timeDeparting * 1000).format('h:mma, MMM D, YYYY ')}
-        </td>
+        <td>{dayjs(value.timeDeparting * 1000).format('MMM D, YYYY ')}</td>
         <td>{value.destinationCity}</td>
         <td className="text-right">{value.memberCount}</td>
       </tr>
