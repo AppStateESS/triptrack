@@ -30,7 +30,7 @@ const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
     )
   } else {
     const orgSelect = (
-      <div className="col-sm-4">
+      <div className="col-5">
         <select
           name="orgId"
           value={filter.orgId}
@@ -46,7 +46,7 @@ const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
     let tripSelect
     if (trips.length > 0) {
       tripSelect = (
-        <div className="col-4">
+        <div className="col-5">
           <select
             name="tripId"
             className="form-control"
@@ -64,13 +64,15 @@ const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
       <div className="row p-2 mb-3">
         {orgSelect}
         {tripSelect}
-        <button
-          className="btn btn-default"
-          onClick={() => {
-            updateFilter(0, 0)
-          }}>
-          Reset
-        </button>
+        <div className="col-2">
+          <button
+            className="btn btn-default"
+            onClick={() => {
+              updateFilter(0, 0)
+            }}>
+            Reset
+          </button>
+        </div>
       </div>
     )
   }
