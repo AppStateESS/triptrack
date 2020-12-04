@@ -3,7 +3,7 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {createOptions} from '../Share/CreateOptions'
 
-const AddMemberToTrip = ({member, tripList, addMember, organization}) => {
+const AddMemberToTrip = ({member, tripList, addMember, close}) => {
   const [tripId, setTripId] = useState(0)
   const tripOptions = createOptions(tripList, 'id', ['host', 'timeEventStarts'])
   return (
@@ -27,9 +27,12 @@ const AddMemberToTrip = ({member, tripList, addMember, organization}) => {
         </div>
         <div className="col-sm-6">
           <button
-            className="btn btn-primary"
-            onClick={() => addMember(organization.id, tripId)}>
+            className="btn btn-primary mr-2"
+            onClick={() => addMember(tripId)}>
             Join trip
+          </button>
+          <button className="btn btn-danger" onClick={close}>
+            Cancel
           </button>
         </div>
       </div>
@@ -42,6 +45,7 @@ AddMemberToTrip.propTypes = {
   tripList: PropTypes.array,
   organization: PropTypes.object,
   addMember: PropTypes.func,
+  close: PropTypes.func,
 }
 
 export default AddMemberToTrip

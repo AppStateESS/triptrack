@@ -3,7 +3,7 @@ import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {createOptions} from '../Share/CreateOptions'
 
-const AddMemberToOrg = ({member, organizationList, addMember}) => {
+const AddMemberToOrg = ({member, organizationList, addMember, close}) => {
   const [orgId, setOrgId] = useState(0)
   const orgOptions = createOptions(organizationList, 'id', 'name')
   return (
@@ -26,8 +26,13 @@ const AddMemberToOrg = ({member, organizationList, addMember}) => {
           </select>
         </div>
         <div className="col-sm-6">
-          <button className="btn btn-primary" onClick={() => addMember(orgId)}>
+          <button
+            className="btn btn-primary mr-2"
+            onClick={() => addMember(orgId)}>
             Join organization
+          </button>
+          <button className="btn btn-danger" onClick={close}>
+            Cancel
           </button>
         </div>
       </div>
@@ -38,7 +43,8 @@ const AddMemberToOrg = ({member, organizationList, addMember}) => {
 AddMemberToOrg.propTypes = {
   member: PropTypes.object,
   organizationList: PropTypes.array,
-  addMember: PropTypes.function,
+  addMember: PropTypes.func,
+  close: PropTypes.func,
 }
 
 export default AddMemberToOrg
