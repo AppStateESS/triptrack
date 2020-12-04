@@ -2,7 +2,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Grid = ({members, edit, deleteRow, filter, add}) => {
+const Grid = ({members, edit, deleteRow, filter, add, tripsExist}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -11,6 +11,16 @@ const Grid = ({members, edit, deleteRow, filter, add}) => {
     ) {
       deleteRow(members[key].id)
     }
+  }
+
+  const formatPhone = (value) => {
+    var numbers = value.toString().replace(/\D/g, ''),
+      char = {0: '(', 3: ') ', 6: '-'}
+    value = ''
+    for (var i = 0; i < numbers.length; i++) {
+      value += (char[i] || '') + numbers[i]
+    }
+    return value
   }
 
   const deleteButton = (key) => {
@@ -38,7 +48,7 @@ const Grid = ({members, edit, deleteRow, filter, add}) => {
             <i className="fas fa-plus"></i>
           </button>
         )
-      } else {
+      } else if (tripsExist) {
         addMemberButton = (
           <button
             className="btn btn-success btn-sm"
@@ -71,7 +81,7 @@ const Grid = ({members, edit, deleteRow, filter, add}) => {
         <td>
           <a href={`mailto:${value.email}`}>{value.email}</a>
         </td>
-        <td>{value.phone}</td>
+        <td>{formatPhone(value.phone)}</td>
       </tr>
     )
   })
@@ -99,6 +109,7 @@ Grid.propTypes = {
   deleteRow: PropTypes.func,
   filter: PropTypes.object,
   add: PropTypes.func,
+  tripsExist: PropTypes.bool,
 }
 
 export default Grid
