@@ -60,20 +60,23 @@ class Trip extends AbstractResource
         $this->secContactPhone = new \phpws2\Variable\PhoneNumber(null,
                 'secContactPhone', 30);
         $this->submitDate = new \phpws2\Variable\DateTime(0, 'submitDate');
+        $this->submitDate->stamp();
         $this->submitEmail = new \phpws2\Variable\Email(null, 'submitEmail');
         $this->submitUsername = new \phpws2\Variable\TextOnly(null,
                 'submitUsername', 50);
         $this->submitName = new \phpws2\Variable\TextOnly(null, 'submitName', 60);
         $this->timeDeparting = new \phpws2\Variable\DateTime(0, 'timeDeparting');
+        $this->timeDeparting->stamp();
         $this->timeEventStarts = new \phpws2\Variable\DateTime(0,
                 'timeEventStarts');
+        $this->timeEventStarts->stamp();
         $this->timeReturn = new \phpws2\Variable\DateTime(0, 'timeReturn');
+        $this->timeReturn->stamp();
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null,
                 'visitPurpose', 255);
         $this->memberCount = new \phpws2\Variable\SmallInteger(0, 'memberCount');
         $this->memberCount->setIsTableColumn(false);
         parent::__construct();
-        $this->submitDate->stamp();
     }
 
 }
