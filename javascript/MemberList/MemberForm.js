@@ -1,47 +1,38 @@
 'use strict'
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
+import {createOptions} from '../Share/CreateOptions'
 
 const MemberForm = ({
   member,
   update,
   close,
-  save,
-  organization,
-  trip,
+  saveMember,
+  organizationList,
+  formMessage,
   loadMember,
 }) => {
-  const [saveType, setSaveType] = useState(0)
+  const [orgId, setOrgId] = useState(0)
 
   const selectAssociation = () => {
     if (member.id === 0) {
-      const options = []
-      options.push(
-        <option key="no-opt" value="0">
-          No association
-        </option>
-      )
-      if (organization !== null) {
-        options.push(
-          <option
-            key="org-opt"
-            value="1">{`Associate to ${organization.name} organization`}</option>
+      if (organizationList.length > 0) {
+        const options = createOptions(organizationList, 'id', 'name')
+        options.unshift(
+          <option key="no-opt" value="0">
+            No association
+          </option>
         )
-      }
-      if (trip !== null) {
-        options.push(
-          <option
-            key="trip-opt"
-            value="2">{`Associate to ${trip.host} trip`}</option>
+        return (
+          <select
+            className="form-control"
+            onChange={(e) => setOrgId(e.target.value)}>
+            {options}
+          </select>
         )
+      } else {
+        return <span></span>
       }
-      return (
-        <select
-          className="form-control"
-          onChange={(e) => setSaveType(e.target.value)}>
-          {options}
-        </select>
-      )
     }
   }
 
@@ -54,11 +45,19 @@ const MemberForm = ({
     }
   }
 
+  let message
+  if (formMessage) {
+    message = (
+      <div className="alert alert-primary text-center">{formMessage}</div>
+    )
+  }
+
   return (
     <div className="container">
       <h3 className="border-bottom pb-2 mb-3">
         {member.id > 0 ? 'Update' : 'Add'} member
       </h3>
+      {message}
       <div className="row mb-3 form-group">
         <div className="col-6">
           <label>Banner ID</label>
@@ -127,7 +126,7 @@ const MemberForm = ({
         <div className="col-sm-4">
           <button
             className="btn btn-primary mr-2"
-            onClick={() => save(saveType)}>
+            onClick={() => saveMember(orgId)}>
             Save
           </button>
 
@@ -143,10 +142,11 @@ const MemberForm = ({
 MemberForm.propTypes = {
   member: PropTypes.object,
   update: PropTypes.func,
-  save: PropTypes.func,
+  saveMember: PropTypes.func,
   close: PropTypes.func,
   organization: PropTypes.object,
-  trip: PropTypes.object,
+  organizationList: PropTypes.array,
+  formMessage: PropTypes.element,
   loadMember: PropTypes.func,
 }
 
