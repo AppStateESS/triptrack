@@ -141,9 +141,12 @@ const MemberList = () => {
 
   const loadMember = (bannerId) => {
     axios
-      .get(`./triptrack/Admin/Member/getByBannerId/?bannerId=${bannerId}`, {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-      })
+      .get(
+        `./triptrack/Admin/Member/getByBannerId/?studentBannerId=${bannerId}`,
+        {
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+        }
+      )
       .then((response) => {
         if (response.data.success) {
           if (response.data.status === 'banner') {
@@ -174,6 +177,44 @@ const MemberList = () => {
         }
       })
   }
+
+  const loadMemberByUsername = (username) => {
+    axios
+      .get(`./triptrack/Admin/Member/getByUsername/?username=${username}`, {
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+      })
+      .then((response) => {
+        if (response.data.success) {
+          if (response.data.status === 'banner') {
+            setFormMessage(
+              <span>
+                Student in Banner but <strong>not saved</strong> to the system.
+              </span>
+            )
+          } else if (response.data.status === 'system') {
+            setFormMessage(
+              <span>
+                Student already in the system. Update their info and save or
+                cancel.
+              </span>
+            )
+          }
+          setCurrentMember(response.data.member)
+        } else {
+          setCurrentMember({
+            id: 0,
+            bannerId: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            username,
+          })
+        }
+      })
+  }
+
+  const handleSuccess = (response) => {}
 
   const resetModal = () => {
     setCurrentMember(Object.assign({}, emptyMember))
@@ -259,6 +300,7 @@ const MemberList = () => {
           close={resetModal}
           saveMember={saveMember}
           formMessage={formMessage}
+          loadMemberByUsername={loadMemberByUsername}
           organizationList={organizationList}
           loadMember={loadMember}
         />
