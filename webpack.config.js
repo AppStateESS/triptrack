@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const setup = require('./exports.js')
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = (env, argv) => {
   const inProduction = argv.mode === 'production'
@@ -72,6 +73,10 @@ module.exports = (env, argv) => {
   }
 
   if (inProduction) {
+    settings.optimization = {
+      minimize: true,
+      minimizer: [new TerserPlugin()],
+    }
     const AssetsPlugin = require('assets-webpack-plugin')
     settings.plugins.push(
       new webpack.DefinePlugin({
