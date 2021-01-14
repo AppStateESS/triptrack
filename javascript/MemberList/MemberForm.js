@@ -11,6 +11,7 @@ const MemberForm = ({
   organizationList,
   formMessage,
   loadMember,
+  loadMemberByUsername,
 }) => {
   const [orgId, setOrgId] = useState(0)
 
@@ -36,13 +37,21 @@ const MemberForm = ({
     }
   }
 
-  const checkAndLoad = (bannerId) => {
+  const checkBannerId = (bannerId) => {
     if (bannerId.length === 9) {
       loadMember(bannerId)
     }
     if (bannerId.length < 10) {
       update('bannerId', bannerId)
     }
+  }
+
+  const checkUsername = (username) => {
+    if (username.length > 4) {
+      loadMemberByUsername(username)
+    }
+
+    update('username', username)
   }
 
   let message
@@ -66,7 +75,7 @@ const MemberForm = ({
             name="bannerId"
             className="form-control"
             value={member.bannerId}
-            onChange={(e) => checkAndLoad(e.target.value)}
+            onChange={(e) => checkBannerId(e.target.value)}
           />
         </div>
         <div className="col-6">
@@ -76,7 +85,7 @@ const MemberForm = ({
             name="username"
             className="form-control"
             value={member.username}
-            onChange={(e) => update('username', e.target.value)}
+            onChange={(e) => checkUsername(e.target.value)}
           />
         </div>
         <div className="col-6">
