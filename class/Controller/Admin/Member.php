@@ -42,6 +42,41 @@ class Member extends SubController
         return ['success' => true];
     }
 
+    protected function getByBannerIdJson(Request $request)
+    {
+        $bannerId = $request->pullGetInteger('studentBannerId');
+        $member = MemberFactory::pullByBannerId($bannerId);
+        if (empty($member)) {
+            $bannerMember = \triptrack\BannerAPI::getStudent($bannerId);
+            if (empty($bannerMember)) {
+                return ['success' => false];
+            } else {
+                $member = MemberFactory::buildMemberFromBannerData($bannerMember);
+                return ['success' => true, 'member' => $member->getStringVars(), 'status' => 'banner'];
+            }
+        } else {
+            return ['success' => true, 'member' => $member, 'status' => 'system'];
+        }
+    }
+
+    protected function getByUsernameJson(Request $request)
+    {
+        $username = $request->pullGetString('username');
+        $member = MemberFactory::pullByUsername($username);
+        if (empty($member)) {
+            $bannerMember = \triptrack\BannerAPI::getStudent($username);
+            if (empty($bannerMember)) {
+                return ['success' => false];
+            } else {
+                $member = MemberFactory::buildMemberFromBannerData($bannerMember);
+                return ['success' => true, 'member' => $member->getStringVars(), 'status' => 'banner'];
+            }
+        } else {
+            return ['success' => true, 'member' => $member, 'status' => 'system'];
+        }
+        return ['success' => true];
+    }
+
     protected function importHtml()
     {
         return $this->view->importForm();
@@ -111,23 +146,6 @@ class Member extends SubController
         $tripId = $request->pullPostInteger('tripId', true) ?? 0;
         $stats = MemberFactory::importFile($fileName, $orgId, $tripId);
         return ['success' => true, 'stats' => $stats];
-    }
-
-    protected function getByBannerIdJson(Request $request)
-    {
-        $bannerId = $request->pullGetInteger('bannerId');
-        $member = MemberFactory::pullByBannerId($bannerId);
-        if (empty($member)) {
-            $bannerMember = \triptrack\BannerAPI::getStudent($bannerId);
-            if (empty($bannerMember)) {
-                return ['success' => false];
-            } else {
-                $member = MemberFactory::buildMemberFromBannerData($bannerMember);
-                return ['success' => true, 'member' => $member->getStringVars(), 'status' => 'banner'];
-            }
-        } else {
-            return ['success' => true, 'member' => $member, 'status' => 'system'];
-        }
     }
 
 }
