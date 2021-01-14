@@ -161,9 +161,8 @@ class MemberFactory extends BaseFactory
             $testRow = fgetcsv($handle);
             $testResult = is_numeric($testRow[0]);
         } else {
-            $testResult = in_array('firstName', $header) && in_array('lastName',
-                            $header) && in_array('email', $header) && in_array('phone',
-                            $header) && in_array('bannerId', $header) && in_array('username',
+            $testResult = in_array('firstName', $header) && in_array('lastName', $header) && in_array('email',
+                            $header) && in_array('phone', $header) && in_array('bannerId', $header) && in_array('username',
                             $header);
         }
         fclose($handle);
@@ -193,8 +192,7 @@ class MemberFactory extends BaseFactory
         return $stats;
     }
 
-    private static function bannerImport(string $path, int $startRow,
-            int $orgId, int $tripId)
+    private static function bannerImport(string $path, int $startRow, int $orgId, int $tripId)
     {
         $stats['errorRow'] = [];
         $stats['badRow'] = 0;
@@ -252,6 +250,14 @@ class MemberFactory extends BaseFactory
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('bannerId', $bannerId);
+        return $db->selectOneRow();
+    }
+
+    public static function pullByUsername($username)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        $tbl->addFieldConditional('username', $username);
         return $db->selectOneRow();
     }
 
@@ -323,8 +329,7 @@ class MemberFactory extends BaseFactory
     {
         return preg_match('/[\w\s]+/', $insertRow['firstName']) &&
                 preg_match('/[\w\s]+/', $insertRow['lastName']) &&
-                preg_match('/^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9.\-]+$/',
-                        $insertRow['email']) &&
+                preg_match('/^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9.\-]+$/', $insertRow['email']) &&
                 preg_match('/\d{9}/', $insertRow['bannerId']) &&
                 strlen(preg_replace('/\D/', '', $insertRow['phone']) > 6) &&
                 preg_match('/\w+/', $insertRow['username']);
