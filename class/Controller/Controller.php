@@ -14,6 +14,7 @@ namespace triptrack\Controller;
 
 use Canopy\Request;
 use phpws2\Database;
+use triptrack\Factory\MemberFactory;
 
 class Controller extends \phpws2\Http\Controller
 {
@@ -33,9 +34,16 @@ class Controller extends \phpws2\Http\Controller
         $userId = \Current_User::getId();
         if (\Current_User::allow('triptrack')) {
             $this->role = new \triptrack\Role\Admin($userId);
+        } elseif (MemberFactory::currentUserIsMember()) {
+            $this->role = new \triptrack\Role\Member();
         } else {
             $this->role = new \triptrack\Role\User;
         }
+    }
+
+    public function isMember()
+    {
+        return $this->role->isMember();
     }
 
     /**
@@ -46,15 +54,13 @@ class Controller extends \phpws2\Http\Controller
      */
     private function loadSubController(Request $request)
     {
-        $roleController = filter_var($request->shiftCommand(),
-                FILTER_SANITIZE_STRING);
+        $roleController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
 
         if (empty($roleController) || preg_match('/\W/', $roleController)) {
             throw new \triptrack\Exception\BadCommand('Missing role controller');
         }
 
-        $subController = filter_var($request->shiftCommand(),
-                FILTER_SANITIZE_STRING);
+        $subController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
             throw new \triptrack\Exception\PrivilegeMissing;
