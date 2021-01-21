@@ -17,6 +17,25 @@ class MemberFactory extends BaseFactory
 
     static $fileDirectory = PHPWS_HOME_DIR . 'files/triptrack/';
 
+    public static function currentUserIsMember()
+    {
+        $username = \Current_User::getUserName();
+        if ($username === null) {
+            return false;
+        }
+        if (isset($_SESSION['TT_MEMBER_IS_USER']) && $_SESSION['TT_MEMBER_IS_USER'] === $username) {
+            return true;
+        } else {
+            $member = self::loadByUsername($username);
+            if ($member->id) {
+                $_SESSION['TT_MEMBER_IS_USER'] = $member->username;
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
     public static function unlinkTrip(int $tripId)
     {
         $db = Database::getDB();
@@ -307,6 +326,21 @@ class MemberFactory extends BaseFactory
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('bannerId', $bannerId);
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return false;
+        } else {
+            $member = new Member();
+            $member->setVars($result);
+            return $member;
+        }
+    }
+
+    public static function loadByUsername(string $username)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_member');
+        $tbl->addFieldConditional('username', $username);
         $result = $db->selectOneRow();
         if (empty($result)) {
             return false;
