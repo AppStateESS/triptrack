@@ -10,7 +10,7 @@ import Message from '../Share/Message'
 import {defaultTrip, testTrip} from '../TripForm/TripDefaults'
 import axios from 'axios'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, memberForm */
 
 const tripSettings = {
   yes: {
@@ -45,6 +45,7 @@ const Create = ({
   tripId,
   defaultState,
   defaultCountry,
+  memberForm,
 }) => {
   defaultTrip.destinationState = defaultState
   defaultTrip.destinationCountry = defaultCountry
@@ -56,16 +57,25 @@ const Create = ({
   const [message, setMessage] = useState(null)
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
+  const backup = Window.localStorage
+  console.log(backup)
 
   const setFormElement = (key, value) => {
+    backup.setItem(key, value)
     Trip[key] = value
     setTrip(Object.assign({}, Trip))
   }
 
   useEffect(() => {
+    let url
+    if (memberForm) {
+      url = 'triptrack/Member/Trip/' + tripId
+    } else {
+      url = 'triptrack/Admin/Trip/' + tripId
+    }
     if (tripId > 0) {
       axios({
-        url: 'triptrack/Admin/Trip/' + tripId,
+        url,
         method: 'get',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',
@@ -78,7 +88,13 @@ const Create = ({
   }, [])
 
   const postTrip = () => {
-    let url = './triptrack/Admin/Trip'
+    let url
+    if (memberForm) {
+      url = 'triptrack/Admin/Member/'
+    } else {
+      url = 'triptrack/Admin/Trip/'
+    }
+
     let method = 'post'
     if (Trip.id > 0) {
       url += '/' + Trip.id
@@ -95,6 +111,7 @@ const Create = ({
       },
     })
       .then((response) => {
+        backup.clear()
         location.href = 'triptrack/Admin/Trip'
       })
       .catch((error) => {
@@ -165,6 +182,7 @@ const Create = ({
         Trip={Trip}
         setFormElement={setFormElement}
         errorCheck={errorCheck}
+        backup={backup}
         errors={errors}
       />
       <a id="host-info"></a>
@@ -211,6 +229,7 @@ ReactDOM.render(
   <Create
     allowInternational={allowInternational}
     contactBannerRequired={contactBannerRequired}
+    memberForm={memberForm}
     tripId={tripId}
     defaultState={defaultState}
     defaultCountry={defaultCountry}

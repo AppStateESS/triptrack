@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Organizations from './Organizations'
 
-const Submitter = ({Trip, setFormElement, errorCheck, errors}) => {
+const Submitter = ({Trip, setFormElement, errorCheck, backup, errors}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
 

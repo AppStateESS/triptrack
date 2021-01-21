@@ -21,12 +21,9 @@ class TripView extends AbstractView
 
     public function form(int $tripId = 0)
     {
+        $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
-        $settings = SettingFactory::getAll();
-        $vars['allowInternational'] = (bool) $settings['allowInternational'];
-        $vars['contactBannerRequired'] = (bool) $settings['contactBannerRequired'];
-        $vars['defaultState'] = $settings['defaultState'];
-        $vars['defaultCountry'] = $settings['defaultCountry'];
+        $vars['memberForm'] = false;
         $tpl['dashboard'] = $this->scriptView('Create', $vars);
         $orgExists = \triptrack\Factory\OrganizationFactory::exists();
         $tpl['tripActive'] = ' active';
@@ -43,6 +40,28 @@ class TripView extends AbstractView
     {
         $trip = TripFactory::load(TripFactory::build(), $tripId);
         return $trip->getVariablesAsValue();
+    }
+
+    public function memberForm($tripId = 0)
+    {
+        if (!\triptrack\Factory\OrganizationFactory::exists()) {
+            return '<p>No organizations were found. Please contact our office.</p>';
+        }
+
+        $vars = $this->getSettings();
+        $vars['tripId'] = $tripId;
+        $vars['memberForm'] = true;
+        return $this->scriptView('Create', $vars);
+    }
+
+    private function getSettings()
+    {
+        $settings = SettingFactory::getAll();
+        $vars['allowInternational'] = (bool) $settings['allowInternational'];
+        $vars['contactBannerRequired'] = (bool) $settings['contactBannerRequired'];
+        $vars['defaultState'] = $settings['defaultState'];
+        $vars['defaultCountry'] = $settings['defaultCountry'];
+        return $vars;
     }
 
 }
