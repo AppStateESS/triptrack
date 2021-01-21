@@ -12,19 +12,12 @@
 
 namespace triptrack\Role;
 
-use triptrack\Factory\VisitorFactory;
-
 class Admin extends Base
 {
 
     public function isAdmin()
     {
         return true;
-    }
-
-    public function isVisitor()
-    {
-        return VisitorFactory::isLoggedIn();
     }
 
 }

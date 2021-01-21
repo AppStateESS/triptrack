@@ -36,12 +36,7 @@ abstract class Base
         return false;
     }
 
-    public function isVisitor()
-    {
-        return false;
-    }
-
-    public function isLogged()
+    public function isMember()
     {
         return false;
     }
@@ -57,8 +52,8 @@ abstract class Base
             case $this->isAdmin():
                 return 'admin';
 
-            case $this->isVisitor():
-                return 'visitor';
+            case $this->isMember():
+                return 'member';
 
             case $this->isUser():
                 return 'user';
