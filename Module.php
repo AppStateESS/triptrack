@@ -17,7 +17,7 @@ use Canopy\Response;
 use Canopy\Server;
 use Canopy\SettingDefaults;
 use triptrack\Controller\Controller;
-use triptrack\Factory\VisitorFactory;
+use triptrack\Factory\MemberFactory;
 
 $defineFile = PHPWS_SOURCE_DIR . 'mod/triptrack/config/defines.php';
 if (is_file($defineFile)) {
@@ -33,7 +33,7 @@ class Module extends \Canopy\Module implements SettingDefaults
     {
         parent::__construct();
         $this->setTitle('triptrack');
-        $this->setProperName('Club Sports Travel Request');
+        $this->setProperName('Travel Request');
         \spl_autoload_register('\triptrack\Module::autoloader', true, true);
     }
 
@@ -53,7 +53,6 @@ class Module extends \Canopy\Module implements SettingDefaults
         $class_dir = implode('/', $class_array);
 
         $class_path = PHPWS_SOURCE_DIR . 'mod/triptrack/class/' . $class_dir . '.php';
-
 
         if (is_file($class_path)) {
             require_once $class_path;
@@ -86,9 +85,10 @@ class Module extends \Canopy\Module implements SettingDefaults
 
     public function runTime(Request $request)
     {
-//        if (\Current_User::allow('triptrack')) {
-//            $this->loadAdminBar();
-//        }
+        if (\phpws\PHPWS_Core::atHome() && MemberFactory::currentUserIsMember()) {
+            $createbutton = '<a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a>';
+            \Layout::add($createbutton, 'triptrack', 'triptrack-create');
+        }
     }
 
     public static function loadAdminBar()
