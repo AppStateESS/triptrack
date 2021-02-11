@@ -158,7 +158,7 @@ const MemberList = () => {
           } else if (response.data.status === 'system') {
             setFormMessage(
               <span>
-                Student already in the system. Update their info and save or
+                Student already in the system. Update their info or
                 cancel.
               </span>
             )
