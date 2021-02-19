@@ -29,25 +29,30 @@ class Trip extends SubController
 
     protected function listJson(Request $request)
     {
-        $options = ['memberCount' => true, 'orgId' => $request->pullGetInteger('orgId',
-                    true), 'search' => $request->pullGetString('search', true)];
+        $options = ['memberCount' => true, 'orgId' => $request->pullGetInteger('orgId', true), 'search' => $request->pullGetString('search',
+                    true)];
 
         return TripFactory::list($options);
     }
 
     protected function createHtml()
     {
-        return $this->view->form();
+        return $this->view->adminForm();
     }
 
     protected function editHtml()
     {
-        return $this->view->form($this->id);
+        return $this->view->adminForm($this->id);
     }
 
     protected function viewJson()
     {
         return $this->view->json($this->id);
+    }
+
+    protected function viewHtml(Request $request)
+    {
+        return $this->view->html($this->id);
     }
 
     protected function delete(Request $request)
@@ -61,14 +66,14 @@ class Trip extends SubController
     {
         $trip = TripFactory::post($request, true);
         TripFactory::save($trip);
-        return ['success' => true];
+        return ['success' => true, 'id' => $trip->id];
     }
 
     protected function put(Request $request)
     {
         $trip = TripFactory::put($this->id, $request);
         TripFactory::save($trip);
-        return ['success' => true];
+        return ['success' => true, 'id' => $trip->id];
     }
 
 }
