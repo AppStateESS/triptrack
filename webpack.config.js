@@ -11,10 +11,7 @@ module.exports = (env, argv) => {
     output: {
       path: setup.path.join(setup.APP_DIR, 'dev'),
     },
-    externals: {
-      $: 'jQuery',
-      jquery: 'jQuery',
-    },
+    watchOptions: {ignored: /node_modules/},
     optimization: {
       splitChunks: {
         minChunks: 2,
@@ -73,10 +70,9 @@ module.exports = (env, argv) => {
   }
 
   if (inProduction) {
-    settings.optimization = {
-      minimize: true,
-      minimizer: [new TerserPlugin()],
-    }
+    settings.optimization.minimize = true
+    settings.optimization.minimizer = [new TerserPlugin()]
+
     const AssetsPlugin = require('assets-webpack-plugin')
     settings.plugins.push(
       new webpack.DefinePlugin({
@@ -84,7 +80,11 @@ module.exports = (env, argv) => {
       })
     )
     settings.plugins.push(
-      new AssetsPlugin({filename: 'assets.json', prettyPrint: true})
+      new AssetsPlugin({
+        filename: 'assets.json',
+        prettyPrint: true,
+        removeFullPathAutoPrefix: true,
+      })
     )
     settings.output = {
       path: setup.path.join(setup.APP_DIR, 'build'),
