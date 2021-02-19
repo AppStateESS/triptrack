@@ -58,6 +58,7 @@ class TripView extends AbstractView
         $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
         $vars['memberForm'] = true;
+        $vars['memberEmail'] = \Current_User::getEmail();
         return $this->scriptView('Create', $vars);
     }
 

@@ -32,6 +32,7 @@ class MemberFactory extends BaseFactory
                 $_SESSION['TT_MEMBER_IS_USER'] = $member->username;
                 return true;
             } else {
+                $_SESSION['TT_MEMBER_IS_USER'] = '';
                 return false;
             }
         }
