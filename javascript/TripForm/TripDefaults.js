@@ -44,4 +44,46 @@ const testTrip = {
   memberCount: 0,
 }
 
-export {defaultTrip, testTrip}
+const tripSettings = {
+  yes: {
+    submitName: true,
+    submitEmail: true,
+    host: true,
+    destinationCity: true,
+    contactName: true,
+    contactEmail: true,
+    contactPhone: true,
+    secContactName: true,
+    secContactEmail: true,
+    secContactPhone: true,
+  },
+  no: {
+    submitName: false,
+    submitEmail: false,
+    host: false,
+    destinationCity: false,
+    contactName: false,
+    contactEmail: false,
+    contactPhone: false,
+    secContactName: false,
+    secContactEmail: false,
+    secContactPhone: false,
+  },
+}
+
+const saveReady = (ready) => {
+  return (
+    ready.submitName &&
+    ready.submitEmail &&
+    ready.host &&
+    ready.destinationCity &&
+    ready.contactName &&
+    ready.contactEmail &&
+    ready.contactPhone &&
+    ready.secContactName &&
+    ready.secContactEmail &&
+    ready.secContactPhone
+  )
+}
+
+export {defaultTrip, testTrip, tripSettings, saveReady}
