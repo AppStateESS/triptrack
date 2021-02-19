@@ -19,12 +19,11 @@ class TripView extends AbstractView
         return $this->dashboard('trip', 'TripList');
     }
 
-    public function form(int $tripId = 0)
+    public function adminForm(int $tripId = 0)
     {
         $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
-        $vars['memberForm'] = false;
-        $tpl['dashboard'] = $this->scriptView('Create', $vars);
+        $tpl['dashboard'] = $this->scriptView('AdminTripForm', $vars);
         $orgExists = \triptrack\Factory\OrganizationFactory::exists();
         $tpl['tripActive'] = ' active';
         $tpl['orgActive'] = null;
@@ -33,6 +32,14 @@ class TripView extends AbstractView
         $tpl['alert'] = !$orgExists;
         $template = new \phpws2\Template($tpl);
         $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
+        return $template->get();
+    }
+
+    public function html(int $tripId)
+    {
+        $values = $this->json($tripId);
+        $template = new \phpws2\Template($values);
+        $template->setModuleTemplate('triptrack', 'Admin/View.html');
         return $template->get();
     }
 
