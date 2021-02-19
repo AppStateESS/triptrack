@@ -90,7 +90,7 @@ const Create = ({
   const postTrip = () => {
     let url
     if (memberForm) {
-      url = 'triptrack/Admin/Member/'
+      url = 'triptrack/Member/Trip/'
     } else {
       url = 'triptrack/Admin/Trip/'
     }
@@ -112,7 +112,9 @@ const Create = ({
     })
       .then((response) => {
         backup.clear()
-        location.href = 'triptrack/Admin/Trip'
+        location.href = memberForm
+          ? 'triptrack/Member/Trip'
+          : 'triptrack/Admin/Trip'
       })
       .catch((error) => {
         console.log('Error:', error)
@@ -223,6 +225,7 @@ Create.propTypes = {
   tripId: PropTypes.number,
   defaultState: PropTypes.string,
   defaultCountry: PropTypes.string,
+  memberForm: PropTypes.bool,
 }
 
 ReactDOM.render(
