@@ -7,7 +7,9 @@ import Contact from './Contact'
 import Submitter from './Submitter'
 import Schedule from './Schedule'
 import Message from '../Share/Message'
-import {getTrip, postTrip} from './AJAX'
+import {getTrip, postTrip, patchApproval} from './AJAX'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 
 const Form = ({
   defaultState,
@@ -32,6 +34,37 @@ const Form = ({
     //backup.setItem(key, value)
     Trip[key] = value
     setTrip(Object.assign({}, Trip))
+  }
+
+  const toggleApproval = (toggle) => {
+    setFormElement('approved', toggle)
+    if (Trip.id > 0) {
+      patchApproval(toggle, Trip.id)
+    }
+  }
+
+  const approvedIcon = () => {
+    if (Trip.approved) {
+      return (
+        <div>
+          <button
+            onClick={() => toggleApproval(false)}
+            className="btn btn-success">
+            <FontAwesomeIcon icon={faToggleOn} /> Approved
+          </button>
+        </div>
+      )
+    } else {
+      return (
+        <div>
+          <button
+            onClick={() => toggleApproval(true)}
+            className="btn btn-danger">
+            <FontAwesomeIcon icon={faToggleOff} /> Not approved
+          </button>
+        </div>
+      )
+    }
   }
 
   const errorCheck = (name) => {
@@ -101,6 +134,8 @@ const Form = ({
       {title}
       <p>Please enter all requested, required information below:</p>
       <Message message={message} />
+      {approvedIcon()}
+
       <a id="submitter-info"></a>
       <Submitter
         Trip={Trip}
