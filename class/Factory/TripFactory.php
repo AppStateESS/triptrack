@@ -35,6 +35,14 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
+    public static function patch(int $id, string $varname, $value)
+    {
+        $trip = self::build();
+        self::loadByID($trip, $id);
+        $trip->$varname = $value;
+        self::save($trip);
+    }
+
     public static function list(array $options = [])
     {
         $db = Database::getDB();
@@ -55,20 +63,13 @@ class TripFactory extends BaseFactory
 
         if (!empty($options['search'])) {
             $search = '%' . $options['search'] . '%';
-            $searchCond1 = $db->createConditional($tbl->getField('host'),
-                    $search, 'like');
-            $searchCond2 = $db->createConditional($tbl->getField('contactName'),
-                    $search, 'like');
-            $searchCond3 = $db->createConditional($tbl->getField('secContactName'),
-                    $search, 'like');
-            $searchCond4 = $db->createConditional($tbl->getField('submitName'),
-                    $search, 'like');
-            $searchCond5 = $db->createConditional($searchCond1, $searchCond2,
-                    'or');
-            $searchCond6 = $db->createConditional($searchCond3, $searchCond4,
-                    'or');
-            $searchCond7 = $db->createConditional($searchCond5, $searchCond6,
-                    'or');
+            $searchCond1 = $db->createConditional($tbl->getField('host'), $search, 'like');
+            $searchCond2 = $db->createConditional($tbl->getField('contactName'), $search, 'like');
+            $searchCond3 = $db->createConditional($tbl->getField('secContactName'), $search, 'like');
+            $searchCond4 = $db->createConditional($tbl->getField('submitName'), $search, 'like');
+            $searchCond5 = $db->createConditional($searchCond1, $searchCond2, 'or');
+            $searchCond6 = $db->createConditional($searchCond3, $searchCond4, 'or');
+            $searchCond7 = $db->createConditional($searchCond5, $searchCond6, 'or');
             $db->addConditional($searchCond7);
         }
 
@@ -134,7 +135,6 @@ class TripFactory extends BaseFactory
         $trip->timeEventStarts = $request->pullPutString('timeEventStarts');
         $trip->timeReturn = $request->pullPutString('timeReturn');
         $trip->visitPurpose = $request->pullPutString('visitPurpose');
-
         return $trip;
     }
 
