@@ -4,6 +4,7 @@ import {getList} from '../api/Fetch'
 import PropTypes from 'prop-types'
 
 const Organizations = ({Trip, setFormElement}) => {
+  const [loading, setLoading] = useState(true)
   const [organizations, setOrganizations] = useState([])
   const loadOrganizations = async () => {
     let response = await getList('./triptrack/Admin/Organization/')
