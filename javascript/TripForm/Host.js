@@ -71,14 +71,14 @@ const Host = ({
       <p>Enter information about the host for your trip.</p>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label className="mb-0">Host name</label>
+          <label className="mb-0">Trip host</label>
         </div>
         <div className="col-sm-8">
           <input
             type="text"
             name="host"
             className={errors.host ? invalid : valid}
-            placeholder="Enter the name of facility, team, group, etc. you are visiting"
+            placeholder="Enter the facility name, event, team, group, etc."
             onBlur={() => errorCheck('host')}
             value={Trip.host}
             onChange={(e) => {
@@ -92,7 +92,7 @@ const Host = ({
       </div>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label>{'Host City' + (statesShown ? ', State' : '')}</label>
+          <label>{'Destination City' + (statesShown ? ', State' : '')}</label>
         </div>
         <div className="col-sm-5">
           <input
@@ -110,6 +110,23 @@ const Host = ({
           ) : null}
         </div>
         <div className="col-sm-3">{showStates()}</div>
+      </div>
+      <div className="row form-group">
+        <div className="col-sm-4">
+          <label>Address of hotel or accommodations</label>
+        </div>
+        <div className="col-sm-8">
+          <input
+            type="text"
+            name="housingAddress"
+            onBlur={() => errorCheck('housingAddress')}
+            className={errors.housingAddress ? invalid : valid}
+            value={Trip.housingAddress}
+            onChange={(e) => {
+              setFormElement('housingAddress', e.target.value)
+            }}
+          />
+        </div>
       </div>
       {international()}
     </fieldset>
