@@ -3,7 +3,8 @@ import React, {useState, useEffect, useRef} from 'react'
 import SaveButton from '../Share/SaveButton'
 import ReactDOM from 'react-dom'
 import BigCheckbox from '@essappstate/canopy-react-bigcheckbox'
-import {Slide} from 'react-awesome-reveal'
+// Removed due to update issue. Check later to restore.
+//import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import {countries} from '../Share/Countries'
@@ -159,9 +160,17 @@ const SettingList = ({currentSettings}) => {
   }
 
   const uploadRequiredRow = () => {
+    /**
+     * This had to be removed due to an error from the update
+     *
+     *  <Slide direction="down" duration={duration}>
+     *      ...
+     *  </Slide>
+     *
+     */
     if (settings.allowUpload) {
       return (
-        <Slide direction="down" duration={duration}>
+        <div>
           <div className="row py-2 border-bottom mb-3">
             <div className="col-sm-6 mb-2 pl-5">
               <strong>Upload required</strong>
@@ -204,7 +213,7 @@ const SettingList = ({currentSettings}) => {
               />
             </div>
           </div>
-        </Slide>
+        </div>
       )
     }
   }
