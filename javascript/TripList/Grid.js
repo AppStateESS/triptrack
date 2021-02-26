@@ -29,7 +29,7 @@ const Grid = ({trips, deleteRow}) => {
 
   const rows = trips.map((value, key) => {
     return (
-      <tr key={'gridrow-' + key}>
+      <tr key={'gridrow-' + value.id}>
         <td style={{width: '20%'}}>
           <a
             title="View members"
@@ -45,9 +45,13 @@ const Grid = ({trips, deleteRow}) => {
           </a>
           {deleteButton(key)}
         </td>
-        <td>{value.host}</td>
+        <td>
+          <a href={`./triptrack/Admin/Trip/${value.id}`}>{value.host}</a>
+        </td>
         <td>{dayjs(value.timeDeparting * 1000).format('MMM D, YYYY ')}</td>
-        <td>{value.destinationCity}</td>
+        <td>
+          {value.destinationCity}, {value.destinationState}
+        </td>
         <td className="text-right">{value.memberCount}</td>
       </tr>
     )
@@ -61,7 +65,7 @@ const Grid = ({trips, deleteRow}) => {
             <td></td>
             <th>Host</th>
             <th>Departure date</th>
-            <th>Destination city</th>
+            <th>City, State</th>
             <th className="text-right">Members</th>
           </tr>
           {rows}
