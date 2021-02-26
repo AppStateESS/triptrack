@@ -1,18 +1,35 @@
-<p><?=$host?><br />
-  <?=$destinationCity,', ', $destinationState?><?=$destinationCountry ? ", $destinationCountry":null?>
+<h2>Trip: <?=$host?> <?php if ($approved):?>
+  <span class="badge badge-success">Approved</span>
+  <?php else: ?>
+  <span class="badge badge-danger">Not approved</span>
+  <?php endif; ?></h2>
+
+<h3>Time line</h3>
+<table class="table">
+  <tbody>
+    <tr>
+      <td><strong>Departing:</strong> <?=strftime('%c', $timeDeparting)?></td>
+      <td><strong>Event start:</strong> <?=strftime('%c', $timeEventStarts)?></td>
+      <td><strong>Returning:</strong> <?=strftime('%c', $timeReturn)?></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Destination</h3>
+<p><?=$destinationCity,', ', $destinationState?><?=$destinationCountry ? ", $destinationCountry":null?></p>
+
+<h3>Housing</h3>
+<p><?=$housingAddress?></p>
+
 <p>Submitted by <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on
   <?=strftime('%l:%M %P, %b. %e, %Y', $submitDate)?></p>
 
+<h3>Contact</h3>
+<p>
+  <?=$contactName?> (<a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a>)<br />
+  Phone: <a href="tel:+1<?=preg_replace('/\D/', '', $contactPhone)?>"><?=$contactPhone?></a></p>
 
-
-
-
-<table class="table table-striped">
-  <tbody>
-    <tr>
-      <th></th>
-      <td></td>
-    </tr>
-   
-  </tbody>
-</table>
+<h3>Secondary Contact</h3>
+<p>
+  <?=$secContactName?> (<a href="mailto:<?=$secContactEmail?>"><?=$secContactEmail?></a>)<br />
+  Phone: <a href="tel:+1<?=preg_replace('/\D/', '', $secContactPhone)?>"><?=$secContactPhone?></a></p>
