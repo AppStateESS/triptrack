@@ -61,6 +61,10 @@ class TripFactory extends BaseFactory
             $db->setGroupBy([$tbl->getField('id')]);
         }
 
+        if ($options['unapprovedOnly']) {
+            $tbl->addFieldConditional('approved', 0);
+        }
+
         if (!empty($options['search'])) {
             $search = '%' . $options['search'] . '%';
             $searchCond1 = $db->createConditional($tbl->getField('host'), $search, 'like');

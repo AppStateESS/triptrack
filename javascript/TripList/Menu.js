@@ -1,8 +1,38 @@
 'use strict'
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({sendSearch, search, setSearch, resetSearch}) => {
+const Menu = ({
+  sendSearch,
+  search,
+  setSearch,
+  resetSearch,
+  unapprovedOnly,
+  setUnapprovedOnly,
+}) => {
+  const unapprovedOnlyButton = () => {
+    if (unapprovedOnly) {
+      return (
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setUnapprovedOnly(false)
+          }}>
+          Show all trips
+        </button>
+      )
+    } else {
+      return (
+        <button
+          className="btn btn-outline-primary"
+          onClick={() => {
+            setUnapprovedOnly(true)
+          }}>
+          Show unapproved only
+        </button>
+      )
+    }
+  }
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -18,13 +48,14 @@ const Menu = ({sendSearch, search, setSearch, resetSearch}) => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li className="nav-item active">
+            <li className="nav-item active mr-2">
               <a
                 className="btn btn-success"
                 href="./triptrack/Admin/Trip/create">
                 Create trip
               </a>
             </li>
+            <li className="nav-item active">{unapprovedOnlyButton()}</li>
           </ul>
           <div className="d-flex justify-content-end">
             <div className="input-group">

@@ -2,6 +2,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
+import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+
+const approvedIcon = (approved) => {
+  return approved ? (
+    <span className="text-success">
+      <FontAwesomeIcon icon={faCheckCircle} size="lg" />
+    </span>
+  ) : (
+    <span className="text-danger">
+      <FontAwesomeIcon icon={faTimesCircle} size="lg" />
+    </span>
+  )
+}
 
 const Grid = ({trips, deleteRow}) => {
   const deleteItem = (key) => {
@@ -30,7 +44,7 @@ const Grid = ({trips, deleteRow}) => {
   const rows = trips.map((value, key) => {
     return (
       <tr key={'gridrow-' + value.id}>
-        <td style={{width: '20%'}}>
+        <td style={{width: '15%'}}>
           <a
             title="View members"
             className="btn btn-success btn-sm mr-1"
@@ -44,6 +58,9 @@ const Grid = ({trips, deleteRow}) => {
             <i className="fas fa-edit"></i>
           </a>
           {deleteButton(key)}
+        </td>
+        <td className="text-center" style={{width: '10%'}}>
+          {approvedIcon(value.approved)}
         </td>
         <td>
           <a href={`./triptrack/Admin/Trip/${value.id}`}>{value.host}</a>
@@ -63,6 +80,7 @@ const Grid = ({trips, deleteRow}) => {
         <tbody>
           <tr>
             <td></td>
+            <th>Approved?</th>
             <th>Host</th>
             <th>Departure date</th>
             <th>City, State</th>
