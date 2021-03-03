@@ -27,4 +27,17 @@ class Trip extends SubController
         return $this->view->memberForm();
     }
 
+    public function viewJson(Request $request)
+    {
+        if ((int) $this->id === 0) {
+            $trip = TripFactory::loadNewMemberTrip();
+        } else {
+            $trip = TripFactory::load(TripFactory::build(), $this->id);
+            if ($trip->submitUsername != \Current_User::getUsername()) {
+                throw new \Exception('Member is not trip submitter');
+            }
+        }
+        return $trip->getVariablesAsValue(false, null, true);
+    }
+
 }
