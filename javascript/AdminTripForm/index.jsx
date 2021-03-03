@@ -8,7 +8,7 @@ import Form from '../TripForm/Form'
 const AdminTripForm = (props) => {
   return (
     <div>
-      <Form {...props} role={'Admin'} />
+      <Form {...props} role={'Admin'} allowApproval={true} role={role} />
     </div>
   )
 }
