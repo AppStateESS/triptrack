@@ -46,6 +46,12 @@ class MemberFactory extends BaseFactory
         return $db->delete();
     }
 
+    public static function currentOwnsTrip(int $tripId)
+    {
+        $trip = TripFactory::loadByID(TripFactory::build(), $tripId);
+        return $trip->submitUsername === \Current_User::getUsername();
+    }
+
     public static function list(array $options = [])
     {
         $db = Database::getDB();
@@ -274,12 +280,24 @@ class MemberFactory extends BaseFactory
         return $db->selectOneRow();
     }
 
-    public static function pullByUsername($username)
+    /**
+     *
+     * @param string $username
+     * @return array
+     */
+    public static function pullByUsername(string $username, $asObject = false)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('username', $username);
-        return $db->selectOneRow();
+        $result = $db->selectOneRow();
+        if ($asObject) {
+            $member = new Member();
+            $member->setVars($result);
+            return $member;
+        } else {
+            return $result;
+        }
     }
 
     private static function csvImport(string $path, int $orgId, int $tripId)
