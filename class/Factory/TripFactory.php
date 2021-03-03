@@ -35,6 +35,20 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
+    public static function loadNewMemberTrip()
+    {
+        $member = MemberFactory::pullByUsername(\Current_User::getUsername(), true);
+        $trip = new Trip;
+        $trip->approved = false;
+        $trip->submitEmail = $member->email;
+        $trip->contactEmail = $member->email;
+        $trip->submitName = $member->getFullName();
+        $trip->contactName = $member->getFullName();
+        $trip->submitUsername = $member->username;
+        $trip->contactPhone = $member->phone;
+        return $trip;
+    }
+
     public static function patch(int $id, string $varname, $value)
     {
         $trip = self::build();
