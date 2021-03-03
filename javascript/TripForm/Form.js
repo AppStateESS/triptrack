@@ -18,6 +18,7 @@ const Form = ({
   contactBannerRequired,
   tripId,
   role,
+  allowApproval,
 }) => {
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
   //const [Trip, setTrip] = useState(Object.assign({}, testTrip))
@@ -44,6 +45,9 @@ const Form = ({
   }
 
   const approvedIcon = () => {
+    if (allowApproval === false) {
+      return <span></span>
+    }
     if (Trip.approved) {
       return (
         <div>
@@ -99,14 +103,16 @@ const Form = ({
   }
 
   useEffect(() => {
-    if (tripId > 0) {
+    // if role is member, we get an empty trip with Member information plugged in
+    if (tripId > 0 || role === 'Member') {
       const promise = getTrip(tripId, role)
       promise.then((response) => {
+        console.log(response.data)
         setTrip(response.data)
         setReady(Object.assign({}, tripSettings.yes))
       })
     }
-  }, [])
+  }, [tripId, role])
 
   let title
   if (Trip.id > 0) {
@@ -142,6 +148,7 @@ const Form = ({
         setFormElement={setFormElement}
         errorCheck={errorCheck}
         errors={errors}
+        role={role}
       />
       <a id="host-info"></a>
       <Host
@@ -173,6 +180,14 @@ const Form = ({
   )
 }
 
-Form.propTypes = {role: PropTypes.string, tripId: PropTypes.number}
+Form.propTypes = {
+  role: PropTypes.string,
+  tripId: PropTypes.number,
+  defaultState: PropTypes.string,
+  defaultCountry: PropTypes.string,
+  allowInternational: PropTypes.bool,
+  contactBannerRequired: PropTypes.bool,
+  allowApproval: PropTypes.bool,
+}
 
 export default Form
