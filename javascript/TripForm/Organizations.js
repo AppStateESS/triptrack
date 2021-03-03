@@ -3,11 +3,11 @@ import React, {useState, useEffect} from 'react'
 import {getList} from '../api/Fetch'
 import PropTypes from 'prop-types'
 
-const Organizations = ({Trip, setFormElement}) => {
+const Organizations = ({Trip, setFormElement, role}) => {
   const [loading, setLoading] = useState(true)
   const [organizations, setOrganizations] = useState([])
   const loadOrganizations = async () => {
-    let response = await getList('./triptrack/Admin/Organization/')
+    let response = await getList(`./triptrack/${role}/Organization/`)
     if (response === false) {
       throw 'Could not contact server.'
     } else {
