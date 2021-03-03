@@ -32,7 +32,12 @@ class Member extends AbstractResource
     public function setPhone($phone)
     {
         $strippedPhone = preg_replace('/\D/', '', $phone);
-        $this->phone = $strippedPhone;
+        $this->phone->set($strippedPhone);
+    }
+
+    public function getFullName()
+    {
+        return $this->firstName->get() . ' ' . $this->lastName->get();
     }
 
 }
