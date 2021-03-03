@@ -54,12 +54,15 @@ class TripView extends AbstractView
         if (!\triptrack\Factory\OrganizationFactory::exists()) {
             return '<p>No organizations were found. Please contact our office.</p>';
         }
-
+        if ($tripId) {
+            if (!\triptrack\Factory\MemberFactory::currentOwnsTrip($tripId)) {
+                exit('Member does not own trip');
+            }
+        }
         $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
-        $vars['memberForm'] = true;
-        $vars['memberEmail'] = \Current_User::getEmail();
-        return $this->scriptView('MemberTripForm', $vars);
+        $result = $this->scriptView('MemberTripForm', $vars);
+        return $result;
     }
 
     private function getSettings()
