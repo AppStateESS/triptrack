@@ -107,7 +107,6 @@ const Form = ({
     if (tripId > 0 || role === 'Member') {
       const promise = getTrip(tripId, role)
       promise.then((response) => {
-        console.log(response.data)
         setTrip(response.data)
         setReady(Object.assign({}, tripSettings.yes))
       })
