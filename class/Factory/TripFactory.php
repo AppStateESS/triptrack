@@ -46,7 +46,16 @@ class TripFactory extends BaseFactory
         $trip->contactName = $member->getFullName();
         $trip->submitUsername = $member->username;
         $trip->contactPhone = $member->phone;
+        self::loadDefaults($trip);
+
         return $trip;
+    }
+
+    public static function loadDefaults(Trip $trip)
+    {
+        $settings = SettingFactory::getAll();
+        $trip->destinationState = $settings['defaultState'];
+        $trip->destinationCountry = $settings['defaultCountry'];
     }
 
     public static function patch(int $id, string $varname, $value)
