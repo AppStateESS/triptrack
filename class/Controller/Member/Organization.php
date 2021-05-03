@@ -13,8 +13,14 @@ use Canopy\Request;
 
 class Organization extends SubController
 {
-       protected function listJson(Request $request)
+
+    protected function listJson(Request $request)
     {
-        return OrganizationFactory::list(['memberCount' => true]);
+        $memberId = \triptrack\Factory\MemberFactory::getCurrentMemberId();
+        if (empty($memberId)) {
+            throw \Exception('User is not a member');
+        }
+        return OrganizationFactory::list(['memberCount' => true, 'memberId' => $memberId]);
     }
+
 }
