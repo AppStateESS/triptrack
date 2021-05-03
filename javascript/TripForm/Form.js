@@ -12,8 +12,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 
 const Form = ({
-  defaultState,
-  defaultCountry,
   allowInternational,
   contactBannerRequired,
   tripId,
@@ -25,11 +23,6 @@ const Form = ({
   const [message, setMessage] = useState(null)
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
-
-  defaultTrip.destinationState = defaultState
-  defaultTrip.destinationCountry = defaultCountry
-  testTrip.destinationState = defaultState
-  testTrip.destinationCountry = defaultCountry
 
   const setFormElement = (key, value) => {
     //backup.setItem(key, value)
