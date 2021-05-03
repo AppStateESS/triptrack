@@ -2,7 +2,7 @@
 
 /**
  * MIT License
- * Copyright (c) 2019 Electronic Student Services @ Appalachian State University
+ * Copyright (c) 2021 Electronic Student Services @ Appalachian State University
  *
  * See LICENSE file in root directory for copyright and distribution permissions.
  *
@@ -38,8 +38,7 @@ abstract class AbstractView
             return null;
         }
         foreach ($vars as $key => $value) {
-            $varList[] = "const $key = " . json_encode($value,
-                            JSON_NUMERIC_CHECK) . ';';
+            $varList[] = "const $key = " . json_encode($value, JSON_NUMERIC_CHECK) . ';';
         }
         return '<script type="text/javascript">' . implode('', $varList) . '</script>';
     }
@@ -96,8 +95,7 @@ EOF;
         return $content;
     }
 
-    protected function dashboard(string $active, string $script,
-            array $scriptVars = [])
+    protected function dashboard(string $active, string $script, array $scriptVars = [])
     {
         $vars['tripActive'] = null;
         $vars['orgActive'] = null;
