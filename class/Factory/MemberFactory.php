@@ -272,6 +272,17 @@ class MemberFactory extends BaseFactory
         return $member;
     }
 
+    public static function getCurrentMemberId()
+    {
+        $username = \Current_User::getUsername();
+        $member = self::pullByUsername($username);
+        if (empty($member)) {
+            return null;
+        } else {
+            return $member->id;
+        }
+    }
+
     public static function pullByBannerId($bannerId)
     {
         $db = Database::getDB();
