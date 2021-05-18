@@ -13,7 +13,10 @@ const Form = ({setFormReady, setSuccessFile}) => {
     form.append('file', uploadFile.target.files[0])
     axios
       .post('./triptrack/Admin/Member/upload', form, {
-        headers: {'Content-Type': 'multipart/form-data'},
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
       })
       .then((response) => {
         if (response.data.success) {
