@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {defaultTrip, testTrip, tripSettings, saveReady} from './TripDefaults'
+import {defaultTrip, tripSettings, saveReady} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
 import Submitter from './Submitter'
@@ -19,7 +19,6 @@ const Form = ({
   allowApproval,
 }) => {
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
-  //const [Trip, setTrip] = useState(Object.assign({}, testTrip))
   const [message, setMessage] = useState(null)
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
