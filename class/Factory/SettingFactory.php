@@ -26,6 +26,8 @@ class SettingFactory
                         'approvalRequired');
         $settings['defaultCountry'] = Settings::get('triptrack',
                         'defaultCountry');
+        $settings['bannerImport'] = Settings::get('triptrack',
+                        'bannerImport');
         $settings['defaultState'] = Settings::get('triptrack', 'defaultState');
         $settings['siteContactName'] = Settings::get('triptrack',
                         'siteContactName');
@@ -45,6 +47,11 @@ class SettingFactory
         $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
                         'contactBannerRequired');
         return $settings;
+    }
+
+    public static function getApprovalRequired()
+    {
+        return Settings::get('triptrack', 'approvalRequired');
     }
 
     public static function saveContact($name, $email)
