@@ -7,7 +7,8 @@ const Submitter = ({
   Trip,
   setFormElement,
   errorCheck,
-  backup,
+  organizationLabel,
+  organizationList,
   errors,
   role,
 }) => {
@@ -55,7 +56,13 @@ const Submitter = ({
   return (
     <fieldset>
       <legend className="border-bottom mb-3">Submitter information</legend>
-      <Organizations Trip={Trip} setFormElement={setFormElement} role={role} />
+      <Organizations
+        organizationList={organizationList}
+        Trip={Trip}
+        setFormElement={setFormElement}
+        role={role}
+        organizationLabel={organizationLabel}
+      />
       <div className="row form-group">
         <div className="col-sm-4">Your name</div>
         <div className="col-sm-8">
@@ -86,7 +93,9 @@ Submitter.propTypes = {
   setFormElement: PropTypes.func,
   errorCheck: PropTypes.func,
   errors: PropTypes.object,
+  organizationLabel: PropTypes.string,
   touched: PropTypes.object,
+  role: PropTypes.string,
 }
 
 export default Submitter
