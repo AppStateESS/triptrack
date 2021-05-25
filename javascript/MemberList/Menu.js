@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 const Menu = ({showModal, sendSearch, search, setSearch}) => {
   return (
     <div className="mb-3">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <nav className="navbar navbar-expand-md navbar-light bg-light">
         <button
           className="navbar-toggler"
           type="button"
