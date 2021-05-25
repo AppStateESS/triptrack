@@ -275,7 +275,8 @@ class MemberFactory extends BaseFactory
     public static function getCurrentMemberId()
     {
         $username = \Current_User::getUsername();
-        $member = self::pullByUsername($username);
+        $member = self::pullByUsername($username, true);
+
         if (empty($member)) {
             return null;
         } else {
