@@ -10,6 +10,9 @@ import Message from '../Share/Message'
 import {getTrip, postTrip, patchApproval} from './AJAX'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
+import {getList} from '../api/Fetch'
+import NoMemberOrg from './NoMemberOrg'
+import NoAdminOrg from './NoAdminOrg'
 
 const Form = ({
   allowInternational,
@@ -17,11 +20,30 @@ const Form = ({
   tripId,
   role,
   allowApproval,
+  hostLabel,
+  organizationLabel,
 }) => {
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [message, setMessage] = useState(null)
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
+  const [organizations, setOrganizations] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const loadOrganizations = async () => {
+    let response = await getList(`./triptrack/${role}/Organization/`)
+    if (response === false) {
+      throw 'Could not contact server.'
+    } else {
+      if (response.length > 0) {
+        setOrganizations(response)
+      }
+    }
+    setLoading(false)
+  }
+  useEffect(() => {
+    loadOrganizations()
+  }, [])
 
   const setFormElement = (key, value) => {
     //backup.setItem(key, value)
@@ -100,7 +122,18 @@ const Form = ({
       const promise = getTrip(tripId, role)
       promise.then((response) => {
         setTrip(response.data)
-        setReady(Object.assign({}, tripSettings.yes))
+
+        if (response.data.id > 0) {
+          setReady(Object.assign({}, tripSettings.yes))
+        } else {
+          const memberReady = Object.assign({}, tripSettings.no)
+          memberReady.submitEmail = true
+          memberReady.submitName = true
+          memberReady.contactName = true
+          memberReady.contactEmail = true
+          memberReady.contactPhone = true
+          setReady(memberReady)
+        }
       })
     }
   }, [tripId, role])
@@ -125,6 +158,19 @@ const Form = ({
       })
   }
 
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (organizations.length == 0) {
+    if (role === 'Member') {
+      return <NoMemberOrg organizationLabel={organizationLabel} />
+    } else {
+      return <NoAdminOrg />
+    }
+  }
+  const canSave = saveReady(ready)
+  console.log(ready)
   //put in Submitter: backup={backup}
   return (
     <div>
@@ -138,6 +184,8 @@ const Form = ({
         Trip={Trip}
         setFormElement={setFormElement}
         errorCheck={errorCheck}
+        organizationLabel={organizationLabel}
+        organizationList={organizations}
         errors={errors}
         role={role}
       />
@@ -147,6 +195,7 @@ const Form = ({
         setFormElement={setFormElement}
         allowInternational={allowInternational}
         errorCheck={errorCheck}
+        hostLabel={hostLabel}
         errors={errors}
       />
       <a id="contact-info"></a>
@@ -163,8 +212,8 @@ const Form = ({
         <button
           className="btn btn-success"
           onClick={saveTrip}
-          disabled={!saveReady(ready)}>
-          {saveReady(ready) ? 'Save and continue' : 'Fill in all fields above'}
+          disabled={!canSave}>
+          {canSave ? 'Save and continue' : 'Fill in all fields above'}
         </button>
       </div>
     </div>
@@ -179,6 +228,8 @@ Form.propTypes = {
   allowInternational: PropTypes.bool,
   contactBannerRequired: PropTypes.bool,
   allowApproval: PropTypes.bool,
+  hostLabel: PropTypes.string,
+  organizationLabel: PropTypes.string,
 }
 
 export default Form
