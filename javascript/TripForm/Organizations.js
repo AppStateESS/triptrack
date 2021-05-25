@@ -1,28 +1,22 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
-import {getList} from '../api/Fetch'
 import PropTypes from 'prop-types'
 
-const Organizations = ({Trip, setFormElement, role}) => {
+const Organizations = ({
+  Trip,
+  setFormElement,
+  role,
+  organizationLabel,
+  organizationList,
+}) => {
   const [loading, setLoading] = useState(true)
-  const [organizations, setOrganizations] = useState([])
-  const loadOrganizations = async () => {
-    let response = await getList(`./triptrack/${role}/Organization/`)
-    if (response === false) {
-      throw 'Could not contact server.'
-    } else {
-      if (response.length > 0) {
-        setOrganizations(response)
-      }
-    }
-  }
-  useEffect(() => {
-    loadOrganizations()
-  }, [])
+
+  const organizationString =
+    organizationLabel.length > 0 ? organizationLabel : 'Organization'
 
   let options = []
-  if (organizations.length > 0) {
-    options = organizations.map((value, key) => {
+  if (organizationList.length > 0) {
+    options = organizationList.map((value, key) => {
       return (
         <option key={'org-' + key} value={value.id}>
           {value.name}
@@ -34,7 +28,7 @@ const Organizations = ({Trip, setFormElement, role}) => {
   return (
     <div className="row form-group">
       <div className="col-sm-4">
-        <label>Attending organization</label>
+        <label>Attending {organizationString}</label>
       </div>
       <div className="col-sm-8">
         <select
@@ -51,6 +45,9 @@ const Organizations = ({Trip, setFormElement, role}) => {
 Organizations.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
+  role: PropTypes.string,
+  organizationLabel: PropTypes.string,
+  organizationList: PropTypes.array,
 }
 
 export default Organizations
