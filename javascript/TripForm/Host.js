@@ -10,8 +10,10 @@ const Host = ({
   setFormElement,
   allowInternational,
   errorCheck,
+  hostLabel,
   errors,
 }) => {
+  const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
   const stateList = createOptions(states)
   const countryList = createOptions(countries)
 
@@ -67,11 +69,13 @@ const Host = ({
 
   return (
     <fieldset className="mb-4">
-      <legend className="border-bottom mb-3">Host information</legend>
-      <p>Enter information about the host for your trip.</p>
+      <legend className="border-bottom mb-3">{hostString} information</legend>
+      <p>
+        Enter information about the {hostString.toLowerCase()} for your trip.
+      </p>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label className="mb-0">Trip host</label>
+          <label className="mb-0">Trip {hostString.toLowerCase()}</label>
         </div>
         <div className="col-sm-8">
           <input
@@ -86,7 +90,9 @@ const Host = ({
             }}
           />
           {errors.host ? (
-            <div className="invalid-feedback">Please provide a valid host.</div>
+            <div className="invalid-feedback">
+              Please provide a valid {hostString.toLowerCase()}.
+            </div>
           ) : null}
         </div>
       </div>
@@ -119,6 +125,7 @@ const Host = ({
           <input
             type="text"
             name="housingAddress"
+            placeholder="If staying in named hotel, include it with the street address"
             onBlur={() => errorCheck('housingAddress')}
             className={errors.housingAddress ? invalid : valid}
             value={Trip.housingAddress}
@@ -139,6 +146,7 @@ Host.propTypes = {
   allowInternational: PropTypes.bool,
   errorCheck: PropTypes.func,
   errors: PropTypes.object,
+  hostLabel: PropTypes.string,
   touched: PropTypes.object,
 }
 
