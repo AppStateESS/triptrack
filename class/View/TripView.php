@@ -69,9 +69,18 @@ class TripView extends AbstractView
     {
         $settings = SettingFactory::getAll();
         $vars['allowInternational'] = (bool) $settings['allowInternational'];
+        $vars['allowUpload'] = (bool) $settings['allowUpload'];
+        $vars['approvalRequired'] = (bool) $settings['approvalRequired'];
+        $vars['bannerImport'] = (bool) $settings['bannerImport'];
         $vars['contactBannerRequired'] = (bool) $settings['contactBannerRequired'];
         $vars['defaultState'] = $settings['defaultState'];
         $vars['defaultCountry'] = $settings['defaultCountry'];
+        $vars['hostLabel'] = $settings['hostLabel'];
+        $vars['organizationLabel'] = $settings['organizationLabel'];
+        $vars['siteContactName'] = $settings['siteContactName'];
+        $vars['siteContactEmail'] = $settings['siteContactEmail'];
+        $vars['uploadRequired'] = (bool) $settings['uploadRequired'];
+        $vars['uploadInstructions'] = $settings['uploadInstructions'];
         return $vars;
     }
 
