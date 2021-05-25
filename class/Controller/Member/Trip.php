@@ -9,6 +9,7 @@ namespace triptrack\Controller\Member;
 
 use triptrack\Controller\SubController;
 use triptrack\Factory\TripFactory;
+use triptrack\Factory\SettingFactory;
 use Canopy\Request;
 
 class Trip extends SubController
@@ -38,6 +39,13 @@ class Trip extends SubController
             }
         }
         return $trip->getVariablesAsValue(false, null, true);
+    }
+
+    public function post(Request $request)
+    {
+        $trip = TripFactory::post($request, SettingFactory::getApprovalRequired());
+        TripFactory::save($trip);
+        return ['success' => true, 'id' => $trip->id];
     }
 
 }
