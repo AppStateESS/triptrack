@@ -32,10 +32,12 @@ class Controller extends \phpws2\Http\Controller
     private function loadRole()
     {
         $userId = \Current_User::getId();
-        if (\Current_User::allow('triptrack')) {
-            $this->role = new \triptrack\Role\Admin($userId);
-        } elseif (MemberFactory::currentUserIsMember()) {
-            $this->role = new \triptrack\Role\Member();
+        if ($userId) {
+            if (\Current_User::allow('triptrack')) {
+                $this->role = new \triptrack\Role\Admin($userId);
+            } elseif (MemberFactory::currentUserIsMember()) {
+                $this->role = new \triptrack\Role\Member($userId);
+            }
         } else {
             $this->role = new \triptrack\Role\User;
         }
@@ -63,6 +65,8 @@ class Controller extends \phpws2\Http\Controller
         $subController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
+            throw new \triptrack\Exception\PrivilegeMissing;
+        } elseif ($roleController === 'Member' && !$this->role->isMember()) {
             throw new \triptrack\Exception\PrivilegeMissing;
         }
 
