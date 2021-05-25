@@ -56,6 +56,9 @@ const tripSettings = {
     secContactName: true,
     secContactEmail: true,
     secContactPhone: true,
+    timeDeparting: true,
+    timeEventStart: true,
+    timeReturn: true,
   },
   no: {
     submitName: false,
@@ -68,6 +71,9 @@ const tripSettings = {
     secContactName: false,
     secContactEmail: false,
     secContactPhone: false,
+    timeDeparting: false,
+    timeEventStart: false,
+    timeReturn: false,
   },
 }
 
