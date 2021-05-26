@@ -26,7 +26,7 @@ class SettingFactory
                         'approvalRequired');
         $settings['defaultCountry'] = Settings::get('triptrack',
                         'defaultCountry');
-        $settings['bannerImport'] = Settings::get('triptrack',
+        $settings['bannerImport'] = (bool) Settings::get('triptrack',
                         'bannerImport');
         $settings['defaultState'] = Settings::get('triptrack', 'defaultState');
         $settings['siteContactName'] = Settings::get('triptrack',
@@ -46,18 +46,24 @@ class SettingFactory
                         'uploadInstructions');
         $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
                         'contactBannerRequired');
+        $settings['secondaryRequired'] = (bool) Settings::get('triptrack', 'secondaryRequired');
+        $settings['accommodationRequired'] = (bool) Settings::get('triptrack', 'accommodationRequired');
         return $settings;
+    }
+
+    public static function getSecondaryRequired()
+    {
+        return Settings::get('triptrack', 'secondaryRequired');
+    }
+
+    public static function getAccommodationRequired()
+    {
+        return Settings::get('triptrack', 'accommodationRequired');
     }
 
     public static function getApprovalRequired()
     {
         return Settings::get('triptrack', 'approvalRequired');
-    }
-
-    public static function saveContact($name, $email)
-    {
-        Settings::set('triptrack', 'contactName', $name);
-        Settings::set('triptrack', 'contactEmail', $email);
     }
 
     public static function getContact()
@@ -105,6 +111,8 @@ class SettingFactory
             case 'allowUpload':
             case 'uploadRequired':
             case 'contactBannerRequired':
+            case 'accommodationRequired':
+            case 'secondaryRequired':
                 Settings::set('triptrack', $varName, (bool) $value);
                 break;
 
