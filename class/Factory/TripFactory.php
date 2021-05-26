@@ -173,6 +173,75 @@ class TripFactory extends BaseFactory
         $db->delete();
     }
 
+    public static function errorCheck(Trip $trip)
+    {
+        $keys = array_keys($trip->getStringVars());
+        $errors = [];
+
+        foreach ($keys as $tripVar) {
+            switch ($tripVar) {
+                case 'contactName':
+                case 'contactEmail':
+                case 'contactPhone':
+                case 'destinationCity':
+                case 'destinationCountry':
+                case 'destinationState':
+                case 'host':
+                case 'housingAddress':
+                case 'submitDate':
+                case 'submitEmail':
+                case 'submitName':
+                case 'submitUsername':
+                case 'visitPurpose':
+                    if ($trip->isEmpty($tripVar)) {
+                        $errors[$tripVar] = 'empty';
+                    }
+                    break;
+
+                case 'organizationId':
+                    if ($trip->isEmpty($tripVar)) {
+                        $errors[$tripVar] = 'org_unset';
+                    }
+                    break;
+
+                case 'timeDeparting':
+                    if ($trip->isEmpty($tripVar)) {
+                        $errors[$tripVar] = 'empty';
+                    }
+                    if ($trip->timeDeparting > $trip->timeEventStarts) {
+                        $errors['timeDeparting'] = 'after';
+                    }
+                    break;
+                case 'timeEventStarts':
+                    if ($trip->isEmpty($tripVar)) {
+                        $errors[$tripVar] = 'empty';
+                    }
+                    if ($trip->timeEventStarts > $trip->timeDeparting) {
+                        $errors['timeEventStarts'] = 'after';
+                    }
+                    break;
+                case 'timeReturn':
+                    if ($trip->isEmpty('timeReturn')) {
+                        $errors['timeReturn'] = 'empty';
+                    }
+                    break;
+
+                case 'secContactName':
+                case 'secContactEmail':
+                case 'secContactPhone':
+                    if (SettingFactory::getSecondaryRequired() && $trip->isEmpty($tripVar)) {
+                        $errors[$tripVar] = 'empty';
+                    }
+                    break;
+            }
+        }
+        if (empty($errors)) {
+            return true;
+        } else {
+            return $errors;
+        }
+    }
+
     public static function delete(int $tripId)
     {
         $db = Database::getDB();
