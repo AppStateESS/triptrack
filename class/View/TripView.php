@@ -81,6 +81,8 @@ class TripView extends AbstractView
         $vars['siteContactEmail'] = $settings['siteContactEmail'];
         $vars['uploadRequired'] = (bool) $settings['uploadRequired'];
         $vars['uploadInstructions'] = $settings['uploadInstructions'];
+        $vars['accommodationRequired'] = (bool) $settings['accommodationRequired'];
+        $vars['secondaryRequired'] = (bool) $settings['secondaryRequired'];
         return $vars;
     }
 
