@@ -72,6 +72,18 @@ const SettingList = ({currentSettings}) => {
 
   useEffect(() => {
     if (rendered.current) {
+      save('secondaryRequired')
+    }
+  }, [settings.secondaryRequired])
+
+  useEffect(() => {
+    if (rendered.current) {
+      save('accommodationRequired')
+    }
+  }, [settings.accommodationRequired])
+
+  useEffect(() => {
+    if (rendered.current) {
       save('defaultCountry')
     }
   }, [settings.defaultCountry])
@@ -311,6 +323,43 @@ const SettingList = ({currentSettings}) => {
       </div>
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
+          <strong>Secondary contact required</strong>
+          <br />
+          <small className="form-text text-muted">
+            If enabled, trips require an additional contact.
+          </small>
+        </div>
+        <div className="col-sm-6">
+          <BigCheckbox
+            label={settings.secondaryRequired ? 'Yes' : 'No'}
+            checked={settings.secondaryRequired}
+            handle={() => {
+              updateCheck('secondaryRequired')
+            }}
+          />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Accommodation required</strong>
+          <br />
+          <small className="form-text text-muted">
+            If enabled, trips require an address where the members will be
+            staying during the trip.
+          </small>
+        </div>
+        <div className="col-sm-6">
+          <BigCheckbox
+            label={settings.accommodationRequired ? 'Yes' : 'No'}
+            checked={settings.accommodationRequired}
+            handle={() => {
+              updateCheck('accommodationRequired')
+            }}
+          />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
           <strong>Allow uploads</strong>
           <br />
           <small className="form-text text-muted">
@@ -327,6 +376,7 @@ const SettingList = ({currentSettings}) => {
           />
         </div>
       </div>
+
       {uploadRequiredRow()}
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
