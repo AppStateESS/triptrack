@@ -64,7 +64,10 @@ const Submitter = ({
         organizationLabel={organizationLabel}
       />
       <div className="row form-group">
-        <div className="col-sm-4">Your name</div>
+        <div className="col-sm-4">
+          {role == 'Member' ? 'Your name' : 'Submitter name'}
+          <span className="text-danger">*</span>
+        </div>
         <div className="col-sm-8">
           {submitName()}
           {errors.submitName ? (
@@ -73,7 +76,10 @@ const Submitter = ({
         </div>
       </div>
       <div className="row form-group">
-        <div className="col-sm-4">Your email</div>
+        <div className="col-sm-4">
+          {role == 'Member' ? 'Your email' : 'Submitter email'}
+          <span className="text-danger">*</span>
+        </div>
         <div className="col-sm-8">
           {submitEmail()}
 
@@ -96,6 +102,7 @@ Submitter.propTypes = {
   organizationLabel: PropTypes.string,
   touched: PropTypes.object,
   role: PropTypes.string,
+  organizationList: PropTypes.array,
 }
 
 export default Submitter
