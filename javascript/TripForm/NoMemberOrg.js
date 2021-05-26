@@ -8,7 +8,7 @@ const NoMemberOrg = ({organizationLabel}) => {
       <h3>Sorry</h3>
       <p>
         Before you can create a trip, you must have been assigned to a{' '}
-        {organizationLabel}.
+        {organizationLabel}. Contact your administrator.
       </p>
     </div>
   )
