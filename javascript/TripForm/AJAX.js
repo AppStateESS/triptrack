@@ -14,7 +14,6 @@ const getTrip = (tripId, role) => {
 const postTrip = (tripObj, role) => {
   const id = tripObj.id > 0 ? tripObj.id : ''
   const url = `triptrack/${role}/Trip/${id}`
-  console.log(url)
   return axios({
     method: tripObj.id > 0 ? 'put' : 'post',
     url,
