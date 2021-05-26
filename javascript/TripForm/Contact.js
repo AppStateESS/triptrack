@@ -2,7 +2,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
+const Contact = ({
+  Trip,
+  setFormElement,
+  errors,
+  errorCheck,
+  secondaryRequired,
+}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
 
@@ -19,7 +25,9 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
             </div>
             <div className="card-body">
               <div className="row form-group">
-                <div className="col-sm-4">Name</div>
+                <div className="col-sm-4">
+                  Name <span className="text-danger">*</span>
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -39,7 +47,9 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-sm-4">Email</div>
+                <div className="col-sm-4">
+                  Email <span className="text-danger">*</span>
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -59,7 +69,9 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-sm-4">Phone</div>
+                <div className="col-sm-4">
+                  Phone <span className="text-danger">*</span>
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -92,7 +104,12 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
             </div>
             <div className="card-body">
               <div className="row form-group">
-                <div className="col-sm-4">Name</div>
+                <div className="col-sm-4">
+                  Name{' '}
+                  {secondaryRequired ? (
+                    <span className="text-danger">*</span>
+                  ) : null}
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -112,7 +129,12 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-sm-4">Email</div>
+                <div className="col-sm-4">
+                  Email{' '}
+                  {secondaryRequired ? (
+                    <span className="text-danger">*</span>
+                  ) : null}
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -132,7 +154,12 @@ const Contact = ({Trip, setFormElement, errors, errorCheck}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-sm-4">Phone</div>
+                <div className="col-sm-4">
+                  Phone{' '}
+                  {secondaryRequired ? (
+                    <span className="text-danger">*</span>
+                  ) : null}
+                </div>
                 <div className="col-sm-8">
                   <input
                     type="text"
@@ -167,6 +194,7 @@ Contact.propTypes = {
   Trip: PropTypes.object,
   setFormElement: PropTypes.func,
   errorCheck: PropTypes.func,
+  secondaryRequired: PropTypes.bool,
   errors: PropTypes.object,
 }
 
