@@ -12,6 +12,7 @@ const Host = ({
   errorCheck,
   hostLabel,
   errors,
+  accommodationRequired,
 }) => {
   const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
   const stateList = createOptions(states)
@@ -75,7 +76,10 @@ const Host = ({
       </p>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label className="mb-0">Trip {hostString.toLowerCase()}</label>
+          <label className="mb-0">
+            Trip {hostString.toLowerCase()}
+            <span className="text-danger">*</span>
+          </label>
         </div>
         <div className="col-sm-8">
           <input
@@ -98,7 +102,10 @@ const Host = ({
       </div>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label>{'Destination City' + (statesShown ? ', State' : '')}</label>
+          <label>
+            {'Destination City' + (statesShown ? ', State' : '')}
+            <span className="text-danger">*</span>
+          </label>
         </div>
         <div className="col-sm-5">
           <input
@@ -119,7 +126,12 @@ const Host = ({
       </div>
       <div className="row form-group">
         <div className="col-sm-4">
-          <label>Address of hotel or accommodations</label>
+          <label>
+            Address of hotel or accommodations
+            {accommodationRequired ? (
+              <span className="text-danger">*</span>
+            ) : null}
+          </label>
         </div>
         <div className="col-sm-8">
           <input
@@ -148,6 +160,7 @@ Host.propTypes = {
   errors: PropTypes.object,
   hostLabel: PropTypes.string,
   touched: PropTypes.object,
+  accommodationRequired: PropTypes.bool,
 }
 
 export default Host
