@@ -3,7 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Form from '../TripForm/Form'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired */
 
 const AdminTripForm = (props) => {
   return (
@@ -24,6 +24,8 @@ ReactDOM.render(
     allowInternational={allowInternational}
     contactBannerRequired={contactBannerRequired}
     organizationLabel={organizationLabel}
+    accommodationRequired={accommodationRequired}
+    secondaryRequired={secondaryRequired}
     hostLabel={hostLabel}
     tripId={tripId}
     defaultState={defaultState}
