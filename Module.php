@@ -78,7 +78,9 @@ class Module extends \Canopy\Module implements SettingDefaults
             'siteContactName' => '',
             'siteContactEmail' => '',
             'uploadRequired' => false,
-            'uploadInstructions' => ''
+            'uploadInstructions' => '',
+            'secondaryRequired' => true,
+            'accommodationRequired' => true,
         );
         return $settings;
     }
