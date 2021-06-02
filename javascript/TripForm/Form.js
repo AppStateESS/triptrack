@@ -22,6 +22,8 @@ const Form = ({
   allowApproval,
   hostLabel,
   organizationLabel,
+  accommodationRequired,
+  secondaryRequired,
 }) => {
   const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [message, setMessage] = useState(null)
@@ -41,6 +43,7 @@ const Form = ({
     }
     setLoading(false)
   }
+
   useEffect(() => {
     loadOrganizations()
   }, [])
@@ -97,14 +100,30 @@ const Form = ({
     let errorFound = false
     switch (name) {
       case 'contactPhone':
-      case 'secContactPhone':
         errorFound = phoneMatch(name)
         break
 
-      case 'contactEmail':
+      case 'secContactPhone':
+        if (secondaryRequired || Trip.secContactPhone.length > 0) {
+          errorFound = phoneMatch(name)
+        }
+        break
+
       case 'secContactEmail':
+        if (secondaryRequired || Trip.secContactEmail.length > 0) {
+          errorFound = emailMatch(name)
+        }
+        break
+
+      case 'contactEmail':
       case 'submitEmail':
         errorFound = emailMatch(name)
+        break
+
+      case 'secContactName':
+        if (secondaryRequired) {
+          errorFound = emailMatch('secContactName')
+        }
         break
 
       default:
@@ -149,9 +168,19 @@ const Form = ({
     const promise = postTrip(Trip, role)
     promise
       .then((response) => {
-        //backup.clear()
-        const url = `triptrack/${role}/Trip/${response.data.id}`
-        location.href = url
+        if (response.data.success) {
+          //backup.clear()
+          const url = `triptrack/${role}/Trip/${response.data.id}`
+          //location.href = url
+        } else {
+          console.log('set errors')
+          const errClone = Object.assign({}, errors)
+          const errorResult = Object.keys(errClone)
+          errorResult.forEach((element) => {
+            errClone[element] = true
+          })
+          setErrors(errClone)
+        }
       })
       .catch((error) => {
         console.log('Error:', error)
@@ -170,7 +199,6 @@ const Form = ({
     }
   }
   const canSave = saveReady(ready)
-  console.log(ready)
   //put in Submitter: backup={backup}
   return (
     <div>
@@ -194,6 +222,7 @@ const Form = ({
         Trip={Trip}
         setFormElement={setFormElement}
         allowInternational={allowInternational}
+        accommodationRequired={accommodationRequired}
         errorCheck={errorCheck}
         hostLabel={hostLabel}
         errors={errors}
@@ -204,6 +233,7 @@ const Form = ({
         setFormElement={setFormElement}
         contactBannerRequired={contactBannerRequired}
         errorCheck={errorCheck}
+        secondaryRequired={secondaryRequired}
         errors={errors}
       />
       <a id="schedule-info"></a>
@@ -212,7 +242,7 @@ const Form = ({
         <button
           className="btn btn-success"
           onClick={saveTrip}
-          disabled={!canSave}>
+          disabled={false && !canSave}>
           {canSave ? 'Save and continue' : 'Fill in all fields above'}
         </button>
       </div>
@@ -230,6 +260,8 @@ Form.propTypes = {
   allowApproval: PropTypes.bool,
   hostLabel: PropTypes.string,
   organizationLabel: PropTypes.string,
+  accommodationRequired: PropTypes.bool,
+  secondaryRequired: PropTypes.bool,
 }
 
 export default Form
