@@ -10,6 +10,7 @@ namespace triptrack\View;
 use triptrack\Factory\SettingFactory;
 use phpws2\Database;
 use triptrack\Factory\TripFactory;
+use triptrack\Resource\Trip;
 
 class TripView extends AbstractView
 {
@@ -17,6 +18,15 @@ class TripView extends AbstractView
     public function listHtml()
     {
         return $this->dashboard('trip', 'TripList');
+    }
+
+    /**
+     * Member trip create button for home screen
+     * @return string
+     */
+    public static function createButton()
+    {
+        return '<a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a>';
     }
 
     public function adminForm(int $tripId = 0)
@@ -84,6 +94,18 @@ class TripView extends AbstractView
         $vars['accommodationRequired'] = (bool) $settings['accommodationRequired'];
         $vars['secondaryRequired'] = (bool) $settings['secondaryRequired'];
         return $vars;
+    }
+
+    public function memberView(Trip $trip)
+    {
+        $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
+        $vars = $trip->getStringVars();
+        $vars['organizationName'] = $organization->name;
+        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'User/View.html');
+        return $template->get();
     }
 
 }
