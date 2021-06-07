@@ -4,9 +4,8 @@ import PropTypes from 'prop-types'
 import Organizations from './Organizations'
 
 const Submitter = ({
-  Trip,
+  trip,
   setFormElement,
-  errorCheck,
   organizationLabel,
   organizationList,
   errors,
@@ -14,18 +13,16 @@ const Submitter = ({
 }) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
-
   const submitName = () => {
     if (role === 'Member') {
-      return <strong>{Trip.submitName}</strong>
+      return <strong>{trip.submitName}</strong>
     } else {
       return (
         <input
           type="text"
           name="submitName"
           className={errors.submitName ? invalid : valid}
-          value={Trip.submitName}
-          onBlur={() => errorCheck('submitName')}
+          value={trip.submitName}
           onChange={(e) => {
             setFormElement('submitName', e.target.value)
           }}
@@ -36,15 +33,14 @@ const Submitter = ({
 
   const submitEmail = () => {
     if (role === 'Member') {
-      return <strong>{Trip.submitEmail}</strong>
+      return <strong>{trip.submitEmail}</strong>
     } else {
       return (
         <input
           type="text"
           name="submitEmail"
           className={errors.submitEmail ? invalid : valid}
-          value={Trip.submitEmail}
-          onBlur={() => errorCheck('submitEmail')}
+          value={trip.submitEmail}
           onChange={(e) => {
             setFormElement('submitEmail', e.target.value)
           }}
@@ -58,7 +54,7 @@ const Submitter = ({
       <legend className="border-bottom mb-3">Submitter information</legend>
       <Organizations
         organizationList={organizationList}
-        Trip={Trip}
+        trip={trip}
         setFormElement={setFormElement}
         role={role}
         organizationLabel={organizationLabel}
@@ -95,7 +91,7 @@ const Submitter = ({
 }
 
 Submitter.propTypes = {
-  Trip: PropTypes.object,
+  trip: PropTypes.object,
   setFormElement: PropTypes.func,
   errorCheck: PropTypes.func,
   errors: PropTypes.object,
