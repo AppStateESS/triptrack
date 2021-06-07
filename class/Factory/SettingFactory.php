@@ -51,6 +51,11 @@ class SettingFactory
         return $settings;
     }
 
+    public static function getOrganizationLabel()
+    {
+        return Settings::get('triptrack', 'organizationLabel');
+    }
+
     public static function getSecondaryRequired()
     {
         return Settings::get('triptrack', 'secondaryRequired');
