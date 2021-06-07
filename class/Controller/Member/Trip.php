@@ -43,8 +43,18 @@ class Trip extends SubController
 
     public function viewHtml(Request $request)
     {
-        $trip = TripFactory::build($this->id);
+        $trip = TripFactory::build($this->id, false);
+        if (empty($trip)) {
+            header("HTTP/1.0 404 Not Found");
+            return '<div>The trip you requested does not exist.</div>';
+        }
+
         return $this->view->memberView($trip);
+    }
+
+    public function listHtml()
+    {
+        return $this->view->memberList();
     }
 
     public function post(Request $request)
