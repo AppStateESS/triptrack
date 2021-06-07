@@ -1,0 +1,35 @@
+<?=$approved ? '<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>Approved</div>' : '<div class="alert alert-danger">Not yet approved</div>';?>
+<h2>Travel plan</h2>
+<p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on <?=$submitDate?><br />
+  <strong><?=$organizationLabel?>:</strong> <?=$organizationName?>
+</p>
+<h3>Destination</h3>
+<p><strong>Host:</strong> <?=$host?><br />
+  <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+  <strong>Housing:</strong> <?=$housingAddress?>
+</p>
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Primary contact</h3>
+    <p><?=$contactName?><br />
+      <a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a><br />
+      <a href="tel:+1<?=$contactPhone?>"><?=$contactPhoneFormat?></a>
+    </p>
+  </div>
+  <?php if (!empty($secContactName)):?>
+  <div class="col-sm-6">
+    <h3>Secondary contact</h3>
+    <p>
+      <?=$secContactName?><br />
+      <?=empty($secContactEmail) ? '' : "<a href=\"mailto:$secContactEmail\">$secContactEmail</a><br />"?>
+      <?=empty($secContactPhone) ? '' : "<a href=\"mailto:$secContactPhone\">$secContactPhone</a>"?>
+    </p>
+  </div>
+  <?php endif;?>
+</div>
+<h3>Itinerary</h3>
+<p>
+  <strong>Departing:</strong> <?=$timeDeparting?><br />
+  <strong>Event start:</strong> <?=$timeEventStarts?><br />
+  <strong>Returning:</strong> <?=$timeReturn?><br />
+</p>
