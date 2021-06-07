@@ -88,8 +88,9 @@ class Module extends \Canopy\Module implements SettingDefaults
     public function runTime(Request $request)
     {
         if (\phpws\PHPWS_Core::atHome() && MemberFactory::currentUserIsMember()) {
-            $content = View\TripView::createButton();
-            \Layout::add($content, 'triptrack', 'triptrack-create');
+            $content[] = View\TripView::createButton();
+            $content[] = View\TripView::viewButton();
+            \Layout::add(implode('', $content), 'triptrack', 'triptrack-create');
         }
     }
 
