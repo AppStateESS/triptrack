@@ -6,10 +6,9 @@ import {countries} from '../Share/Countries'
 import {createOptions} from '../Share/CreateOptions'
 
 const Host = ({
-  Trip,
+  trip,
   setFormElement,
   allowInternational,
-  errorCheck,
   hostLabel,
   errors,
   accommodationRequired,
@@ -22,14 +21,14 @@ const Host = ({
   const valid = 'form-control'
 
   const statesShown =
-    (allowInternational && Trip.destinationCountry == 'United States') ||
+    (allowInternational && trip.destinationCountry == 'United States') ||
     !allowInternational
 
   const stateSelect = () => {
     return (
       <select
         className="form-control"
-        value={Trip.destinationState}
+        value={trip.destinationState}
         onChange={(e) => setFormElement('destinationState', e.target.value)}>
         {stateList}
       </select>
@@ -46,7 +45,7 @@ const Host = ({
           <div className="col-sm-4">
             <select
               className="form-control"
-              value={Trip.destinationCountry}
+              value={trip.destinationCountry}
               onChange={(e) =>
                 setFormElement('destinationCountry', e.target.value)
               }>
@@ -87,8 +86,7 @@ const Host = ({
             name="host"
             className={errors.host ? invalid : valid}
             placeholder="Enter the facility name, event, team, group, etc."
-            onBlur={() => errorCheck('host')}
-            value={Trip.host}
+            value={trip.host}
             onChange={(e) => {
               setFormElement('host', e.target.value)
             }}
@@ -96,6 +94,31 @@ const Host = ({
           {errors.host ? (
             <div className="invalid-feedback">
               Please provide a valid {hostString.toLowerCase()}.
+            </div>
+          ) : null}
+        </div>
+      </div>
+      <div className="row form-group">
+        <div className="col-sm-4">
+          <label className="mb-0">
+            Purpose of trip
+            <span className="text-danger">*</span>
+          </label>
+        </div>
+        <div className="col-sm-8">
+          <input
+            type="text"
+            name="visitPurpose"
+            className={errors.visitPurpose ? invalid : valid}
+            placeholder="Reason for traveling"
+            value={trip.visitPurpose}
+            onChange={(e) => {
+              setFormElement('visitPurpose', e.target.value)
+            }}
+          />
+          {errors.visitPurpose ? (
+            <div className="invalid-feedback">
+              Please provide a valid purpose.
             </div>
           ) : null}
         </div>
@@ -111,9 +134,8 @@ const Host = ({
           <input
             type="text"
             name="destinationCity"
-            onBlur={() => errorCheck('destinationCity')}
             className={errors.destinationCity ? invalid : valid}
-            value={Trip.destinationCity}
+            value={trip.destinationCity}
             onChange={(e) => {
               setFormElement('destinationCity', e.target.value)
             }}
@@ -138,9 +160,8 @@ const Host = ({
             type="text"
             name="housingAddress"
             placeholder="If staying in named hotel, include it with the street address"
-            onBlur={() => errorCheck('housingAddress')}
             className={errors.housingAddress ? invalid : valid}
-            value={Trip.housingAddress}
+            value={trip.housingAddress}
             onChange={(e) => {
               setFormElement('housingAddress', e.target.value)
             }}
@@ -153,7 +174,7 @@ const Host = ({
 }
 
 Host.propTypes = {
-  Trip: PropTypes.object,
+  trip: PropTypes.object,
   setFormElement: PropTypes.func,
   allowInternational: PropTypes.bool,
   errorCheck: PropTypes.func,
