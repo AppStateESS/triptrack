@@ -26,7 +26,12 @@ class TripView extends AbstractView
      */
     public static function createButton()
     {
-        return '<a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a>';
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a></div>';
+    }
+
+    public static function viewButton()
+    {
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-primary">See upcoming trips</a></div>';
     }
 
     public function adminForm(int $tripId = 0)
@@ -105,6 +110,16 @@ class TripView extends AbstractView
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/View.html');
+        return $template->get();
+    }
+
+    public function memberList()
+    {
+        $vars['rows'] = TripFactory::list(['submitUsername' => \Current_User::getUsername(),
+                    'order' => 'submitDate']);
+        $vars['hostLabel'] = SettingFactory::getHostLabel();
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'User/List.html');
         return $template->get();
     }
 
