@@ -3,7 +3,7 @@ import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 
 const Organizations = ({
-  Trip,
+  trip,
   setFormElement,
   role,
   organizationLabel,
@@ -34,7 +34,7 @@ const Organizations = ({
         <select
           className="form-control"
           onChange={(e) => setFormElement('organizationId', e.target.value)}
-          value={Trip.organizationId}>
+          value={trip.organizationId}>
           {options}
         </select>
       </div>
@@ -43,11 +43,12 @@ const Organizations = ({
 }
 
 Organizations.propTypes = {
-  Trip: PropTypes.object,
+  trip: PropTypes.object,
   setFormElement: PropTypes.func,
   role: PropTypes.string,
   organizationLabel: PropTypes.string,
   organizationList: PropTypes.array,
+  organizationId: PropTypes.number,
 }
 
 export default Organizations
