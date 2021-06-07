@@ -2,16 +2,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Contact = ({
-  Trip,
-  setFormElement,
-  errors,
-  errorCheck,
-  secondaryRequired,
-}) => {
+const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
-
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">Contact information</legend>
@@ -33,8 +26,7 @@ const Contact = ({
                     type="text"
                     name="contactName"
                     className={errors.contactName ? invalid : valid}
-                    onBlur={() => errorCheck('contactName')}
-                    value={Trip.contactName}
+                    value={trip.contactName}
                     onChange={(e) => {
                       setFormElement('contactName', e.target.value)
                     }}
@@ -55,8 +47,7 @@ const Contact = ({
                     type="text"
                     name="contactEmail"
                     className={errors.contactEmail ? invalid : valid}
-                    onBlur={() => errorCheck('contactEmail')}
-                    value={Trip.contactEmail}
+                    value={trip.contactEmail}
                     onChange={(e) => {
                       setFormElement('contactEmail', e.target.value)
                     }}
@@ -77,12 +68,11 @@ const Contact = ({
                     type="text"
                     name="contactPhone"
                     className={errors.contactPhone ? invalid : valid}
-                    value={Trip.contactPhone}
+                    value={trip.contactPhone}
                     placeholder="###-###-####"
-                    onBlur={() => errorCheck('contactPhone')}
                     onChange={(e) => {
                       const value = e.target.value
-                      if (value.match(/[\d\-\.]+/)) {
+                      if (value.match(/^[\d\-\.]+$/) || value == '') {
                         setFormElement('contactPhone', value)
                       }
                     }}
@@ -115,8 +105,7 @@ const Contact = ({
                     type="text"
                     name="secContactName"
                     className={errors.secContactName ? invalid : valid}
-                    value={Trip.secContactName}
-                    onBlur={() => errorCheck('secContactName')}
+                    value={trip.secContactName}
                     onChange={(e) => {
                       setFormElement('secContactName', e.target.value)
                     }}
@@ -140,8 +129,7 @@ const Contact = ({
                     type="text"
                     name="secContactEmail"
                     className={errors.secContactEmail ? invalid : valid}
-                    value={Trip.secContactEmail}
-                    onBlur={() => errorCheck('secContactEmail')}
+                    value={trip.secContactEmail}
                     onChange={(e) => {
                       setFormElement('secContactEmail', e.target.value)
                     }}
@@ -166,11 +154,10 @@ const Contact = ({
                     name="secContactPhone"
                     className={errors.secContactPhone ? invalid : valid}
                     placeholder="###-###-####"
-                    value={Trip.secContactPhone}
-                    onBlur={() => errorCheck('secContactPhone')}
+                    value={trip.secContactPhone}
                     onChange={(e) => {
                       const value = e.target.value
-                      if (value.match(/[\d\-\.]+/)) {
+                      if (value.match(/^[\d\-\.]+$/) || value == '') {
                         setFormElement('secContactPhone', value)
                       }
                     }}
@@ -191,7 +178,7 @@ const Contact = ({
 }
 
 Contact.propTypes = {
-  Trip: PropTypes.object,
+  trip: PropTypes.object,
   setFormElement: PropTypes.func,
   errorCheck: PropTypes.func,
   secondaryRequired: PropTypes.bool,
