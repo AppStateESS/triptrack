@@ -66,6 +66,11 @@ class SettingFactory
         return Settings::get('triptrack', 'accommodationRequired');
     }
 
+    public static function getHostLabel()
+    {
+        return Settings::get('triptrack', 'hostLabel');
+    }
+
     public static function getApprovalRequired()
     {
         return Settings::get('triptrack', 'approvalRequired');
