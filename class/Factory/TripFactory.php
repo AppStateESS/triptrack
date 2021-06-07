@@ -29,11 +29,11 @@ class TripFactory extends BaseFactory
         $db->delete();
     }
 
-    public static function build(int $id = 0)
+    public static function build(int $id = 0, $throwException = true)
     {
         $trip = new Trip;
         if ($id) {
-            self::load($trip, $id);
+            $trip = self::load($trip, $id, $throwException);
         }
         return $trip;
     }
@@ -69,6 +69,20 @@ class TripFactory extends BaseFactory
         self::save($trip);
     }
 
+    /**
+     * Options
+     * orgId (int): only trips with organization id
+     * memberCount (bool): include a count of members column on return
+     * unapprovedOnly (bool): only returned unapproved trips
+     * search (string): search for string in the host, contact name, secondary
+     *                  contact name, or submit name
+     * submitUsername (string): only return trip submitted using this username
+     * order (string): column to order by
+     * dir (string): direction to order by. order must be set
+     *
+     * @param array $options
+     * @return type
+     */
     public static function list(array $options = [])
     {
         $db = Database::getDB();
@@ -87,7 +101,11 @@ class TripFactory extends BaseFactory
             $db->setGroupBy([$tbl->getField('id')]);
         }
 
-        if ($options['unapprovedOnly']) {
+        if (!empty($options['submitUsername'])) {
+            $tbl->addFieldConditional('submitUsername', $options['submitUsername']);
+        }
+
+        if (!empty($options['unapprovedOnly'])) {
             $tbl->addFieldConditional('approved', 0);
         }
 
@@ -105,7 +123,7 @@ class TripFactory extends BaseFactory
 
         if (!empty($options['order'])) {
             $orderBy = $options['order'];
-            if (!empty($options['dir'])) {
+            if (empty($options['dir'])) {
                 $dir = 'asc';
             }
         } else {
