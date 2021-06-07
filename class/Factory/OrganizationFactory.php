@@ -14,9 +14,12 @@ use triptrack\Resource\Organization;
 class OrganizationFactory extends BaseFactory
 {
 
-    public static function build()
+    public static function build(int $id = 0)
     {
         $org = new Organization;
+        if ($id) {
+            $org = self::load($org, $id);
+        }
         return $org;
     }
 
