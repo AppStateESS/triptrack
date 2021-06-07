@@ -1,23 +1,20 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
-import {defaultTrip, tripSettings, saveReady} from './TripDefaults'
+import {tripSettings} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
 import Submitter from './Submitter'
 import Schedule from './Schedule'
-import Message from '../Share/Message'
-import {getTrip, postTrip, patchApproval} from './AJAX'
+import {postTrip, patchApproval} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
-import {getList} from '../api/Fetch'
-import NoMemberOrg from './NoMemberOrg'
-import NoAdminOrg from './NoAdminOrg'
 
 const Form = ({
+  organizations,
+  defaultTrip,
   allowInternational,
   contactBannerRequired,
-  tripId,
   role,
   allowApproval,
   hostLabel,
@@ -25,39 +22,20 @@ const Form = ({
   accommodationRequired,
   secondaryRequired,
 }) => {
-  const [Trip, setTrip] = useState(Object.assign({}, defaultTrip))
-  const [message, setMessage] = useState(null)
+  const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
-  const [ready, setReady] = useState(Object.assign({}, tripSettings.no))
-  const [organizations, setOrganizations] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  const loadOrganizations = async () => {
-    let response = await getList(`./triptrack/${role}/Organization/`)
-    if (response === false) {
-      throw 'Could not contact server.'
-    } else {
-      if (response.length > 0) {
-        setOrganizations(response)
-      }
-    }
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    loadOrganizations()
-  }, [])
-
+  const [allowSave, setAllowSave] = useState(true)
   const setFormElement = (key, value) => {
     //backup.setItem(key, value)
-    Trip[key] = value
-    setTrip(Object.assign({}, Trip))
+    trip[key] = value
+    setTrip(Object.assign({}, trip))
+    errorCheck(key, value)
   }
 
   const toggleApproval = (toggle) => {
     setFormElement('approved', toggle)
-    if (Trip.id > 0) {
-      patchApproval(toggle, Trip.id)
+    if (trip.id > 0) {
+      patchApproval(toggle, trip.id)
     }
   }
 
@@ -65,7 +43,7 @@ const Form = ({
     if (allowApproval === false) {
       return <span></span>
     }
-    if (Trip.approved) {
+    if (trip.approved) {
       return (
         <div>
           <button
@@ -88,130 +66,116 @@ const Form = ({
     }
   }
 
-  const errorCheck = (name) => {
-    const emailMatch = (valueName) => {
-      return Trip[valueName].match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
+  const errorCheck = (name, value) => {
+    const emailMatch = (value) => {
+      return value.match(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/) === null
     }
 
-    const phoneMatch = (valueName) => {
-      return Trip[valueName].length < 7
+    const phoneMatch = (value) => {
+      return value.replace(/\W/, '').length < 7
     }
 
     let errorFound = false
     switch (name) {
       case 'contactPhone':
-        errorFound = phoneMatch(name)
+        errorFound = phoneMatch(value)
         break
 
       case 'secContactPhone':
-        if (secondaryRequired || Trip.secContactPhone.length > 0) {
-          errorFound = phoneMatch(name)
+        if (secondaryRequired || value.length > 0) {
+          errorFound = phoneMatch(value)
         }
         break
 
       case 'secContactEmail':
-        if (secondaryRequired || Trip.secContactEmail.length > 0) {
-          errorFound = emailMatch(name)
+        if (secondaryRequired || value.length > 0) {
+          errorFound = emailMatch(value)
         }
         break
 
       case 'contactEmail':
       case 'submitEmail':
-        errorFound = emailMatch(name)
+        errorFound = emailMatch(value)
         break
 
       case 'secContactName':
         if (secondaryRequired) {
-          errorFound = emailMatch('secContactName')
+          errorFound = value.length === 0
         }
         break
 
       default:
-        errorFound = Trip[name].length === 0
+        errorFound = value.length === 0
+        break
     }
     errors[name] = errorFound
+    let checkSave = true
+    const errorKeys = Object.keys(errors)
+    errorKeys.forEach((errorName) => {
+      if (errors[errorName]) {
+        checkSave = false
+      }
+    })
+    setAllowSave(checkSave)
     setErrors(Object.assign({}, errors))
-    ready[name] = !errorFound
-    setReady(Object.assign({}, ready))
   }
 
-  useEffect(() => {
-    // if role is member, we get an empty trip with Member information plugged in
-    if (tripId > 0 || role === 'Member') {
-      const promise = getTrip(tripId, role)
-      promise.then((response) => {
-        setTrip(response.data)
-
-        if (response.data.id > 0) {
-          setReady(Object.assign({}, tripSettings.yes))
-        } else {
-          const memberReady = Object.assign({}, tripSettings.no)
-          memberReady.submitEmail = true
-          memberReady.submitName = true
-          memberReady.contactName = true
-          memberReady.contactEmail = true
-          memberReady.contactPhone = true
-          setReady(memberReady)
-        }
-      })
-    }
-  }, [tripId, role])
-
   let title
-  if (Trip.id > 0) {
+  if (trip.id > 0) {
     title = <h3>Update trip</h3>
   } else {
     title = <h3>Create trip</h3>
   }
+  const finalErrorCheck = () => {
+    errorCheck('contactName', trip.contactName)
+    errorCheck('contactEmail', trip.contactEmail)
+    errorCheck('contactPhone', trip.contactPhone)
+    errorCheck('destinationCity', trip.destinationCity)
+    errorCheck('host', trip.host)
+    errorCheck('housingAddress', trip.housingAddress)
+    errorCheck('secContactName', trip.secContactName)
+    errorCheck('secContactEmail', trip.secContactEmail)
+    errorCheck('secContactPhone', trip.secContactPhone)
+    errorCheck('submitName', trip.submitName)
+    errorCheck('submitEmail', trip.submitEmail)
+  }
 
   const saveTrip = () => {
-    const promise = postTrip(Trip, role)
-    promise
-      .then((response) => {
-        if (response.data.success) {
-          //backup.clear()
-          const url = `triptrack/${role}/Trip/${response.data.id}`
-          //location.href = url
-        } else {
-          console.log('set errors')
-          const errClone = Object.assign({}, errors)
-          const errorResult = Object.keys(errClone)
-          errorResult.forEach((element) => {
-            errClone[element] = true
-          })
-          setErrors(errClone)
-        }
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
-  }
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (organizations.length == 0) {
-    if (role === 'Member') {
-      return <NoMemberOrg organizationLabel={organizationLabel} />
-    } else {
-      return <NoAdminOrg />
+    finalErrorCheck()
+    if (allowSave) {
+      const promise = postTrip(trip, role)
+      promise
+        .then((response) => {
+          if (response.data.success) {
+            //backup.clear()
+            const url = `triptrack/${role}/Trip/${response.data.id}`
+            location.href = url
+          } else {
+            const errClone = response.data.errors
+            const errorResult = Object.keys(errClone)
+            errorResult.forEach((element) => {
+              errClone[element] = true
+            })
+            setErrors(errClone)
+          }
+        })
+        .catch((error) => {
+          console.log('Error:', error)
+        })
     }
   }
-  const canSave = saveReady(ready)
+
   //put in Submitter: backup={backup}
   return (
     <div>
       {title}
       <p>Please enter all requested, required information below:</p>
-      <Message message={message} />
       {approvedIcon()}
 
       <a id="submitter-info"></a>
       <Submitter
-        Trip={Trip}
+        trip={trip}
         setFormElement={setFormElement}
-        errorCheck={errorCheck}
         organizationLabel={organizationLabel}
         organizationList={organizations}
         errors={errors}
@@ -219,31 +183,29 @@ const Form = ({
       />
       <a id="host-info"></a>
       <Host
-        Trip={Trip}
+        trip={trip}
         setFormElement={setFormElement}
         allowInternational={allowInternational}
         accommodationRequired={accommodationRequired}
-        errorCheck={errorCheck}
         hostLabel={hostLabel}
         errors={errors}
       />
       <a id="contact-info"></a>
       <Contact
-        Trip={Trip}
+        trip={trip}
         setFormElement={setFormElement}
         contactBannerRequired={contactBannerRequired}
-        errorCheck={errorCheck}
         secondaryRequired={secondaryRequired}
         errors={errors}
       />
       <a id="schedule-info"></a>
-      <Schedule Trip={Trip} setFormElement={setFormElement} />
+      <Schedule trip={trip} setFormElement={setFormElement} />
       <div className="text-center">
         <button
           className="btn btn-success"
           onClick={saveTrip}
-          disabled={false && !canSave}>
-          {canSave ? 'Save and continue' : 'Fill in all fields above'}
+          disabled={!allowSave}>
+          {allowSave ? 'Save and continue' : 'Fill in all fields above'}
         </button>
       </div>
     </div>
@@ -262,6 +224,8 @@ Form.propTypes = {
   organizationLabel: PropTypes.string,
   accommodationRequired: PropTypes.bool,
   secondaryRequired: PropTypes.bool,
+  organizations: PropTypes.array,
+  defaultTrip: PropTypes.object,
 }
 
 export default Form
