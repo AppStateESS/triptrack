@@ -1,27 +1,27 @@
 'use strict'
-import React, {useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
-const Schedule = ({Trip, setFormElement}) => {
+const Schedule = ({trip, setFormElement}) => {
   let departingObj
-  if (Trip.timeDeparting) {
-    departingObj = new Date(Trip.timeDeparting * 1000)
+  if (trip.timeDeparting) {
+    departingObj = new Date(trip.timeDeparting * 1000)
   } else {
     departingObj = new Date()
   }
 
   let eventStarts
-  if (Trip.timeEventStarts) {
-    eventStarts = new Date(Trip.timeEventStarts * 1000)
+  if (trip.timeEventStarts) {
+    eventStarts = new Date(trip.timeEventStarts * 1000)
   } else {
     eventStarts = new Date()
   }
 
   let returning
-  if (Trip.timeReturn) {
-    returning = new Date(Trip.timeReturn * 1000)
+  if (trip.timeReturn) {
+    returning = new Date(trip.timeReturn * 1000)
   } else {
     returning = new Date()
   }
@@ -70,6 +70,6 @@ const Schedule = ({Trip, setFormElement}) => {
   )
 }
 
-Schedule.propTypes = {Trip: PropTypes.object, setFormElement: PropTypes.func}
+Schedule.propTypes = {trip: PropTypes.object, setFormElement: PropTypes.func}
 
 export default Schedule
