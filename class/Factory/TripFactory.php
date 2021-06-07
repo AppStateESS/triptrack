@@ -29,9 +29,12 @@ class TripFactory extends BaseFactory
         $db->delete();
     }
 
-    public static function build()
+    public static function build(int $id = 0)
     {
         $trip = new Trip;
+        if ($id) {
+            self::load($trip, $id);
+        }
         return $trip;
     }
 
