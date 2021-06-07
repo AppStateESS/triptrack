@@ -41,6 +41,12 @@ class Trip extends SubController
         return $trip->getVariablesAsValue(false, null, true);
     }
 
+    public function viewHtml(Request $request)
+    {
+        $trip = TripFactory::build($this->id);
+        return $this->view->memberView($trip);
+    }
+
     public function post(Request $request)
     {
         $trip = TripFactory::post($request, SettingFactory::getApprovalRequired());
