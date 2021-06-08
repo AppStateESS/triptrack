@@ -30,9 +30,16 @@ class MemberFactory extends BaseFactory
 
             if ($member) {
                 $_SESSION['TT_MEMBER_IS_USER'] = $member->username;
+                $_SESSION['TT_MEMBER_ID'] = $member->id;
                 return true;
             } else {
-                $_SESSION['TT_MEMBER_IS_USER'] = '';
+                if (isset($_SESSION['TT_MEMBER_IS_USER'])) {
+                    unset($_SESSION['TT_MEMBER_IS_USER']);
+                }
+
+                if (isset($_SESSION['TT_MEMBER_ID'])) {
+                    unset($_SESSION['TT_MEMBER_ID']);
+                }
                 return false;
             }
         }
