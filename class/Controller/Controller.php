@@ -31,12 +31,12 @@ class Controller extends \phpws2\Http\Controller
 
     private function loadRole()
     {
-        $userId = \Current_User::getId();
-        if ($userId) {
+        if (\Current_User::isLogged()) {
             if (\Current_User::allow('triptrack')) {
                 $this->role = new \triptrack\Role\Admin($userId);
             } elseif (MemberFactory::currentUserIsMember()) {
-                $this->role = new \triptrack\Role\Member($userId);
+                $this->role = new \triptrack\Role\Member(\Current_User::getId());
+                $this->role->memberId = $_SESSION['TT_MEMBER_ID'];
             }
         } else {
             $this->role = new \triptrack\Role\User;
