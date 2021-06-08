@@ -48,12 +48,17 @@ class Trip extends SubController
 
     protected function viewJson()
     {
-        return $this->view->json($this->id);
+        if ((int) $this->id === 0) {
+            $trip = TripFactory::build();
+        } else {
+            $trip = TripFactory::build($this->id);
+        }
+        return $trip->getVariablesAsValue(false, null, true);
     }
 
     protected function viewHtml(Request $request)
     {
-        return $this->view->html($this->id);
+        return $this->view->adminView($this->id);
     }
 
     protected function delete(Request $request)
