@@ -40,7 +40,7 @@ const MemberTripForm = (props) => {
           setView('form')
         }
       })
-      .catch((error) => {
+      .catch(() => {
         setView('error')
       })
   }, [])
