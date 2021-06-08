@@ -237,7 +237,7 @@ class TripFactory extends BaseFactory
                     if ($trip->isEmpty($tripVar)) {
                         $errors[$tripVar] = 'empty';
                     }
-                    if ($trip->timeEventStarts > $trip->timeDeparting) {
+                    if ($trip->timeEventStarts > $trip->timeReturn) {
                         $errors['timeEventStarts'] = 'after';
                     }
                     break;
