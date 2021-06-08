@@ -60,13 +60,14 @@ class Trip extends SubController
     public function post(Request $request)
     {
         $trip = TripFactory::post($request, SettingFactory::getApprovalRequired());
-        $errors = TripFactory::errorCheck($trip);
+        $errorFree = TripFactory::errorCheck($trip);
 
-        if ($errors === true) {
-            TripFactory::save($trip);
+        if ($errorFree === true) {
+            $trip = TripFactory::save($trip);
+            \triptrack\Factory\MemberFactory::addToTrip($this->role->memberId, $trip->id);
             return ['success' => true, 'id' => $trip->id];
         } else {
-            return ['success' => false, 'errors' => $errors];
+            return ['success' => false, 'errors' => $errorFree];
         }
     }
 
