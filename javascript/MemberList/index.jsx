@@ -49,47 +49,52 @@ const MemberList = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    loadOrganizationList()
+    Promise.all([
+      getList('./triptrack/Admin/Organization'),
+      loadTripList(filter.orgId),
+    ]).then((response) => {
+      const orgData = response[0].data
+      setOrganizationList(orgData)
+      if (filter.orgId > 0) {
+        const trip = response[1].data ?? {}
+        setTripList(trip)
+      }
+    })
   }, [])
 
   useEffect(() => {
-    loadTripList(filter.orgId)
+    if (filter.orgId > 0) {
+      loadTripList(filter.orgId).then((response) => setTripList(response.data))
+    }
   }, [filter.orgId])
 
   useEffect(() => {
     updateUrl()
   }, [filter.orgId, filter.tripId])
 
-  const loadOrganizationList = async () => {
-    const response = await getList('./triptrack/Admin/Organization')
-    setOrganizationList(response)
+  const loadTripList = (orgId) => {
+    return getList('./triptrack/Admin/Trip', {
+      orgId,
+    })
   }
 
-  const loadTripList = async (orgId) => {
-    if (orgId > 0) {
-      const response = await getList('./triptrack/Admin/Trip', {
-        orgId,
-      })
-      setTripList(response)
-    }
-  }
-
-  const load = async () => {
+  const load = () => {
     const data = Object.assign({}, filter)
     data.search = encodeURIComponent(search)
-    let response = await getList('./triptrack/Admin/Member/', data)
-    if (response === false) {
-      setMessage('Error: could not load member list')
-      setMessageType('danger')
-      setLoading(false)
-    } else {
-      if (response.length > 0) {
-        setMembers(response)
+    getList('./triptrack/Admin/Member/', data).then((response) => {
+      if (response === false) {
+        setMessage('Error: could not load member list')
+        setMessageType('danger')
+        setLoading(false)
       } else {
-        setMembers([])
+        if (response.data.length > 0) {
+          setMembers(response.data)
+        } else {
+          setMembers([])
+        }
+        setLoading(false)
       }
-      setLoading(false)
-    }
+    })
   }
 
   const updateUrl = () => {
@@ -158,8 +163,7 @@ const MemberList = () => {
           } else if (response.data.status === 'system') {
             setFormMessage(
               <span>
-                Student already in the system. Update their info or
-                cancel.
+                Student already in the system. Update their info or cancel.
               </span>
             )
           }
@@ -213,8 +217,6 @@ const MemberList = () => {
         }
       })
   }
-
-  const handleSuccess = (response) => {}
 
   const resetModal = () => {
     setCurrentMember(Object.assign({}, emptyMember))
