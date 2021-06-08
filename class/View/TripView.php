@@ -50,10 +50,15 @@ class TripView extends AbstractView
         return $template->get();
     }
 
-    public function html(int $tripId)
+    public function adminView(int $tripId)
     {
-        $values = $this->json($tripId);
-        $template = new \phpws2\Template($values);
+        $trip = TripFactory::build($tripId);
+        $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
+        $vars = $trip->getStringVars();
+        $vars['organizationName'] = $organization->name;
+        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
+        $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/View.html');
         return $template->get();
     }
