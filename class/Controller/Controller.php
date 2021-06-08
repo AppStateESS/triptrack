@@ -33,7 +33,7 @@ class Controller extends \phpws2\Http\Controller
     {
         if (\Current_User::isLogged()) {
             if (\Current_User::allow('triptrack')) {
-                $this->role = new \triptrack\Role\Admin($userId);
+                $this->role = new \triptrack\Role\Admin(\Current_User::getId());
             } elseif (MemberFactory::currentUserIsMember()) {
                 $this->role = new \triptrack\Role\Member(\Current_User::getId());
                 $this->role->memberId = $_SESSION['TT_MEMBER_ID'];
