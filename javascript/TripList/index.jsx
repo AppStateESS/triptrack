@@ -23,19 +23,21 @@ const TripList = () => {
     load()
   }, [unapprovedOnly])
 
-  const load = async (useSearch = true) => {
+  const load = (useSearch = true) => {
     setLoading(true)
     setTrips([])
     const options = {search: useSearch ? search : '', unapprovedOnly}
-    let response = await getList('./triptrack/Admin/Trip/', options)
-    if (response === false) {
-      setMessage('Error: could not load trip list')
-      setMessageType('danger')
-      setLoading(false)
-    } else {
-      setTrips(response)
-      setLoading(false)
-    }
+    const promise = getList('./triptrack/Admin/Trip/', options)
+    promise.then((response) => {
+      if (response === false) {
+        setMessage('Error: could not load trip list')
+        setMessageType('danger')
+        setLoading(false)
+      } else {
+        setTrips(response.data)
+        setLoading(false)
+      }
+    })
   }
   const sendSearch = () => {
     load()
