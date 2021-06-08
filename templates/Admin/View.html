@@ -1,35 +1,35 @@
-<h2>Trip: <?=$host?> <?php if ($approved):?>
-  <span class="badge badge-success">Approved</span>
-  <?php else: ?>
-  <span class="badge badge-danger">Not approved</span>
-  <?php endif; ?></h2>
-
-<h3>Time line</h3>
-<table class="table">
-  <tbody>
-    <tr>
-      <td><strong>Departing:</strong> <?=strftime('%c', $timeDeparting)?></td>
-      <td><strong>Event start:</strong> <?=strftime('%c', $timeEventStarts)?></td>
-      <td><strong>Returning:</strong> <?=strftime('%c', $timeReturn)?></td>
-    </tr>
-  </tbody>
-</table>
-
+<?=$approved ? '<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>Approved</div>' : '<div class="float-right w-25 alert alert-danger">Not yet approved</div>';?>
+<h2>Travel plan</h2>
+<p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on <?=$submitDate?><br />
+  <strong><?=$organizationLabel?>:</strong> <?=$organizationName?>
+</p>
 <h3>Destination</h3>
-<p><?=$destinationCity,', ', $destinationState?><?=$destinationCountry ? ", $destinationCountry":null?></p>
-
-<h3>Housing</h3>
-<p><?=$housingAddress?></p>
-
-<p>Submitted by <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on
-  <?=strftime('%l:%M %P, %b. %e, %Y', $submitDate)?></p>
-
-<h3>Contact</h3>
+<p><strong>Host:</strong> <?=$host?><br />
+  <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+  <strong>Housing:</strong> <?=$housingAddress?>
+</p>
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Primary contact</h3>
+    <p><?=$contactName?><br />
+      <a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a><br />
+      <a href="tel:+1<?=$contactPhone?>"><?=$contactPhoneFormat?></a>
+    </p>
+  </div>
+  <?php if (!empty($secContactName)):?>
+  <div class="col-sm-6">
+    <h3>Secondary contact</h3>
+    <p>
+      <?=$secContactName?><br />
+      <?=empty($secContactEmail) ? '' : "<a href=\"mailto:$secContactEmail\">$secContactEmail</a><br />"?>
+      <?=empty($secContactPhone) ? '' : "<a href=\"mailto:$secContactPhone\">$secContactPhone</a>"?>
+    </p>
+  </div>
+  <?php endif;?>
+</div>
+<h3>Itinerary</h3>
 <p>
-  <?=$contactName?> (<a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a>)<br />
-  Phone: <a href="tel:+1<?=preg_replace('/\D/', '', $contactPhone)?>"><?=$contactPhone?></a></p>
-
-<h3>Secondary Contact</h3>
-<p>
-  <?=$secContactName?> (<a href="mailto:<?=$secContactEmail?>"><?=$secContactEmail?></a>)<br />
-  Phone: <a href="tel:+1<?=preg_replace('/\D/', '', $secContactPhone)?>"><?=$secContactPhone?></a></p>
+  <strong>Departing:</strong> <?=$timeDeparting?><br />
+  <strong>Event start:</strong> <?=$timeEventStarts?><br />
+  <strong>Returning:</strong> <?=$timeReturn?><br />
+</p>
