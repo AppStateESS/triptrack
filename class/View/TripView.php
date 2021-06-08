@@ -26,12 +26,12 @@ class TripView extends AbstractView
      */
     public static function createButton()
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a></div>';
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-outline-dark">Create travel plan</a></div>';
     }
 
     public static function viewButton()
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-primary">See upcoming trips</a></div>';
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-outline-dark">See upcoming trips</a></div>';
     }
 
     public function adminForm(int $tripId = 0)
