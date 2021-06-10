@@ -42,8 +42,8 @@ const Form = ({setFormReady, setSuccessFile}) => {
   return (
     <div>
       <p>
-        To import members to TripTrack, you must upload a CSV file with either
-        the following column headers (note the capitalization):
+        To import members to TripTrack, you must upload a CSV file with the
+        following column headers (note the capitalization):
       </p>
       {message.length > 0 ? (
         <div className="alert alert-danger">{message}</div>
