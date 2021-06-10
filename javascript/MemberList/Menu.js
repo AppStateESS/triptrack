@@ -3,6 +3,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const Menu = ({showModal, sendSearch, search, setSearch}) => {
+  const adminOption = (e) => {
+    switch (e.target.value) {
+      case 'newMember':
+        showModal()
+        break
+      case 'addToOrg':
+        break
+      case 'addToTrip':
+        break
+      case 'importMember':
+        break
+    }
+    console.log(e.target.value)
+  }
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-md navbar-light bg-light">
@@ -19,10 +33,24 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
             <li className="nav-item">
+              <select
+                defaultValue="0"
+                className="form-control"
+                onChange={adminOption}>
+                <option value="0" disabled={true}>
+                  Admin options
+                </option>
+                <option value="newMember">Add new member</option>
+                <option value="addToOrg">Add member to organization</option>
+                <option value="addToTrip">Add member to trip</option>
+                <option value="importMember">Import members</option>
+              </select>
+            </li>
+            <li className="nav-item">
               <button
                 className="btn btn-primary btn-sm mr-2"
                 onClick={showModal}>
-                Add member
+                Add new member
               </button>
             </li>
             <li className="nav-item">
