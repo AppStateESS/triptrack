@@ -42,6 +42,12 @@ class Member extends SubController
         return ['success' => true];
     }
 
+    protected function dropFromTripPatch(Request $request)
+    {
+        MemberFactory::dropFromTrip($this->id, $request->pullPatchInteger('tripId'));
+        return ['success' => true];
+    }
+
     protected function getByBannerIdJson(Request $request)
     {
         $bannerId = $request->pullGetInteger('studentBannerId');
