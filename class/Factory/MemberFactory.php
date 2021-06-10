@@ -96,6 +96,15 @@ class MemberFactory extends BaseFactory
         return $db->select();
     }
 
+    public static function dropFromTrip(int $memberId, int $tripId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertotrip');
+        $tbl->addFieldConditional('tripId', $tripId);
+        $tbl->addFieldConditional('memberId', $memberId);
+        $db->delete();
+    }
+
     public static function post(Request $request)
     {
         $member = new Member;
