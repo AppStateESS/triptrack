@@ -52,4 +52,22 @@ const addMember = async (memberId, orgId, tripId) => {
   }
 }
 
-export {getList, sendDelete, getItem, addMember}
+const dropMember = async (memberId, tripId) => {
+  const url = `triptrack/Admin/Member/${memberId}/dropFromTrip`
+  try {
+    const response = await axios.patch(
+      url,
+      {tripId},
+      {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      }
+    )
+    return response
+  } catch (error) {
+    return false
+  }
+}
+
+export {getList, sendDelete, getItem, addMember, dropMember}
