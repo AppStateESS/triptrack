@@ -2,7 +2,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Grid = ({members, edit, deleteRow, filter, add, tripsExist}) => {
+const Grid = ({
+  members,
+  edit,
+  deleteRow,
+  filter,
+  add,
+  tripsExist,
+  dropMember,
+  selectedTripId,
+}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -36,6 +45,21 @@ const Grid = ({members, edit, deleteRow, filter, add, tripsExist}) => {
     )
   }
 
+  const dropMemberButton = (key) => {
+    if (selectedTripId > 0) {
+      return (
+        <button
+          title="Remove member"
+          className="btn btn-sm btn-warning mr-1"
+          onClick={() => {
+            dropMember(members[key].id, selectedTripId)
+          }}>
+          <i className="fas fa-user-times"></i>
+        </button>
+      )
+    }
+  }
+
   const rows = members.map((value, key) => {
     let addMemberButton
     if (filter.tripId === 0) {
@@ -64,6 +88,7 @@ const Grid = ({members, edit, deleteRow, filter, add, tripsExist}) => {
     return (
       <tr key={'gridrow-' + key}>
         <td style={{width: '25%'}}>
+          {dropMemberButton(key)}
           <button
             title="Edit member"
             className="btn btn-sm btn-primary mr-1"
