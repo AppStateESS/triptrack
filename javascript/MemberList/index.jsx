@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import {getList, addMember} from '../api/Fetch'
+import {getList, addMember, dropMember} from '../api/Fetch'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
@@ -231,6 +231,12 @@ const MemberList = () => {
     setCurrentMember(member)
   }
 
+  const dropMemberFromTrip = (memberId, tripId) => {
+    dropMember(memberId, tripId).then(() => {
+      load()
+    })
+  }
+
   const deleteRow = (id) => {
     axios({
       method: 'delete',
@@ -288,6 +294,8 @@ const MemberList = () => {
         tripsExist={tripList.length > 0}
         add={assignMember}
         deleteRow={deleteRow}
+        dropMember={dropMemberFromTrip}
+        selectedTripId={tripId}
         filter={filter}
       />
     )
