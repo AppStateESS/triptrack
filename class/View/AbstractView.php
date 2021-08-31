@@ -90,7 +90,7 @@ abstract class AbstractView
         $react = implode("\n", $script);
         \Layout::addJSHeader($react);
         $content = <<<EOF
-<div id="$view_name"></div>
+<div id="$view_name"><p>Loading page. Please wait.</p></div>
 EOF;
         return $content;
     }
@@ -104,6 +104,8 @@ EOF;
         $vars['dashboard'] = null;
         $orgExists = OrganizationFactory::exists();
         $vars['alert'] = false;
+        $vars['organizationLabel'] = $scriptVars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['hostLabel'] = $scriptVars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
 
         switch ($active) {
             case 'trip':
