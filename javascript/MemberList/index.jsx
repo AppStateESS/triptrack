@@ -12,6 +12,9 @@ import Message from '../Share/Message'
 import OrgTripSelect from '../Share/OrgTripSelect'
 import 'regenerator-runtime'
 import axios from 'axios'
+import PropTypes from 'prop-types'
+
+/* global organizationLabel */
 
 const emptyMember = {
   id: 0,
@@ -23,7 +26,7 @@ const emptyMember = {
   username: '',
 }
 
-const MemberList = () => {
+const MemberList = ({organizationLabel}) => {
   const [organizationList, setOrganizationList] = useState([])
   const [tripList, setTripList] = useState([])
   const [members, setMembers] = useState([])
@@ -354,6 +357,7 @@ const MemberList = () => {
   return (
     <div>
       <Menu
+        organizationLabel={organizationLabel}
         search={search}
         setSearch={setSearch}
         sendSearch={load}
@@ -365,6 +369,7 @@ const MemberList = () => {
           <OrgTripSelect
             setFilter={setFilter}
             filter={filter}
+            organizationLabel={organizationLabel}
             organizations={organizationList}
             trips={tripList}
           />
@@ -376,5 +381,11 @@ const MemberList = () => {
     </div>
   )
 }
+MemberList.propTypes = {
+  organizationLabel: PropTypes.string,
+}
 
-ReactDOM.render(<MemberList />, document.getElementById('MemberList'))
+ReactDOM.render(
+  <MemberList organizationLabel={organizationLabel} />,
+  document.getElementById('MemberList')
+)
