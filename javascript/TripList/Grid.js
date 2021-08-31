@@ -17,7 +17,7 @@ const approvedIcon = (approved) => {
   )
 }
 
-const Grid = ({trips, deleteRow}) => {
+const Grid = ({trips, deleteRow, hostLabel}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -28,40 +28,50 @@ const Grid = ({trips, deleteRow}) => {
     }
   }
 
-  const deleteButton = (key) => {
-    return (
-      <button
-        title="Delete trip"
-        className="btn btn-sm btn-danger"
-        onClick={() => {
-          deleteItem(key)
-        }}>
-        <i className="fas fa-trash"></i>
-      </button>
-    )
-  }
-
   const rows = trips.map((value, key) => {
     return (
       <tr key={'gridrow-' + value.id}>
-        <td style={{width: '15%'}}>
-          <a
-            title="View members"
-            className="btn btn-success btn-sm mr-1"
-            href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}>
-            <i className="fas fa-users"></i>
-          </a>
-          <a
-            title="Edit trip"
-            className="btn btn-sm btn-primary mr-1"
-            href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
-            <i className="fas fa-edit"></i>
-          </a>
-          {deleteButton(key)}
+        <td>
+          <div className="dropdown">
+            <button
+              className="btn btn-outline-dark dropdown-toggle btn-sm"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+              Options
+            </button>
+            <div className="dropdown-menu">
+              <a
+                className="dropdown-item"
+                href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}
+                title="View members">
+                <i className="fas fa-users"></i>&nbsp;Members
+              </a>
+              <a
+                className="dropdown-item"
+                href={`triptrack/Admin/Trip/emailMembers?orgId=${value.organizationId}&tripId=${value.id}`}
+                title="Email members">
+                <i className="fas fa-envelope"></i>&nbsp;Email
+              </a>
+              <a
+                title="Edit trip"
+                className="dropdown-item"
+                href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
+                <i className="fas fa-edit"></i>&nbsp;Edit
+              </a>
+              <a
+                title="Delete trip"
+                className="dropdown-item text-danger"
+                onClick={() => {
+                  deleteItem(key)
+                }}>
+                <i className="fas fa-trash"></i> Delete
+              </a>
+            </div>
+          </div>
         </td>
-        <td className="text-center" style={{width: '10%'}}>
-          {approvedIcon(value.approved)}
-        </td>
+        <td className="text-center">{approvedIcon(value.approved)}</td>
         <td>
           <a href={`./triptrack/Admin/Trip/${value.id}`}>{value.host}</a>
         </td>
@@ -79,10 +89,10 @@ const Grid = ({trips, deleteRow}) => {
       <table className="table table-striped">
         <tbody>
           <tr>
-            <td></td>
-            <th>Approved?</th>
-            <th>Host</th>
-            <th>Departure date</th>
+            <td style={{width: '10%'}}></td>
+            <th style={{width: '10%'}}>Approved?</th>
+            <th>{hostLabel}</th>
+            <th style={{width: '15%'}}>Departure date</th>
             <th>City, State</th>
             <th className="text-right">Members</th>
           </tr>
@@ -98,6 +108,7 @@ Grid.propTypes = {
   edit: PropTypes.func,
   deleteRow: PropTypes.func,
   deity: PropTypes.bool,
+  hostLabel: PropTypes.string,
 }
 
 export default Grid
