@@ -2,7 +2,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({showModal, sendSearch, search, setSearch}) => {
+const Menu = ({
+  showModal,
+  sendSearch,
+  search,
+  setSearch,
+  organizationLabel,
+}) => {
   const adminOption = (e) => {
     switch (e.target.value) {
       case 'newMember':
@@ -15,7 +21,6 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
       case 'importMember':
         break
     }
-    console.log(e.target.value)
   }
   return (
     <div className="mb-3">
@@ -32,7 +37,7 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li className="nav-item">
+            <li className="nav-item mr-2">
               <select
                 defaultValue="0"
                 className="form-control"
@@ -41,7 +46,9 @@ const Menu = ({showModal, sendSearch, search, setSearch}) => {
                   Admin options
                 </option>
                 <option value="newMember">Add new member</option>
-                <option value="addToOrg">Add member to organization</option>
+                <option value="addToOrg">
+                  Add member to {organizationLabel}
+                </option>
                 <option value="addToTrip">Add member to trip</option>
                 <option value="importMember">Import members</option>
               </select>
@@ -101,6 +108,7 @@ Menu.propTypes = {
   sendSearch: PropTypes.func,
   search: PropTypes.string,
   setSearch: PropTypes.func,
+  organizationLabel: PropTypes.string,
 }
 
 Menu.defaultProps = {}
