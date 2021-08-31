@@ -114,10 +114,18 @@ const TripList = () => {
           }}
         />
         <Message message={message} type={messageType} />
-        <Grid trips={trips} edit={update} deleteRow={deleteRow} />
+        <Grid
+          trips={trips}
+          edit={update}
+          deleteRow={deleteRow}
+          hostLabel={hostLabel}
+        />
       </div>
     )
   }
 }
 
-ReactDOM.render(<TripList />, document.getElementById('TripList'))
+ReactDOM.render(
+  <TripList hostLabel={hostLabel} />,
+  document.getElementById('TripList')
+)
