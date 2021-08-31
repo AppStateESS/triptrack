@@ -3,7 +3,13 @@ import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {createOptions} from '../Share/CreateOptions'
 
-const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
+const OrgTripSelect = ({
+  filter,
+  setFilter,
+  organizations,
+  trips,
+  organizationLabel,
+}) => {
   const [tripOptions, setTripOptions] = useState([])
   const [orgOptions, setOrgOptions] = useState([])
 
@@ -25,7 +31,9 @@ const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
   if (organizations.length === 0) {
     content = (
       <div className="alert alert-warning text-center p-1">
-        <a href="./triptrack/Admin/Organization/">No organizations created.</a>
+        <a href="./triptrack/Admin/Organization/">
+          No {organizationLabel}s created.
+        </a>
       </div>
     )
   } else {
@@ -38,7 +46,7 @@ const OrgTripSelect = ({filter, setFilter, organizations, trips}) => {
           onChange={(e) => {
             updateFilter(parseInt(e.target.value), 0)
           }}>
-          <option value="0">Select organization below</option>
+          <option value="0">Select {organizationLabel} below</option>
           {orgOptions}
         </select>
       </div>
