@@ -29,6 +29,11 @@ class TripView extends AbstractView
         return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-outline-dark">Create travel plan</a></div>';
     }
 
+    public function emailMembers(int $organizationId, int $tripId)
+    {
+        return $this->dashboard('trip', 'EmailMembers', ['orgId' => $organizationId, 'tripId' => $tripId]);
+    }
+
     public static function viewButton()
     {
         return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-outline-dark">See upcoming trips</a></div>';
