@@ -41,6 +41,13 @@ class Trip extends SubController
         return $this->view->adminForm();
     }
 
+    protected function emailMembersHtml(Request $request)
+    {
+        $organizationId = $request->pullGetInteger('orgId');
+        $tripId = $request->pullGetInteger('tripId');
+        return $this->view->emailMembers($organizationId, $tripId);
+    }
+
     protected function editHtml()
     {
         return $this->view->adminForm($this->id);
