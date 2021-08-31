@@ -29,8 +29,8 @@ const OrgList = ({deity}) => {
       setMessageType('danger')
       setLoading(false)
     } else {
-      if (response.length > 0) {
-        setOrganizations(response)
+      if (response.data.length > 0) {
+        setOrganizations(response.data)
       }
       setLoading(false)
     }
