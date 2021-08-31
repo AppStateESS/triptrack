@@ -66,4 +66,18 @@ class Trip extends AbstractResource
         parent::__construct();
     }
 
+    public function getVariablesAsValue($return_null = null, $hide = null, $null_as_empty_string = false)
+    {
+        $timeFormat = '%l:%M %p';
+        $dateFormat = '%b %e, %Y';
+        $values = parent::getVariablesAsValue($return_null, $hide, $null_as_empty_string);
+        $formats = ['timeDeparting', 'timeEventStarts', 'timeReturn'];
+        foreach ($formats as $varName) {
+            $unix = $values[$varName];
+            $values['formatted'][$varName] = ['time' => strftime($timeFormat, $unix),
+                'date' => strftime($dateFormat, $unix)];
+        }
+        return $values;
+    }
+
 }
