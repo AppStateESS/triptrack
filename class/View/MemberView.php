@@ -12,12 +12,27 @@ class MemberView extends AbstractView
 
     public function listHtml()
     {
-        return $this->dashboard('member', 'MemberList');
+        return $this->dashboardScript('member', 'MemberList');
     }
 
     public function importForm()
     {
-        return $this->dashboard('member', 'ImportForm');
+        return $this->dashboardScript('member', 'ImportForm');
+    }
+
+    public static function memberTable(array $memberList, bool $isAdmin = false)
+    {
+        if (count($memberList) === 0) {
+            return '<div>No members signed up for trip</div>';
+        }
+        if ($isAdmin) {
+            $filename = 'Admin/MemberListTable.tpl';
+        } else {
+            $filename = 'Member/MemberListTable.tpl';
+        }
+        $template = new \phpws2\Template(['listing' => $memberList]);
+        $template->setModuleTemplate('triptrack', $filename);
+        return $template->get();
     }
 
 }
