@@ -7,9 +7,12 @@
 
 namespace triptrack\View;
 
-use triptrack\Factory\SettingFactory;
 use phpws2\Database;
 use triptrack\Factory\TripFactory;
+use triptrack\Factory\MemberFactory;
+use triptrack\Factory\SettingFactory;
+use triptrack\Factory\OrganizationFactory;
+use triptrack\View\MemberView;
 use triptrack\Resource\Trip;
 
 class TripView extends AbstractView
@@ -17,7 +20,7 @@ class TripView extends AbstractView
 
     public function listHtml()
     {
-        return $this->dashboard('trip', 'TripList');
+        return $this->dashboardScript('trip', 'TripList');
     }
 
     /**
@@ -31,7 +34,7 @@ class TripView extends AbstractView
 
     public function emailMembers(int $organizationId, int $tripId)
     {
-        return $this->dashboard('trip', 'EmailMembers', ['orgId' => $organizationId, 'tripId' => $tripId]);
+        return $this->dashboardScript('trip', 'EmailMembers', ['orgId' => $organizationId, 'tripId' => $tripId]);
     }
 
     public static function viewButton()
@@ -43,7 +46,7 @@ class TripView extends AbstractView
     {
         $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
-        return $this->dashboard('trip', 'AdminTripForm', $vars);
+        return $this->dashboardScript('trip', 'AdminTripForm', $vars);
     }
 
     public function adminView(int $tripId)
@@ -52,11 +55,14 @@ class TripView extends AbstractView
         $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
         $vars = $trip->getStringVars();
         $vars['organizationName'] = $organization->name;
-        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
+        $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true]);
+        $vars['memberList'] = MemberView::memberTable($members, true);
+
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/View.html');
-        return $template->get();
+        return $this->dashboardHTML('trip', $template->get());
     }
 
     public function json(int $tripId)
@@ -109,6 +115,8 @@ class TripView extends AbstractView
         $vars['organizationName'] = $organization->name;
         $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
+        $members = MemberFactory::list(['tripId' => $trip->id]);
+        $vars['memberList'] = MemberView::memberTable($members);
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/View.html');
         return $template->get();
