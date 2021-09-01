@@ -1,13 +1,14 @@
 import axios from 'axios'
+const headers = {
+  'X-Requested-With': 'XMLHttpRequest',
+}
 
 const getTrip = (tripId, role) => {
   const url = `triptrack/${role}/Trip/${tripId}`
   return axios({
     url,
     method: 'get',
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers,
   })
 }
 
@@ -19,26 +20,17 @@ const postTrip = (tripObj, role) => {
     url,
     data: tripObj,
     timeout: 3000,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers,
   })
 }
 
-const patchApproval = (approved, tripId) => {
-  axios({
+const patchApproval = (tripId) => {
+  return axios({
     method: 'patch',
     url: `triptrack/Admin/Trip/${tripId}/approval`,
-    data: {approved},
     timeout: 3000,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers,
   })
-    .then((response) => {})
-    .catch((error) => {
-      console.log('Error:', error)
-    })
 }
 
 export {getTrip, postTrip, patchApproval}
