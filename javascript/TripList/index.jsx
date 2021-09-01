@@ -116,6 +116,7 @@ const TripList = () => {
         <Message message={message} type={messageType} />
         <Grid
           trips={trips}
+          load={load}
           edit={update}
           deleteRow={deleteRow}
           hostLabel={hostLabel}
