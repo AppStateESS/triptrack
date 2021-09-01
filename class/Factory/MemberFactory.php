@@ -63,6 +63,17 @@ class MemberFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
+
+        $tbl->addField('email');
+        $tbl->addField('firstName');
+        $tbl->addField('lastName');
+        $tbl->addField('phone');
+
+        if (!empty($options['isAdmin'])) {
+            $tbl->addField('bannerId');
+            $tbl->addField('username');
+        }
+
         if (!empty($options['orderBy'])) {
             $orderBy = $options['orderBy'];
         } else {
