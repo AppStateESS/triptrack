@@ -95,8 +95,9 @@ EOF;
         return $content;
     }
 
-    protected function dashboard(string $active, string $script, array $scriptVars = [])
+    private function menuVars(string $active)
     {
+        $vars = [];
         $vars['tripActive'] = null;
         $vars['orgActive'] = null;
         $vars['memberActive'] = null;
@@ -104,8 +105,8 @@ EOF;
         $vars['dashboard'] = null;
         $orgExists = OrganizationFactory::exists();
         $vars['alert'] = false;
-        $vars['organizationLabel'] = $scriptVars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-        $vars['hostLabel'] = $scriptVars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
+        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
 
         switch ($active) {
             case 'trip':
@@ -123,7 +124,27 @@ EOF;
                 $vars['orgActive'] = ' active';
                 break;
         }
+        return $vars;
+    }
+
+    protected function dashboardHTML(string $active, string $content)
+    {
+        $vars = $this->menuVars($active);
+        $vars['dashboard'] = $content;
+        return $this->dashboardTemplate($vars);
+    }
+
+    protected function dashboardScript(string $active, string $script = null, array $scriptVars = [])
+    {
+        $scriptVars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $scriptVars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
+        $vars = $this->menuVars($active);
         $vars['dashboard'] = $this->scriptView($script, $scriptVars);
+        return $this->dashboardTemplate($vars);
+    }
+
+    private function dashboardTemplate(array $vars)
+    {
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
         return $template->get();
