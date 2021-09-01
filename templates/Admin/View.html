@@ -1,4 +1,4 @@
-<?=$approved ? '<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>Approved</div>' : '<div class="float-right w-25 alert alert-danger">Not yet approved</div>';?>
+<?=$approved ? '<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>&nbsp;Approved</div>' : '<div class="float-right w-25 alert alert-danger">Not yet approved</div>';?>
 <h2>Travel plan</h2>
 <p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on <?=$submitDate?><br />
   <strong><?=$organizationLabel?>:</strong> <?=$organizationName?>
@@ -33,3 +33,5 @@
   <strong>Event start:</strong> <?=$timeEventStarts?><br />
   <strong>Returning:</strong> <?=$timeReturn?><br />
 </p>
+<h3>Attending</h3>
+<?=$memberList?>
