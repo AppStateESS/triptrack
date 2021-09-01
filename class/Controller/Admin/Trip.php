@@ -98,8 +98,7 @@ class Trip extends SubController
 
     protected function approvalPatch(Request $request)
     {
-        $approved = $request->pullPatchBoolean('approved');
-        TripFactory::patch($this->id, 'approved', $approved);
+        TripFactory::patch($this->id, 'approved', true);
         return ['success' => true];
     }
 
