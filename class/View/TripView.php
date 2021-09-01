@@ -43,16 +43,7 @@ class TripView extends AbstractView
     {
         $vars = $this->getSettings();
         $vars['tripId'] = $tripId;
-        $tpl['dashboard'] = $this->scriptView('AdminTripForm', $vars);
-        $orgExists = \triptrack\Factory\OrganizationFactory::exists();
-        $tpl['tripActive'] = ' active';
-        $tpl['orgActive'] = null;
-        $tpl['memberActive'] = null;
-        $tpl['settingActive'] = null;
-        $tpl['alert'] = !$orgExists;
-        $template = new \phpws2\Template($tpl);
-        $template->setModuleTemplate('triptrack', 'Admin/Dashboard.html');
-        return $template->get();
+        return $this->dashboard('trip', 'AdminTripForm', $vars);
     }
 
     public function adminView(int $tripId)
