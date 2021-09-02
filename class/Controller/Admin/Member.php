@@ -48,6 +48,12 @@ class Member extends SubController
         return ['success' => true];
     }
 
+    protected function dropFromOrganizationPatch(Request $request)
+    {
+        MemberFactory::dropFromOrganization($this->id, $request->pullPatchInteger('orgId'));
+        return ['success' => true];
+    }
+
     protected function getByBannerIdJson(Request $request)
     {
         $bannerId = $request->pullGetInteger('studentBannerId');
@@ -96,6 +102,7 @@ class Member extends SubController
     protected function listJson(Request $request)
     {
         $options = [];
+        $options['isAdmin'] = true;
         $options['orgId'] = $request->pullGetString('orgId', true);
         $options['tripId'] = $request->pullGetString('tripId', true);
         $options['search'] = $request->pullGetString('search', true);
