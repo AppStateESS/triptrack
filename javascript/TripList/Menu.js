@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 const Menu = ({
@@ -96,6 +96,9 @@ Menu.propTypes = {
   sendSearch: PropTypes.func,
   search: PropTypes.string,
   setSearch: PropTypes.func,
+  resetSearch: PropTypes.func,
+  unapprovedOnly: PropTypes.bool,
+  setUnapprovedOnly: PropTypes.func,
 }
 
 Menu.defaultProps = {}

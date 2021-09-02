@@ -126,6 +126,7 @@ Grid.propTypes = {
   deleteRow: PropTypes.func,
   deity: PropTypes.bool,
   hostLabel: PropTypes.string,
+  load: PropTypes.func,
 }
 
 export default Grid
