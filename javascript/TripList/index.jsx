@@ -5,21 +5,41 @@ import Grid from './Grid'
 import Menu from './Menu'
 import Message from '../Share/Message'
 import {getList} from '../api/Fetch'
-import axios from 'axios'
+import {deleteTrip} from '../api/TripAjax'
+/* global hostLabel */
 
-const TripList = () => {
+const TripList = ({hostLabel}) => {
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
   const [search, setSearch] = useState('')
   const [unapprovedOnly, setUnapprovedOnly] = useState(false)
+  const [init, setInit] = useState(false)
+
+  let searchTimeout
 
   useEffect(() => {
     load()
+    setInit(true)
   }, [])
 
   useEffect(() => {
+    if (!init) {
+      return
+    }
+    clearTimeout(searchTimeout)
+    if (search.length > 3 || search.length === 0) {
+      searchTimeout = setTimeout(() => {
+        sendSearch()
+      }, 1000)
+    }
+  }, [search])
+
+  useEffect(() => {
+    if (!init) {
+      return
+    }
     load()
   }, [unapprovedOnly])
 
@@ -50,24 +70,10 @@ const TripList = () => {
 
   const deleteRow = (key) => {
     const trip = trips[key]
-    const url = 'triptrack/Admin/Trip/' + trip.id
-    axios({
-      method: 'delete',
-      url,
-      timeout: 3000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+    deleteTrip(trip.id).then(() => {
+      load()
     })
-      .then(() => {
-        load()
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
   }
-
-  const update = () => {}
 
   if (loading) {
     return <div>Loading trips...</div>
@@ -117,7 +123,6 @@ const TripList = () => {
         <Grid
           trips={trips}
           load={load}
-          edit={update}
           deleteRow={deleteRow}
           hostLabel={hostLabel}
         />
