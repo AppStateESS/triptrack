@@ -64,6 +64,7 @@ class MemberFactory extends BaseFactory
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
 
+        $tbl->addField('id');
         $tbl->addField('email');
         $tbl->addField('firstName');
         $tbl->addField('lastName');
@@ -112,6 +113,15 @@ class MemberFactory extends BaseFactory
         $db = Database::getDB();
         $tbl = $db->addTable('trip_membertotrip');
         $tbl->addFieldConditional('tripId', $tripId);
+        $tbl->addFieldConditional('memberId', $memberId);
+        $db->delete();
+    }
+
+    public static function dropFromOrganization(int $memberId, int $orgId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertoorg');
+        $tbl->addFieldConditional('orgId', $tripId);
         $tbl->addFieldConditional('memberId', $memberId);
         $db->delete();
     }
