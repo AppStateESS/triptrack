@@ -1,6 +1,7 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
+import {formatPhone} from '../api/String'
 
 const Grid = ({
   members,
@@ -9,8 +10,11 @@ const Grid = ({
   filter,
   add,
   tripsExist,
-  dropMember,
+  tripApproved,
+  dropMemberFromTrip,
+  dropMemberFromOrg,
   selectedTripId,
+  selectedOrgId,
 }) => {
   const deleteItem = (key) => {
     if (
@@ -22,83 +26,110 @@ const Grid = ({
     }
   }
 
-  const formatPhone = (value) => {
-    var numbers = value.toString().replace(/\D/g, ''),
-      char = {0: '(', 3: ') ', 6: '-'}
-    value = ''
-    for (var i = 0; i < numbers.length; i++) {
-      value += (char[i] || '') + numbers[i]
-    }
-    return value
-  }
-
-  const deleteButton = (key) => {
+  const deleteOption = (key) => {
     return (
-      <button
+      <a
         title="Delete member"
-        className="btn btn-sm btn-danger mr-1"
+        className="dropdown-item text-danger"
         onClick={() => {
           deleteItem(key)
         }}>
-        <i className="fas fa-trash"></i>
-      </button>
+        <i className="fas fa-trash"></i> Delete member
+      </a>
     )
   }
 
-  const dropMemberButton = (key) => {
+  const dropMemberOption = (key) => {
     if (selectedTripId > 0) {
       return (
-        <button
-          title="Remove member"
-          className="btn btn-sm btn-warning mr-1"
+        <a
+          title="Drop from trip"
+          className="dropdown-item"
           onClick={() => {
-            dropMember(members[key].id, selectedTripId)
+            if (tripApproved) {
+              if (
+                confirm(
+                  'Are you sure you want to remove this member from an approved trip?'
+                )
+              ) {
+                dropMemberFromTrip(members[key].id, selectedTripId)
+              }
+            } else {
+              dropMemberFromTrip(members[key].id, selectedTripId)
+            }
           }}>
-          <i className="fas fa-user-times"></i>
-        </button>
+          <i className="fas fa-user-times"></i> Drop from trip
+        </a>
+      )
+    } else if (selectedOrgId > 0) {
+      return (
+        <a
+          title="Drop from organization"
+          className="dropdown-item"
+          onClick={() => {
+            dropMemberFromOrg(members[key].id, selectedOrgId)
+          }}>
+          <i className="fas fa-user-times"></i> Drop from organization
+        </a>
       )
     }
   }
 
-  const rows = members.map((value, key) => {
-    let addMemberButton
+  const addMemberOption = (key) => {
+    let addMemberOption
     if (filter.tripId === 0) {
       if (filter.orgId == 0) {
-        addMemberButton = (
-          <button
-            className="btn btn-success btn-sm"
+        addMemberOption = (
+          <a
+            className="dropdown-item"
             title="Add to organization"
             onClick={() => add(key)}>
-            <i className="fas fa-plus"></i>
-          </button>
+            <i className="fas fa-plus"></i> Add to organization
+          </a>
         )
       } else if (tripsExist) {
-        addMemberButton = (
-          <button
-            className="btn btn-success btn-sm"
+        addMemberOption = (
+          <a
+            className="dropdown-item"
             title="Add to trip"
             onClick={() => {
               add(key)
             }}>
-            <i className="fas fa-plus"></i>
-          </button>
+            <i className="fas fa-plus"></i> Add to trip
+          </a>
         )
       }
     }
+    return addMemberOption
+  }
+
+  const rows = members.map((value, key) => {
     return (
       <tr key={'gridrow-' + key}>
-        <td style={{width: '25%'}}>
-          {dropMemberButton(key)}
-          <button
-            title="Edit member"
-            className="btn btn-sm btn-primary mr-1"
-            onClick={() => {
-              edit(value.id)
-            }}>
-            <i className="fas fa-edit"></i>
-          </button>
-          {deleteButton(key)}
-          {addMemberButton}
+        <td style={{width: '15%'}}>
+          <div className="dropdown">
+            <button
+              className="btn btn-outline-dark dropdown-toggle btn-sm"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+              Options
+            </button>
+            <div className="dropdown-menu">
+              {addMemberOption(key)}
+              {dropMemberOption(key)}
+              <a
+                title="Edit member"
+                className="dropdown-item"
+                onClick={() => {
+                  edit(value.id)
+                }}>
+                <i className="fas fa-edit"></i> Edit member
+              </a>
+              {deleteOption(key)}
+            </div>
+          </div>
         </td>
         <td>
           {value.lastName}, {value.firstName}
@@ -135,6 +166,11 @@ Grid.propTypes = {
   filter: PropTypes.object,
   add: PropTypes.func,
   tripsExist: PropTypes.bool,
+  dropMemberFromTrip: PropTypes.func,
+  dropMemberFromOrg: PropTypes.func,
+  selectedTripId: PropTypes.number,
+  selectedOrgId: PropTypes.number,
+  tripApproved: PropTypes.bool,
 }
 
 export default Grid
