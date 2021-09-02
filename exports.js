@@ -11,4 +11,5 @@ exports.entry = {
   MemberList: exports.APP_DIR + '/MemberList/index.jsx',
   SettingList: exports.APP_DIR + '/SettingList/index.jsx',
   EmailMembers: exports.APP_DIR + '/EmailMembers/index.jsx',
+  Reports: exports.APP_DIR + '/Reports/index.jsx',
 }
