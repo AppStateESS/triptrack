@@ -1,12 +1,14 @@
 import axios from 'axios'
 import 'regenerator-runtime'
 
+const headers = {
+  'X-Requested-With': 'XMLHttpRequest',
+}
+
 const getList = async (url, options) => {
   const response = await axios.get(url, {
     params: options,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers,
   })
   return response
 }
@@ -14,9 +16,7 @@ const getList = async (url, options) => {
 const sendDelete = async (url) => {
   try {
     const response = await axios.delete(url, {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+      headers,
     })
     return response
   } catch (error) {
@@ -24,50 +24,23 @@ const sendDelete = async (url) => {
   }
 }
 
-const getItem = async (itemName, id) => {
-  const url = `triptrack/Admin/${itemName}/${id}`
+const getItem = async (itemName, id, role = 'Admin') => {
+  const url = `triptrack/${role}/${itemName}/${id}`
   return await axios.get(url, {
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
+    headers,
   })
 }
 
-// Move this out
-const addMember = async (memberId, orgId, tripId) => {
-  const url = `triptrack/Admin/Member/${memberId}/add`
-  try {
-    const response = await axios.patch(
-      url,
-      {orgId, tripId},
-      {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      }
-    )
-    return response
-  } catch (error) {
-    return false
-  }
+const postItem = async (item, itemName, role = 'Admin') => {
+  const url = `triptrack/${role}/${itemName}/${item.id > 0 ? item.id : ''}`
+
+  return await axios({
+    method: item.id > 0 ? 'put' : 'post',
+    url,
+    data: item,
+    timeout: 3000,
+    headers,
+  })
 }
 
-const dropMember = async (memberId, tripId) => {
-  const url = `triptrack/Admin/Member/${memberId}/dropFromTrip`
-  try {
-    const response = await axios.patch(
-      url,
-      {tripId},
-      {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-      }
-    )
-    return response
-  } catch (error) {
-    return false
-  }
-}
-
-export {getList, sendDelete, getItem, addMember, dropMember}
+export {getList, sendDelete, getItem, postItem}
