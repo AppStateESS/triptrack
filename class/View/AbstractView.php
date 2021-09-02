@@ -102,6 +102,7 @@ EOF;
         $vars['orgActive'] = null;
         $vars['memberActive'] = null;
         $vars['settingActive'] = null;
+        $vars['reportActive'] = null;
         $vars['dashboard'] = null;
         $orgExists = OrganizationFactory::exists();
         $vars['alert'] = false;
@@ -122,6 +123,9 @@ EOF;
                 break;
             case 'org':
                 $vars['orgActive'] = ' active';
+                break;
+            case 'report':
+                $vars['reportActive'] = ' active';
                 break;
         }
         return $vars;
