@@ -94,6 +94,7 @@ OrgTripSelect.propTypes = {
   organizations: PropTypes.array,
   trips: PropTypes.array,
   loadTrips: PropTypes.func,
+  organizationLabel: PropTypes.string,
 }
 
 export default OrgTripSelect
