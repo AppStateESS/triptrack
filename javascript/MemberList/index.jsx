@@ -1,7 +1,16 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import ReactDOM from 'react-dom'
-import {getList, addMember, dropMember} from '../api/Fetch'
+import {getList} from '../api/Fetch'
+import {
+  addMember,
+  deleteMember,
+  dropFromOrg,
+  dropFromTrip,
+  loadByBannerId,
+  loadByUsername,
+  save,
+} from '../api/MemberAjax'
 import Menu from './Menu'
 import Grid from './Grid'
 import MemberForm from './MemberForm'
@@ -10,8 +19,6 @@ import AddMemberToTrip from './AddMemberToTrip'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 import OrgTripSelect from '../Share/OrgTripSelect'
-import 'regenerator-runtime'
-import axios from 'axios'
 import PropTypes from 'prop-types'
 
 /* global organizationLabel */
@@ -39,6 +46,7 @@ const MemberList = ({organizationLabel}) => {
   const [currentMember, setCurrentMember] = useState(
     Object.assign({}, emptyMember)
   )
+  const [tripApproved, setTripApproved] = useState(false)
   const urlParams = new URLSearchParams(window.location.search)
 
   const tripId =
@@ -52,24 +60,27 @@ const MemberList = ({organizationLabel}) => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    Promise.all([
-      getList('./triptrack/Admin/Organization'),
-      loadTripList(filter.orgId),
-    ]).then((response) => {
-      const orgData = response[0].data
+    getList('./triptrack/Admin/Organization').then((response) => {
+      const orgData = response.data
       setOrganizationList(orgData)
-      if (filter.orgId > 0) {
-        const trip = response[1].data ?? {}
-        setTripList(trip)
-      }
     })
   }, [])
 
   useEffect(() => {
     if (filter.orgId > 0) {
-      loadTripList(filter.orgId).then((response) => setTripList(response.data))
+      loadTripList(filter.orgId).then((response) => {
+        setTripList(response.data)
+      })
     }
   }, [filter.orgId])
+
+  useEffect(() => {
+    tripList.forEach((trip) => {
+      if (filter.tripId == trip.id) {
+        setTripApproved(trip.approved == 1)
+      }
+    })
+  }, [filter.tripId, tripList])
 
   useEffect(() => {
     updateUrl()
@@ -115,110 +126,78 @@ const MemberList = ({organizationLabel}) => {
   }
 
   const saveMember = (orgId = 0) => {
-    let method
-    let url = 'triptrack/Admin/Member'
-    if (currentMember.id > 0) {
-      method = 'put'
-      url += '/' + currentMember.id
-    } else {
-      method = 'post'
-    }
-
-    axios({
-      method,
-      url,
-      data: currentMember,
-      timeout: 3000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+    save(currentMember.id).then((resource) => {
+      const memberId = resource.data.memberId
+      if (orgId > 0) {
+        addMember(memberId, parseInt(orgId), 0)
+      }
+      setShowModal(false)
+      setCurrentMember(Object.assign({}, emptyMember))
+      load()
     })
-      .then((resource) => {
-        const memberId = resource.data.memberId
-        if (orgId > 0) {
-          addMember(memberId, parseInt(orgId), 0)
-        }
-        setShowModal(false)
-        setCurrentMember(Object.assign({}, emptyMember))
-        load()
-      })
-      .catch((error) => {
-        //console.log('Error:', error)
-      })
   }
 
   const loadMember = (bannerId) => {
-    axios
-      .get(
-        `./triptrack/Admin/Member/getByBannerId/?studentBannerId=${bannerId}`,
-        {
-          headers: {'X-Requested-With': 'XMLHttpRequest'},
+    loadByBannerId.then((response) => {
+      if (response.data.success) {
+        if (response.data.status === 'banner') {
+          setFormMessage(
+            <span>
+              Student in Banner but <strong>not saved</strong> to the system.
+            </span>
+          )
+        } else if (response.data.status === 'system') {
+          setFormMessage(
+            <span>
+              Student already in the system. Update their info or cancel.
+            </span>
+          )
         }
-      )
-      .then((response) => {
-        if (response.data.success) {
-          if (response.data.status === 'banner') {
-            setFormMessage(
-              <span>
-                Student in Banner but <strong>not saved</strong> to the system.
-              </span>
-            )
-          } else if (response.data.status === 'system') {
-            setFormMessage(
-              <span>
-                Student already in the system. Update their info or cancel.
-              </span>
-            )
-          }
-          setCurrentMember(response.data.member)
-        } else {
-          setCurrentMember({
-            id: 0,
-            bannerId,
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            username: '',
-          })
-        }
-      })
+        setCurrentMember(response.data.member)
+      } else {
+        setCurrentMember({
+          id: 0,
+          bannerId,
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          username: '',
+        })
+      }
+    })
   }
 
   const loadMemberByUsername = (username) => {
-    axios
-      .get(`./triptrack/Admin/Member/getByUsername/?username=${username}`, {
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-      })
-      .then((response) => {
-        if (response.data.success) {
-          if (response.data.status === 'banner') {
-            setFormMessage(
-              <span>
-                Student in Banner but <strong>not saved</strong> to the system.
-              </span>
-            )
-          } else if (response.data.status === 'system') {
-            setFormMessage(
-              <span>
-                Student already in the system. Update their info and save or
-                cancel.
-              </span>
-            )
-          }
-          setCurrentMember(response.data.member)
-        } else {
-          setCurrentMember({
-            id: 0,
-            bannerId: '',
-            firstName: '',
-            lastName: '',
-            email: '',
-            phone: '',
-            username,
-          })
+    loadByUsername.then((response) => {
+      if (response.data.success) {
+        if (response.data.status === 'banner') {
+          setFormMessage(
+            <span>
+              Student in Banner but <strong>not saved</strong> to the system.
+            </span>
+          )
+        } else if (response.data.status === 'system') {
+          setFormMessage(
+            <span>
+              Student already in the system. Update their info and save or
+              cancel.
+            </span>
+          )
         }
-      })
+        setCurrentMember(response.data.member)
+      } else {
+        setCurrentMember({
+          id: 0,
+          bannerId: '',
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          username,
+        })
+      }
+    })
   }
 
   const resetModal = () => {
@@ -235,26 +214,20 @@ const MemberList = ({organizationLabel}) => {
   }
 
   const dropMemberFromTrip = (memberId, tripId) => {
-    dropMember(memberId, tripId).then(() => {
+    dropFromTrip(memberId, tripId).then(() => {
+      load()
+    })
+  }
+  const dropMemberFromOrg = (memberId, orgId) => {
+    dropFromOrg(memberId, orgId).then(() => {
       load()
     })
   }
 
   const deleteRow = (id) => {
-    axios({
-      method: 'delete',
-      url: './triptrack/Admin/Member/' + id,
-      timeout: 3000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
+    deleteMember(id).then(() => {
+      load()
     })
-      .then(() => {
-        load()
-      })
-      .catch((error) => {
-        //console.log('Error:', error)
-      })
   }
 
   const edit = async (memberId) => {
@@ -291,16 +264,32 @@ const MemberList = ({organizationLabel}) => {
     content = <div>{emptyMessage()}</div>
   } else {
     content = (
-      <Grid
-        members={members}
-        edit={edit}
-        tripsExist={tripList.length > 0}
-        add={assignMember}
-        deleteRow={deleteRow}
-        dropMember={dropMemberFromTrip}
-        selectedTripId={tripId}
-        filter={filter}
-      />
+      <div>
+        <div className="text-center">
+          {filter.tripId > 0 ? (
+            tripApproved ? (
+              <span className="badge badge-success mb-2">Trip approved</span>
+            ) : (
+              <span className="badge badge-danger mb-2">Trip not approved</span>
+            )
+          ) : null}
+        </div>
+        <div>
+          <Grid
+            members={members}
+            edit={edit}
+            tripsExist={tripList.length > 0}
+            add={assignMember}
+            deleteRow={deleteRow}
+            dropMemberFromTrip={dropMemberFromTrip}
+            dropMemberFromOrg={dropMemberFromOrg}
+            tripApproved={tripApproved}
+            selectedTripId={tripId}
+            selectedOrgId={orgId}
+            filter={filter}
+          />
+        </div>
+      </div>
     )
   }
 
