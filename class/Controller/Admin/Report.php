@@ -37,4 +37,14 @@ class Report extends SubController
         return $this->view->list();
     }
 
+    protected function organizationHtml(Request $request)
+    {
+        return $this->view->organization($request->pullGetInteger('orgId'), true);
+    }
+
+    protected function tripHtml(Request $request)
+    {
+        return $this->view->trip($request->pullGetInteger('tripId'), true);
+    }
+
 }
