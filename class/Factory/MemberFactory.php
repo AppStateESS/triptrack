@@ -80,8 +80,8 @@ class MemberFactory extends BaseFactory
         } else {
             $orderBy = 'lastName';
         }
-        if (isset($options['dir'])) {
-            $direction = (int) $options['dir'] ? 'asc' : 'desc';
+        if (isset($options['dir']) && in_array($options['dir'], ['asc', 'desc'])) {
+            $direction = $options['dir'];
         } else {
             $direction = 'asc';
         }
@@ -121,7 +121,7 @@ class MemberFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_membertoorg');
-        $tbl->addFieldConditional('orgId', $tripId);
+        $tbl->addFieldConditional('orgId', $orgId);
         $tbl->addFieldConditional('memberId', $memberId);
         $db->delete();
     }
