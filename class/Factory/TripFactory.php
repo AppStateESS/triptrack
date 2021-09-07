@@ -121,16 +121,15 @@ class TripFactory extends BaseFactory
             $db->addConditional($searchCond7);
         }
 
-        if (!empty($options['order'])) {
-            $orderBy = $options['order'];
+        if (!empty($options['orderBy'])) {
+            $orderBy = $options['orderBy'];
             if (empty($options['dir'])) {
                 $dir = 'asc';
+            } else {
+                $dir = $options['dir'];
             }
-        } else {
-            $orderBy = 'timeDeparting';
-            $dir = 'desc';
+            $tbl->addOrderBy($orderBy, $dir);
         }
-        $tbl->addOrderBy($orderBy, $dir);
         return $db->select();
     }
 

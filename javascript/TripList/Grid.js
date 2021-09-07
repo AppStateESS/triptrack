@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import {patchApproval} from '../api/TripAjax'
 import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import SortButton from '../api/SortButton'
 
 const approvedIcon = (approved, patch) => {
   return approved ? (
@@ -18,7 +19,7 @@ const approvedIcon = (approved, patch) => {
   )
 }
 
-const Grid = ({trips, deleteRow, hostLabel, load}) => {
+const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -108,8 +109,18 @@ const Grid = ({trips, deleteRow, hostLabel, load}) => {
           <tr>
             <td style={{width: '10%'}}></td>
             <th style={{width: '10%'}}>Approved?</th>
-            <th>{hostLabel}</th>
-            <th style={{width: '15%'}}>Departure date</th>
+            <th>
+              {hostLabel}{' '}
+              <SortButton sort={sort} colName="host" handle={setSort} />
+            </th>
+            <th style={{width: '15%'}}>
+              Departure date{' '}
+              <SortButton
+                sort={sort}
+                colName="timeDeparting"
+                handle={setSort}
+              />
+            </th>
             <th>City, State</th>
             <th className="text-right">Members</th>
           </tr>
@@ -127,6 +138,8 @@ Grid.propTypes = {
   deity: PropTypes.bool,
   hostLabel: PropTypes.string,
   load: PropTypes.func,
+  sort: PropTypes.object,
+  setSort: PropTypes.func,
 }
 
 export default Grid

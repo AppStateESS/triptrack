@@ -46,6 +46,7 @@ const MemberList = ({organizationLabel}) => {
   const [currentMember, setCurrentMember] = useState(
     Object.assign({}, emptyMember)
   )
+  const [sort, setSort] = useState({column: '', dir: 0})
   const [tripApproved, setTripApproved] = useState(false)
   const urlParams = new URLSearchParams(window.location.search)
 
@@ -65,6 +66,10 @@ const MemberList = ({organizationLabel}) => {
       setOrganizationList(orgData)
     })
   }, [])
+
+  useEffect(() => {
+    load()
+  }, [sort])
 
   useEffect(() => {
     if (filter.orgId > 0) {
@@ -95,6 +100,16 @@ const MemberList = ({organizationLabel}) => {
   const load = () => {
     const data = Object.assign({}, filter)
     data.search = encodeURIComponent(search)
+    switch (sort.dir) {
+      case 1:
+        data.orderBy = sort.column
+        data.dir = 'asc'
+        break
+      case -1:
+        data.orderBy = sort.column
+        data.dir = 'desc'
+        break
+    }
     getList('./triptrack/Admin/Member/', data).then((response) => {
       if (response === false) {
         setMessage('Error: could not load member list')
@@ -126,7 +141,7 @@ const MemberList = ({organizationLabel}) => {
   }
 
   const saveMember = (orgId = 0) => {
-    save(currentMember.id).then((resource) => {
+    save(currentMember).then((resource) => {
       const memberId = resource.data.memberId
       if (orgId > 0) {
         addMember(memberId, parseInt(orgId), 0)
@@ -286,7 +301,10 @@ const MemberList = ({organizationLabel}) => {
             tripApproved={tripApproved}
             selectedTripId={tripId}
             selectedOrgId={orgId}
+            load={load}
             filter={filter}
+            sort={sort}
+            setSort={setSort}
           />
         </div>
       </div>

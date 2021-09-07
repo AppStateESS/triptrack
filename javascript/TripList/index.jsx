@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 import Grid from './Grid'
 import Menu from './Menu'
@@ -16,11 +16,15 @@ const TripList = ({hostLabel}) => {
   const [search, setSearch] = useState('')
   const [unapprovedOnly, setUnapprovedOnly] = useState(false)
   const [init, setInit] = useState(false)
+  const [sort, setSort] = useState({column: '', dir: 0})
 
-  let searchTimeout
+  let searchTimeout = useRef(null)
 
   useEffect(() => {
     load()
+  }, [sort])
+
+  useEffect(() => {
     setInit(true)
   }, [])
 
@@ -28,11 +32,13 @@ const TripList = ({hostLabel}) => {
     if (!init) {
       return
     }
-    clearTimeout(searchTimeout)
     if (search.length > 3 || search.length === 0) {
-      searchTimeout = setTimeout(() => {
-        sendSearch()
+      searchTimeout.current = setTimeout(() => {
+        load()
       }, 1000)
+    }
+    return () => {
+      clearTimeout(searchTimeout.current)
     }
   }, [search])
 
@@ -46,7 +52,20 @@ const TripList = ({hostLabel}) => {
   const load = (useSearch = true) => {
     setLoading(true)
     setTrips([])
-    const options = {search: useSearch ? search : '', unapprovedOnly}
+    const options = {
+      search: useSearch ? search : '',
+      unapprovedOnly,
+    }
+    switch (sort.dir) {
+      case 1:
+        options.orderBy = sort.column
+        options.dir = 'asc'
+        break
+      case -1:
+        options.orderBy = sort.column
+        options.dir = 'desc'
+        break
+    }
     const promise = getList('./triptrack/Admin/Trip/', options)
     promise.then((response) => {
       if (response === false) {
@@ -58,9 +77,6 @@ const TripList = ({hostLabel}) => {
         setLoading(false)
       }
     })
-  }
-  const sendSearch = () => {
-    load()
   }
 
   const resetSearch = () => {
@@ -96,7 +112,7 @@ const TripList = ({hostLabel}) => {
           {...{
             search,
             setSearch,
-            sendSearch,
+            sendSearch: load,
             resetSearch,
             setUnapprovedOnly,
             unapprovedOnly,
@@ -113,7 +129,7 @@ const TripList = ({hostLabel}) => {
           {...{
             search,
             setSearch,
-            sendSearch,
+            sendSearch: load,
             resetSearch,
             setUnapprovedOnly,
             unapprovedOnly,
@@ -121,6 +137,8 @@ const TripList = ({hostLabel}) => {
         />
         <Message message={message} type={messageType} />
         <Grid
+          setSort={setSort}
+          sort={sort}
           trips={trips}
           load={load}
           deleteRow={deleteRow}

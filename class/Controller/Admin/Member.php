@@ -106,6 +106,8 @@ class Member extends SubController
         $options['orgId'] = $request->pullGetString('orgId', true);
         $options['tripId'] = $request->pullGetString('tripId', true);
         $options['search'] = $request->pullGetString('search', true);
+        $options['orderBy'] = $request->pullGetString('orderBy', true);
+        $options['dir'] = $request->pullGetString('dir', true);
         return MemberFactory::list($options);
     }
 

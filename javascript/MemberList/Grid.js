@@ -2,6 +2,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {formatPhone} from '../api/String'
+import SortButton from '../api/SortButton'
 
 const Grid = ({
   members,
@@ -15,6 +16,8 @@ const Grid = ({
   dropMemberFromOrg,
   selectedTripId,
   selectedOrgId,
+  setSort,
+  sort,
 }) => {
   const deleteItem = (key) => {
     if (
@@ -148,7 +151,10 @@ const Grid = ({
         <tbody>
           <tr>
             <td>&nbsp;</td>
-            <th>Name</th>
+            <th>
+              Name{' '}
+              <SortButton sort={sort} colName="lastName" handle={setSort} />
+            </th>
             <th>Email</th>
             <th>Phone</th>
           </tr>
@@ -171,6 +177,8 @@ Grid.propTypes = {
   selectedTripId: PropTypes.number,
   selectedOrgId: PropTypes.number,
   tripApproved: PropTypes.bool,
+  setSort: PropTypes.func,
+  sort: PropTypes.object,
 }
 
 export default Grid
