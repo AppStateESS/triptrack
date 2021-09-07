@@ -108,6 +108,7 @@ class Member extends SubController
         $options['search'] = $request->pullGetString('search', true);
         $options['orderBy'] = $request->pullGetString('orderBy', true);
         $options['dir'] = $request->pullGetString('dir', true);
+        $options['emailOnly'] = (bool) $request->pullGetBoolean('emailOnly', true);
         return MemberFactory::list($options);
     }
 

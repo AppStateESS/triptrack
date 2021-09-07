@@ -22,3 +22,5 @@ define('TRIPTRACK_ALLOWED_TAGS',
         ['<p>', '<strong>', '<em>', '<blockquote>', '<ul>', '<ol>', '<li>', '<a>']);
 
 define('TRIPTRACK_BANNER_API', '');
+
+define('TRIPTRACK_SWIFT_OLD_VERSION', true);

@@ -9,6 +9,7 @@ namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
 use triptrack\Factory\OrganizationFactory;
+use triptrack\View\EmailView;
 use Canopy\Request;
 
 class Organization extends SubController
@@ -54,6 +55,13 @@ class Organization extends SubController
     {
         $organization = self::load();
         return $organization->getStringVars();
+    }
+
+    protected function emailMembersHtml(Request $request)
+    {
+        $organizationId = $request->pullGetInteger('orgId');
+        $emailView = new EmailView;
+        return $emailView->emailMembers('organization', $organizationId);
     }
 
     protected function delete(Request $request)

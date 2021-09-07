@@ -9,6 +9,7 @@ namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
 use triptrack\Factory\TripFactory;
+use triptrack\View\EmailView;
 use Canopy\Request;
 
 class Trip extends SubController
@@ -47,7 +48,8 @@ class Trip extends SubController
     {
         $organizationId = $request->pullGetInteger('orgId');
         $tripId = $request->pullGetInteger('tripId');
-        return $this->view->emailMembers($organizationId, $tripId);
+        $emailView = new EmailView;
+        return $emailView->emailMembers('organization', $organizationId, $tripId);
     }
 
     protected function editHtml()
