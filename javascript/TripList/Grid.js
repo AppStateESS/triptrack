@@ -104,16 +104,16 @@ const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
 
   return (
     <div>
-      <table className="table table-striped">
+      <table className="table table-striped table-responsive">
         <tbody>
           <tr>
             <td style={{width: '10%'}}></td>
-            <th style={{width: '10%'}}>Approved?</th>
+            <th style={{width: '5%'}}>Approved?</th>
             <th>
               {hostLabel}{' '}
               <SortButton sort={sort} colName="host" handle={setSort} />
             </th>
-            <th style={{width: '15%'}}>
+            <th style={{width: '20%'}}>
               Departure date{' '}
               <SortButton
                 sort={sort}
@@ -121,8 +121,10 @@ const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
                 handle={setSort}
               />
             </th>
-            <th>City, State</th>
-            <th className="text-right">Members</th>
+            <th style={{width: '20%'}}>City, State</th>
+            <th className="text-right" style={{width: '5%'}}>
+              Members
+            </th>
           </tr>
           {rows}
         </tbody>
