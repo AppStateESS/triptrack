@@ -22,7 +22,7 @@ const Menu = ({
           onClick={() => {
             setUnapprovedOnly(false)
           }}>
-          Show all trips
+          Showing unapproved
         </button>
       )
     } else {
@@ -32,7 +32,7 @@ const Menu = ({
           onClick={() => {
             setUnapprovedOnly(true)
           }}>
-          Show unapproved only
+          Showing all
         </button>
       )
     }
