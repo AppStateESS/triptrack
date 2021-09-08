@@ -115,10 +115,17 @@ class TripFactory extends BaseFactory
             $searchCond2 = $db->createConditional($tbl->getField('contactName'), $search, 'like');
             $searchCond3 = $db->createConditional($tbl->getField('secContactName'), $search, 'like');
             $searchCond4 = $db->createConditional($tbl->getField('submitName'), $search, 'like');
-            $searchCond5 = $db->createConditional($searchCond1, $searchCond2, 'or');
-            $searchCond6 = $db->createConditional($searchCond3, $searchCond4, 'or');
-            $searchCond7 = $db->createConditional($searchCond5, $searchCond6, 'or');
-            $db->addConditional($searchCond7);
+            $searchCond5 = $db->createConditional($tbl->getField('destinationCity'), $search, 'like');
+            $searchCond6 = $db->createConditional($tbl->getField('destinationState'), $search, 'like');
+            $searchCond7 = $db->createConditional($tbl->getField('destinationCountry'), $search, 'like');
+
+            $subjoin1 = $db->createConditional($searchCond1, $searchCond2, 'or');
+            $subjoin2 = $db->createConditional($searchCond3, $searchCond4, 'or');
+            $subjoin3 = $db->createConditional($searchCond5, $searchCond6, 'or');
+            $join1 = $db->createConditional($subjoin1, $subjoin2, 'or');
+            $join2 = $db->createConditional($subjoin3, $searchCond7, 'or');
+            $finalSearchCondition = $db->createConditional($join1, $join2, 'or');
+            $db->addConditional($finalSearchCondition);
         }
 
         if (!empty($options['startDate']) && !empty($options['endDate'])) {
