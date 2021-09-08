@@ -9,12 +9,18 @@ import {deleteTrip} from '../api/TripAjax'
 
 /* global hostLabel */
 
+const updateSession = (dateArray) => {
+  localStorage.setItem('startDate', dateArray[0].getTime())
+  localStorage.setItem('endDate', dateArray[1].getTime())
+}
+
 const TripList = ({hostLabel}) => {
   const today = new Date()
-  const nextMonth = new Date()
-  nextMonth.setMonth(today.getMonth() + 1)
-  const lastMonth = new Date()
-  lastMonth.setMonth(today.getMonth() - 1)
+  let startRange = new Date()
+  startRange.setMonth(today.getMonth() - 1)
+  let endRange = new Date()
+  endRange.setMonth(today.getMonth() + 1)
+
   const [trips, setTrips] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState(null)
@@ -23,7 +29,15 @@ const TripList = ({hostLabel}) => {
   const [unapprovedOnly, setUnapprovedOnly] = useState(false)
   const [init, setInit] = useState(false)
   const [sort, setSort] = useState({column: '', dir: 0})
-  const [dateRange, setDateRange] = useState([lastMonth, nextMonth])
+  const [dateRange, setDateRange] = useState(() => {
+    const startDate = localStorage.getItem('startDate')
+    const endDate = localStorage.getItem('endDate')
+    if (startDate && endDate) {
+      return [new Date(parseInt(startDate)), new Date(parseInt(endDate))]
+    } else {
+      return [startRange, endRange]
+    }
+  })
 
   let searchTimeout = useRef(null)
 
@@ -100,9 +114,17 @@ const TripList = ({hostLabel}) => {
     })
   }
   const updateDateRange = (value) => {
-    value[0].setHours(0)
-    value[1].setHours(23, 59, 59)
-    setDateRange(value)
+    if (value === null) {
+      setDateRange([startRange, endRange])
+      updateSession([startRange, endRange])
+      localStorage.removeItem('startDate')
+      localStorage.removeItem('endDate')
+    } else {
+      value[0].setHours(0)
+      value[1].setHours(23, 59, 59)
+      setDateRange(value)
+      updateSession(value)
+    }
   }
 
   const menu = (
@@ -115,22 +137,26 @@ const TripList = ({hostLabel}) => {
         setUnapprovedOnly,
         unapprovedOnly,
         dateRange,
+        setDateRange: updateDateRange,
       }}
-      setDateRange={updateDateRange}
     />
   )
   if (loading) {
     return <div>Loading trips...</div>
   } else if (trips.length === 0) {
     let emptyMessage = (
-      <span>No {unapprovedOnly ? 'unapproved' : ''} trips found.</span>
+      <span>
+        No {unapprovedOnly ? 'unapproved' : ''}
+        trips found.
+      </span>
     )
 
     if (search.length > 0) {
       emptyMessage = (
         <span>
-          No {unapprovedOnly ? 'unapproved' : ''} trips found with for search
-          query: <strong>{search}</strong>.
+          No {unapprovedOnly ? 'unapproved' : ''}
+          trips found with for search query:
+          <strong>{search}</strong>.
         </span>
       )
     }
