@@ -121,6 +121,13 @@ class TripFactory extends BaseFactory
             $db->addConditional($searchCond7);
         }
 
+        if (!empty($options['startDate']) && !empty($options['endDate'])) {
+            $timeCond1 = $db->createConditional($tbl->getField('timeReturn'), $options['startDate'], '>=');
+            $timeCond2 = $db->createConditional($tbl->getField('timeDeparting'), $options['endDate'], '<=');
+            $timeCond3 = $db->createConditional($timeCond1, $timeCond2, 'and');
+            $db->addConditional($timeCond3);
+        }
+
         if (!empty($options['orderBy'])) {
             $orderBy = $options['orderBy'];
             if (empty($options['dir'])) {
@@ -130,6 +137,7 @@ class TripFactory extends BaseFactory
             }
             $tbl->addOrderBy($orderBy, $dir);
         }
+
         return $db->select();
     }
 

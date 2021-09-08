@@ -1,6 +1,8 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
+import DateRangePicker from '@wojtekmaj/react-daterange-picker'
+import './menu.css'
 
 const Menu = ({
   sendSearch,
@@ -9,6 +11,8 @@ const Menu = ({
   resetSearch,
   unapprovedOnly,
   setUnapprovedOnly,
+  setDateRange,
+  dateRange,
 }) => {
   const unapprovedOnlyButton = () => {
     if (unapprovedOnly) {
@@ -48,14 +52,21 @@ const Menu = ({
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li className="nav-item active mr-2">
+            <li className="nav-item mr-2">
               <a
                 className="btn btn-success"
                 href="./triptrack/Admin/Trip/create">
                 Create trip
               </a>
             </li>
-            <li className="nav-item active">{unapprovedOnlyButton()}</li>
+            <li className="nav-item mr-2">{unapprovedOnlyButton()}</li>
+            <li className="nav-item">
+              <DateRangePicker
+                className="form-control"
+                onChange={setDateRange}
+                value={dateRange}
+              />
+            </li>
           </ul>
           <div className="d-flex justify-content-end">
             <div className="input-group">
@@ -99,6 +110,8 @@ Menu.propTypes = {
   resetSearch: PropTypes.func,
   unapprovedOnly: PropTypes.bool,
   setUnapprovedOnly: PropTypes.func,
+  setDateRange: PropTypes.func,
+  dateRange: PropTypes.array,
 }
 
 Menu.defaultProps = {}

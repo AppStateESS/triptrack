@@ -33,6 +33,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
+    "@wojtekmaj/react-daterange-picker": "^3.3.0",
     "assets-webpack-plugin": "^7.1.1",
     "axios": "^0.21.4",
     "babel-loader": "^8.2.2",
