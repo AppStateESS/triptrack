@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <p>Your trip to <?=$city?>, <?php if ($country === 'United States'):?><?=$state?><?php else:?><?=$country?><?php endif;?> has been approved by <?=$contactName?>.</p>
+        <p><a href="<?=$url?>">Click here to review your trip details!</a></p>
+        <p>Please contact us if any details change.</p>
+    </body>
+</html>

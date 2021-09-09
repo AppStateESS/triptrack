@@ -23,7 +23,7 @@ if (!defined('TRIPTRACK_SWIFT_OLD_VERSION')) {
 class EmailFactory
 {
 
-    public static function send(string $subject, string $body, array $emailList)
+    public static function send(string $subject, string $body, array $emailList, $htmlFormat = false)
     {
 
         if (TRIPTRACK_SWIFT_OLD_VERSION) {
@@ -37,10 +37,18 @@ class EmailFactory
         $from = SettingFactory::getContact();
         $message->setSubject($subject);
         $message->setFrom($from['siteContactEmail']);
-        $message->setBody($body);
+        if ($htmlFormat) {
+            $message->setBody($body, 'text/html');
+        } else {
+            $message->setBody($body);
+        }
         $mailer = new \Swift_Mailer($transport);
         foreach ($emailList as $to) {
-            $message->setTo($to['email']);
+            if (is_array($to)) {
+                $message->setTo($to['email']);
+            } else {
+                $message->setTo($to);
+            }
             $mailer->send($message);
         }
     }

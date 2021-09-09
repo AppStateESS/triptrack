@@ -38,6 +38,24 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
+    public static function emailApproval(int $tripId)
+    {
+        $trip = self::build($tripId);
+
+        $subject = 'Your trip has been approved!';
+        $vars['subject'] = $subject;
+        $vars['city'] = $trip->destinationCity;
+        $vars['state'] = $trip->destinationState;
+        $vars['country'] = $trip->destinationCountry;
+        $vars['contactName'] = SettingFactory::getContact()['siteContactName'];
+        $vars['url'] = PHPWS_HOME_HTTP . 'triptrack/Member/Trip/' . $tripId;
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'Admin/ApprovalEmail.html');
+        $body = $template->get();
+
+        EmailFactory::send($subject, $body, [$trip->submitEmail], true);
+    }
+
     public static function loadNewMemberTrip()
     {
         $member = MemberFactory::pullByUsername(\Current_User::getUsername(), true);

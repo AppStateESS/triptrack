@@ -54,7 +54,7 @@ class TripView extends AbstractView
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true]);
         $vars['memberList'] = MemberView::memberTable($members, true);
-
+        $vars['approvalButton'] = $this->scriptView('Approval', ['approvedStatus' => $trip->approved, 'tripId' => $tripId]);
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/View.html');
         return $this->dashboardHTML('trip', $template->get());
