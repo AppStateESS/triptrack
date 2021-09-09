@@ -90,7 +90,7 @@ abstract class AbstractView
         $react = implode("\n", $script);
         \Layout::addJSHeader($react);
         $content = <<<EOF
-<div id="$view_name"><p>Loading page. Please wait.</p></div>
+<div id="$view_name"><p>Loading. Please wait.</p></div>
 EOF;
         return $content;
     }
