@@ -67,7 +67,11 @@ class Controller extends \phpws2\Http\Controller
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
             throw new \triptrack\Exception\PrivilegeMissing;
         } elseif ($roleController === 'Member' && !$this->role->isMember()) {
-            throw new \triptrack\Exception\PrivilegeMissing;
+            if ($this->role->isAdmin()) {
+                throw new \triptrack\Exception\MemberPermission;
+            } else {
+                throw new \triptrack\Exception\PrivilegeMissing;
+            }
         }
 
         if (empty($subController)) {
