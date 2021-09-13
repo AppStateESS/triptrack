@@ -1,4 +1,12 @@
-<?=$approved ? '<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>&nbsp;Approved</div>' : '<div class="float-right w-25 alert alert-danger">Not yet approved</div>';?>
+<?php
+if ($approved):?>
+<div class="float-right alert alert-success w-25"><i class="fas fa-check"></i>&nbsp;Approved</div>
+<?php else:?>
+<div class="float-right text-center">
+    <div class="alert alert-danger mb-1">Not yet approved.</div>
+    <a class="btn btn-primary text-white" href="./triptrack/Member/Trip/<?=$id?>/edit">Update</a>
+</div>
+<?php endif; ?>
 <h2>Travel plan</h2>
 <p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on <?=$submitDate?><br />
   <strong><?=$organizationLabel?>:</strong> <?=$organizationName?>
