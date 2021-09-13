@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <p>
+            <?=$submitName?> has submitted a trip for approval:</p>
+        <p><?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+           <?=$formatted['timeDeparting']['date']?> - <?=$formatted['timeReturn']['date']?>.
+        </p>
+        <p><a href="<?=$siteUrl?>">View current unapproved trip.</a></p>
+    </body>
+</html>

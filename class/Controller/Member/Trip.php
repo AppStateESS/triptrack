@@ -72,6 +72,7 @@ class Trip extends SubController
         if ($errorFree === true) {
             $trip = TripFactory::save($trip);
             \triptrack\Factory\MemberFactory::addToTrip($this->role->memberId, $trip->id);
+            TripFactory::emailTripSubmissionToAdmin($trip, !SettingFactory::getApprovalRequired());
             return ['success' => true, 'id' => $trip->id];
         } else {
             return ['success' => false, 'errors' => $errorFree];

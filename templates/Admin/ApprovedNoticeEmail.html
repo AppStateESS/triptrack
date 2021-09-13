@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <p>
+            <?=$submitName?> has submitted a pre-approved trip:</p>
+        <p><?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+           <?=$formatted['timeDeparting']['date']?> - <?=$formatted['timeReturn']['date']?>.
+        </p>
+        <p>This trip was pre-approved due to system settings.</p>
+        <p><a href="<?=$siteUrl?>">View submitted trip.</a></p>
+    </body>
+</html>
