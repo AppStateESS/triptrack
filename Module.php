@@ -114,7 +114,13 @@ class Module extends \Canopy\Module implements SettingDefaults
             return $controller;
         } catch (\triptrack\Exception\PrivilegeMissing $e) {
             if ($request->isGet() && !$request->isAjax()) {
-                \Current_User::requireLogin();
+                $auth = \Current_User::getAuthorization();
+                if (!empty($auth->login_link)) {
+                    $url = $auth->login_link;
+                } else {
+                    $url = 'index.php?module=users&action=user&command=login_page';
+                }
+                \phpws\PHPWS_Core::reroute($url);
             } else {
                 throw $e;
             }
