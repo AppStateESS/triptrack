@@ -166,16 +166,20 @@ class TripFactory extends BaseFactory
         return $db->select();
     }
 
-    public static function post(Request $request, bool $approved = false)
+    public static function post(Request $request, bool $preapproved = false)
     {
+        $country = $request->pullPostString('destinationCountry', true);
+        if (!$country) {
+            $country = SettingFactory::getDefaultCountry();
+        }
         $trip = new Trip;
-        $trip->approved = $approved;
+        $trip->approved = $preapproved;
         $trip->host = $request->pullPostString('host');
         $trip->contactName = $request->pullPostString('contactName');
         $trip->contactEmail = $request->pullPostString('contactEmail');
         $trip->contactPhone = $request->pullPostString('contactPhone');
         $trip->destinationCity = $request->pullPostString('destinationCity');
-        $trip->destinationCountry = $request->pullPostString('destinationCountry');
+        $trip->destinationCountry = $country;
         $trip->destinationState = $request->pullPostString('destinationState');
         $trip->housingAddress = $request->pullPostString('housingAddress');
         $trip->organizationId = $request->pullPostInteger('organizationId');
@@ -192,25 +196,30 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
-    public static function put(int $id, Request $request)
+    public static function put(int $id, Request $request, bool $isAdmin = false)
     {
-        $trip = new Trip;
-        self::load($trip, $id);
+        $country = $request->pullPostString('destinationCountry', true);
+        if (!$country) {
+            $country = SettingFactory::getDefaultCountry();
+        }
+        $trip = self::build($id);
         $trip->host = $request->pullPutString('host');
         $trip->contactName = $request->pullPutString('contactName');
         $trip->contactEmail = $request->pullPutString('contactEmail');
         $trip->contactPhone = $request->pullPutString('contactPhone');
         $trip->destinationCity = $request->pullPutString('destinationCity');
-        $trip->destinationCountry = $request->pullPutString('destinationCountry');
+        $trip->destinationCountry = $country;
         $trip->destinationState = $request->pullPutString('destinationState');
         $trip->housingAddress = $request->pullPutString('housingAddress');
         $trip->organizationId = $request->pullPutInteger('organizationId');
         $trip->secContactName = $request->pullPutString('secContactName');
         $trip->secContactEmail = $request->pullPutString('secContactEmail');
         $trip->secContactPhone = $request->pullPutString('secContactPhone');
-        $trip->submitEmail = $request->pullPutString('submitEmail');
-        $trip->submitName = $request->pullPutString('submitName');
-        $trip->submitUsername = $request->pullPutString('submitUsername');
+        if ($isAdmin) {
+            $trip->submitEmail = $request->pullPutString('submitEmail');
+            $trip->submitName = $request->pullPutString('submitName');
+            $trip->submitUsername = $request->pullPutString('submitUsername');
+        }
         $trip->timeDeparting = $request->pullPutString('timeDeparting');
         $trip->timeEventStarts = $request->pullPutString('timeEventStarts');
         $trip->timeReturn = $request->pullPutString('timeReturn');
