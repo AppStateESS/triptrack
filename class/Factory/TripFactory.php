@@ -10,6 +10,7 @@ namespace triptrack\Factory;
 use phpws2\Database;
 use Canopy\Request;
 use triptrack\Resource\Trip;
+use triptrack\Factory\SettingFactory;
 
 class TripFactory extends BaseFactory
 {
@@ -36,6 +37,24 @@ class TripFactory extends BaseFactory
             $trip = self::load($trip, $id, $throwException);
         }
         return $trip;
+    }
+
+    public static function emailTripSubmissionToAdmin(Trip $trip, $approved = true)
+    {
+        $vars = $trip->getVariablesAsValue();
+
+        $vars['siteUrl'] = PHPWS_HOME_HTTP . 'triptrack/Admin/Trip/' . $trip->id;
+        $template = new \phpws2\Template($vars);
+
+        if ($approved) {
+            $template->setModuleTemplate('triptrack', 'Admin/ApprovedNoticeEmail.html');
+        } else {
+            $template->setModuleTemplate('triptrack', 'Admin/UnapprovedNoticeEmail.html');
+        }
+        $content = $template->get();
+        $contact = SettingFactory::getEmailAddressOnly();
+        $subject = 'New trip needs review';
+        EmailFactory::send($subject, $content, [$contact], true);
     }
 
     public static function emailApproval(int $tripId)
@@ -166,14 +185,18 @@ class TripFactory extends BaseFactory
         return $db->select();
     }
 
-    public static function post(Request $request, bool $preapproved = false)
+    public static function post(Request $request, bool $approved = false)
     {
         $country = $request->pullPostString('destinationCountry', true);
         if (!$country) {
             $country = SettingFactory::getDefaultCountry();
         }
         $trip = new Trip;
-        $trip->approved = $preapproved;
+        /**
+         * If approval is required, then this is defaultly not approved.
+         * If not required, then the trip is preapproved.
+         */
+        $trip->approved = $approved;
         $trip->host = $request->pullPostString('host');
         $trip->contactName = $request->pullPostString('contactName');
         $trip->contactEmail = $request->pullPostString('contactEmail');
