@@ -52,7 +52,7 @@ const OrgTripSelect = ({
       </div>
     )
     let tripSelect
-    if (trips.length > 0) {
+    if (trips.length > 0 && filter.orgId > 0) {
       tripSelect = (
         <div className="col-5">
           <select
