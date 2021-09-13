@@ -1,6 +1,7 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
+import '../api/pointer.css'
 
 const Grid = ({organizations, edit, deleteRow, deity = false}) => {
   const deleteItem = (key) => {

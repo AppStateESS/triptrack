@@ -6,6 +6,7 @@ import {patchApproval} from '../api/TripAjax'
 import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import SortButton from '../api/SortButton'
+import '../api/pointer.css'
 
 const approvedIcon = (approved, patch) => {
   return approved ? (
