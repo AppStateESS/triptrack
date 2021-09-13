@@ -23,9 +23,10 @@ class Trip extends SubController
         $this->view = new \triptrack\View\TripView();
     }
 
-    protected function listHtml()
+    protected function listHtml(Request $request)
     {
-        return $this->view->listHtml();
+        $unapproved = $request->pullGetBoolean('unapproved', true);
+        return $this->view->listHtml($unapproved);
     }
 
     protected function listJson(Request $request)
