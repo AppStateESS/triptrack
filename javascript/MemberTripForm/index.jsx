@@ -6,6 +6,7 @@ import {getTrip} from '../api/TripAjax'
 import {getList} from '../api/Fetch'
 import Loading from '../api/Loading'
 import NoMemberOrg from './NoMemberOrg'
+import PropTypes from 'prop-types'
 
 /* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired */
 
@@ -19,7 +20,7 @@ const MemberTripForm = (props) => {
   }
 
   useEffect(() => {
-    Promise.all([loadOrganizations(), getTrip(0, 'Member')])
+    Promise.all([loadOrganizations(), getTrip(props.tripId, 'Member')])
       .then((response) => {
         const orgList = response[0].data
         const trip = response[1].data
@@ -72,6 +73,10 @@ const MemberTripForm = (props) => {
     case 'noorg':
       return <NoMemberOrg organizationLabel={organizationLabel} />
   }
+}
+
+MemberTripForm.propTypes = {
+  tripId: PropTypes.number,
 }
 
 ReactDOM.render(
