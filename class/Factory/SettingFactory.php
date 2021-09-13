@@ -83,6 +83,11 @@ class SettingFactory
             'siteContactEmail' => Settings::get('triptrack', 'siteContactEmail')];
     }
 
+    public static function getDefaultCountry()
+    {
+        return Settings::get('triptrack', 'defaultCountry');
+    }
+
     /**
      * Returns a SwiftMailer ready reply-to address
      * @param bool $onlyNoReply If true, return the no-reply version
