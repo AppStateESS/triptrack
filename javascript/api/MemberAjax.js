@@ -1,6 +1,6 @@
 import axios from 'axios'
 import 'regenerator-runtime'
-import {postItem, sendDelete} from './Fetch'
+import {patchItem, postItem, sendDelete} from './Fetch'
 
 const headers = {
   'X-Requested-With': 'XMLHttpRequest',
@@ -57,6 +57,23 @@ const deleteMember = async (id) => {
   return await sendDelete('./triptrack/Admin/Member/' + id)
 }
 
+const restrictMember = async (id) => {
+  return await patchItem(
+    'Member',
+    id,
+    {varName: 'restricted', value: true},
+    'restrict'
+  )
+}
+const unrestrictMember = async (id) => {
+  return await patchItem(
+    'Member',
+    id,
+    {varName: 'restricted', value: false},
+    'unrestrict'
+  )
+}
+
 export {
   addMember,
   dropFromTrip,
@@ -65,4 +82,6 @@ export {
   loadByBannerId,
   loadByUsername,
   deleteMember,
+  restrictMember,
+  unrestrictMember,
 }
