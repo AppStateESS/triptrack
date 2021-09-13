@@ -84,6 +84,8 @@ class Trip extends SubController
     protected function post(Request $request)
     {
         $trip = TripFactory::post($request, true);
+        $trip->submitUsername = \Current_User::getUsername();
+        $trip->submitName = \Current_User::getDisplayName();
 
         $errors = TripFactory::errorCheck($trip);
 
@@ -97,7 +99,7 @@ class Trip extends SubController
 
     protected function put(Request $request)
     {
-        $trip = TripFactory::put($this->id, $request);
+        $trip = TripFactory::put($this->id, $request, true);
         TripFactory::save($trip);
         return ['success' => true, 'id' => $trip->id];
     }
@@ -107,6 +109,19 @@ class Trip extends SubController
         TripFactory::patch($this->id, 'approved', true);
         TripFactory::emailApproval($this->id);
         return ['success' => true];
+    }
+
+    protected function addMembersPost(Request $request)
+    {
+        $tripId = $request->pullPostInteger('tripId');
+        $members = $request->pullPostArray('members');
+        MemberFactory::unlinkTrip($tripId);
+        if (!empty($members) && $tripId > 0) {
+            MemberFactory::addListToTrip($members, $tripId);
+            return ['success' => true];
+        } else {
+            return ['success' => false];
+        }
     }
 
 }
