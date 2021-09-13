@@ -31,6 +31,10 @@ class Member extends SubController
         }
         MemberFactory::addToOrganization($this->id, $orgId);
         if ($tripId) {
+            $member = MemberFactory::build($this->id);
+            if ($member->restricted) {
+                throw new \Exception('Cannot add restricted member to a trip');
+            }
             MemberFactory::addToTrip($this->id, $tripId);
         }
         return ['success' => true];
@@ -162,6 +166,20 @@ class Member extends SubController
         $tripId = $request->pullPostInteger('tripId', true) ?? 0;
         $stats = MemberFactory::importFile($fileName, $orgId, $tripId);
         return ['success' => true, 'stats' => $stats];
+    }
+
+    protected function restrictPatch()
+    {
+        MemberFactory::restrict($this->id);
+        return ['success' => true];
+    }
+
+    protected function unrestrictPatch()
+    {
+        $member = MemberFactory::build($this->id);
+        $member->restricted = false;
+        MemberFactory::save($member);
+        return ['success' => true];
     }
 
 }

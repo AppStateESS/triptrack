@@ -3,6 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {formatPhone} from '../api/String'
 import SortButton from '../api/SortButton'
+import '../api/pointer.css'
+import {restrictMember, unrestrictMember} from '../api/MemberAjax'
+import {faBan, faDoorOpen} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const Grid = ({
   members,
@@ -18,6 +22,7 @@ const Grid = ({
   selectedOrgId,
   setSort,
   sort,
+  load,
 }) => {
   const deleteItem = (key) => {
     if (
@@ -78,6 +83,30 @@ const Grid = ({
     }
   }
 
+  const restrictOption = (key) => {
+    if (members[key].restricted === 1) {
+      return (
+        <a
+          className="dropdown-item"
+          title="Restrict member"
+          onClick={() => unrestrictMember(members[key].id).then(load)}>
+          <FontAwesomeIcon icon={faDoorOpen} />
+          &nbsp;Unrestrict
+        </a>
+      )
+    } else {
+      return (
+        <a
+          className="dropdown-item"
+          title="Restrict member"
+          onClick={() => restrictMember(members[key].id).then(load)}>
+          <FontAwesomeIcon icon={faBan} />
+          &nbsp;Restrict
+        </a>
+      )
+    }
+  }
+
   const addMemberOption = (key) => {
     let addMemberOption
     if (filter.tripId === 0) {
@@ -90,7 +119,7 @@ const Grid = ({
             <i className="fas fa-plus"></i> Add to organization
           </a>
         )
-      } else if (tripsExist) {
+      } else if (tripsExist && members[key].restricted === 0) {
         addMemberOption = (
           <a
             className="dropdown-item"
@@ -130,12 +159,15 @@ const Grid = ({
                 }}>
                 <i className="fas fa-edit"></i> Edit member
               </a>
+              {restrictOption(key)}
               {deleteOption(key)}
             </div>
           </div>
         </td>
         <td>
-          {value.lastName}, {value.firstName}
+          <span className={value.restricted === 1 ? 'text-danger' : null}>
+            {value.lastName}, {value.firstName}
+          </span>
         </td>
         <td>
           <a href={`mailto:${value.email}`}>{value.email}</a>
@@ -147,6 +179,9 @@ const Grid = ({
 
   return (
     <div>
+      <span className="text-danger small">
+        Red names are restricted from joining trips.
+      </span>
       <table className="table table-striped">
         <tbody>
           <tr>
@@ -179,6 +214,7 @@ Grid.propTypes = {
   tripApproved: PropTypes.bool,
   setSort: PropTypes.func,
   sort: PropTypes.object,
+  load: PropTypes.func,
 }
 
 export default Grid
