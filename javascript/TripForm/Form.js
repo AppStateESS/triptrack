@@ -1,14 +1,17 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {tripSettings} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
 import Submitter from './Submitter'
 import Schedule from './Schedule'
+import MemberChoice from './MemberChoice'
 import {postTrip, patchApproval} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
+import {getList} from '../api/Fetch'
+import {addMembersToTrip} from '../api/TripAjax'
 
 const Form = ({
   organizations,
@@ -25,8 +28,20 @@ const Form = ({
   const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [allowSave, setAllowSave] = useState(true)
+  const [members, setMembers] = useState([])
+  const [selectedMembers, setSelectedMembers] = useState([])
+
+  useEffect(() => {
+    Promise.all([
+      getList(`./triptrack/${role}/Member`, {orgId: trip.organizationId}),
+      getList(`./triptrack/${role}/Trip/${trip.id}/memberList`),
+    ]).then((response) => {
+      setMembers(response[0].data)
+      setSelectedMembers(response[1].data)
+    })
+  }, [trip.organizationId])
+
   const setFormElement = (key, value) => {
-    //backup.setItem(key, value)
     trip[key] = value
     setTrip(Object.assign({}, trip))
     errorCheck(key, value)
@@ -143,29 +158,25 @@ const Form = ({
   const saveTrip = () => {
     finalErrorCheck()
     if (allowSave) {
-      const promise = postTrip(trip, role)
-      promise
-        .then((response) => {
-          if (response.data.success) {
-            //backup.clear()
-            const url = `triptrack/${role}/Trip/${response.data.id}`
-            location.href = url
-          } else {
-            const errClone = response.data.errors
-            const errorResult = Object.keys(errClone)
-            errorResult.forEach((element) => {
-              errClone[element] = true
-            })
-            setErrors(errClone)
-          }
-        })
-        .catch((error) => {
-          console.log('Error:', error)
-        })
+      Promise.all([
+        postTrip(trip, role),
+        addMembersToTrip(selectedMembers, defaultTrip.id, 'Member'),
+      ]).then((response) => {
+        if (response[0].data.success) {
+          const url = `triptrack/${role}/Trip/${response[0].data.id}`
+          location.href = url
+        } else {
+          const errClone = response[0].data.errors
+          const errorResult = Object.keys(errClone)
+          errorResult.forEach((element) => {
+            errClone[element] = true
+          })
+          setErrors(errClone)
+        }
+      })
     }
   }
 
-  //put in Submitter: backup={backup}
   return (
     <div>
       {title}
@@ -200,6 +211,10 @@ const Form = ({
       />
       <a id="schedule-info"></a>
       <Schedule trip={trip} setFormElement={setFormElement} />
+      <a id="members"></a>
+      <MemberChoice
+        {...{members, organizationLabel, selectedMembers, setSelectedMembers}}
+      />
       <div className="text-center">
         <button
           className="btn btn-success"
