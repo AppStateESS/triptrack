@@ -18,9 +18,9 @@ use triptrack\Resource\Trip;
 class TripView extends AbstractView
 {
 
-    public function listHtml()
+    public function listHtml($unapproved = false)
     {
-        return $this->dashboardScript('trip', 'TripList');
+        return $this->dashboardScript('trip', 'TripList', ['unapproved' => $unapproved]);
     }
 
     /**

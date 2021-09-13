@@ -7,14 +7,14 @@ import Message from '../Share/Message'
 import {getList} from '../api/Fetch'
 import {deleteTrip} from '../api/TripAjax'
 
-/* global hostLabel */
+/* global hostLabel, unapproved */
 
 const updateSession = (dateArray) => {
   localStorage.setItem('startDate', dateArray[0].getTime())
   localStorage.setItem('endDate', dateArray[1].getTime())
 }
 
-const TripList = ({hostLabel}) => {
+const TripList = ({hostLabel, unapproved}) => {
   const today = new Date()
   let startRange = new Date()
   startRange.setMonth(today.getMonth() - 1)
@@ -26,7 +26,7 @@ const TripList = ({hostLabel}) => {
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
   const [search, setSearch] = useState('')
-  const [unapprovedOnly, setUnapprovedOnly] = useState(false)
+  const [unapprovedOnly, setUnapprovedOnly] = useState(unapproved)
   const [init, setInit] = useState(false)
   const [sort, setSort] = useState({column: '', dir: 0})
   const [dateRange, setDateRange] = useState(() => {
@@ -186,6 +186,6 @@ const TripList = ({hostLabel}) => {
 }
 
 ReactDOM.render(
-  <TripList hostLabel={hostLabel} />,
+  <TripList hostLabel={hostLabel} unapproved={unapproved} />,
   document.getElementById('TripList')
 )
