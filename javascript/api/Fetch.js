@@ -31,6 +31,27 @@ const getItem = async (itemName, id, role = 'Admin') => {
   })
 }
 
+const patchItem = async (
+  itemName,
+  id,
+  data,
+  control = null,
+  role = 'Admin'
+) => {
+  let url = `triptrack/${role}/${itemName}/${id}`
+  if (control !== null) {
+    url = url + '/' + control
+  }
+
+  return await axios({
+    method: 'patch',
+    url,
+    data,
+    timeout: 3000,
+    headers,
+  })
+}
+
 const postItem = async (item, itemName, role = 'Admin') => {
   const url = `triptrack/${role}/${itemName}/${item.id > 0 ? item.id : ''}`
 
@@ -43,4 +64,4 @@ const postItem = async (item, itemName, role = 'Admin') => {
   })
 }
 
-export {getList, sendDelete, getItem, postItem}
+export {getList, sendDelete, getItem, postItem, patchItem}
