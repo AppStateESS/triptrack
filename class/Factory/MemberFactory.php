@@ -17,6 +17,15 @@ class MemberFactory extends BaseFactory
 
     static $fileDirectory = PHPWS_HOME_DIR . 'files/triptrack/';
 
+    public static function build(int $id = 0, $throwException = true)
+    {
+        $member = new Member;
+        if ($id) {
+            $member = self::load($member, $id, $throwException);
+        }
+        return $member;
+    }
+
     public static function currentUserIsMember()
     {
         $username = \Current_User::getUserName();
@@ -55,7 +64,7 @@ class MemberFactory extends BaseFactory
 
     public static function currentOwnsTrip(int $tripId)
     {
-        $trip = TripFactory::loadByID(TripFactory::build(), $tripId);
+        $trip = TripFactory::build($tripId);
         return $trip->submitUsername === \Current_User::getUsername();
     }
 
@@ -72,12 +81,12 @@ class MemberFactory extends BaseFactory
             $tbl->addField('firstName');
             $tbl->addField('lastName');
             $tbl->addField('phone');
+            $tbl->addField('restricted');
             if (!empty($options['isAdmin'])) {
                 $tbl->addField('bannerId');
                 $tbl->addField('username');
             }
         }
-
 
         if (!empty($options['orderBy'])) {
             $orderBy = $options['orderBy'];
@@ -157,11 +166,24 @@ class MemberFactory extends BaseFactory
         return $member;
     }
 
-    public static function unlinkAllTrips(int $memberId)
+    public static function restrict(int $memberId)
+    {
+        $member = self::build($memberId);
+        $member->restricted = true;
+        self::save($member);
+        self::unlinkAllTrips($memberId, true);
+    }
+
+    public static function unlinkAllTrips(int $memberId, $unapprovedOnly = false)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_membertotrip');
         $tbl->addFieldConditional('memberId', $memberId);
+        if ($unapprovedOnly) {
+            $tbl2 = $db->addTable('trip_trip');
+            $tbl2->addWhereConditional('approved', 0);
+            $db->addConditional(new Database\Conditional($db, $tbl->getField('tripId'), $tbl2->getField('id'), '='));
+        }
         $db->delete();
     }
 
@@ -311,6 +333,18 @@ class MemberFactory extends BaseFactory
         return $stats;
     }
 
+    /**
+     *
+     * @param array $memberList Numeric array of member ids
+     * @param int $tripId
+     */
+    public static function addListToTrip(array $memberList, int $tripId)
+    {
+        foreach ($memberList as $memberId) {
+            self::addToTrip($memberId, $tripId);
+        }
+    }
+
     public static function buildMemberFromBannerData(\stdClass $valueObj)
     {
         $member = new Member();
@@ -450,6 +484,19 @@ class MemberFactory extends BaseFactory
                 preg_match('/\d{9}/', $insertRow['bannerId']) &&
                 strlen(preg_replace('/\D/', '', $insertRow['phone']) > 6) &&
                 preg_match('/\w+/', $insertRow['username']);
+    }
+
+    public static function getTripParticipants(int $tripId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertotrip');
+        $tbl->addField('memberId');
+        $tbl->addFieldConditional('tripId', $tripId);
+        $result = [];
+        while ($col = $db->selectColumn()) {
+            $result[] = $col;
+        }
+        return $result;
     }
 
 }
