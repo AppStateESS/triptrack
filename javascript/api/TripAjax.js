@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {getItem, postItem, sendDelete} from './Fetch'
+import {getItem, postItem, sendDelete, getList} from './Fetch'
 import 'regenerator-runtime'
 
 const headers = {
@@ -8,6 +8,12 @@ const headers = {
 
 const getTrip = async (tripId, role) => {
   return getItem('Trip', tripId, role)
+}
+
+const getTripDocuments = async (tripId, role) => {
+  const url = `triptrack/${role}/Document/`
+  const options = {tripId}
+  return getList(url, options)
 }
 
 const postTrip = async (tripObj, role) => {
@@ -42,4 +48,17 @@ const deleteTrip = async (tripId) => {
   return sendDelete(url)
 }
 
-export {getTrip, postTrip, patchApproval, deleteTrip, addMembersToTrip}
+const removeDocument = async (documentId, role) => {
+  const url = `triptrack/${role}/Document/${documentId}`
+  return sendDelete(url)
+}
+
+export {
+  getTrip,
+  postTrip,
+  patchApproval,
+  deleteTrip,
+  addMembersToTrip,
+  getTripDocuments,
+  removeDocument,
+}
