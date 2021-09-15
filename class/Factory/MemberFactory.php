@@ -15,8 +15,6 @@ use triptrack\BannerAPI;
 class MemberFactory extends BaseFactory
 {
 
-    static $fileDirectory = PHPWS_HOME_DIR . 'files/triptrack/';
-
     public static function build(int $id = 0, $throwException = true)
     {
         $member = new Member;
@@ -239,12 +237,6 @@ class MemberFactory extends BaseFactory
         $path = self::createPath($fileName);
         move_uploaded_file($fileArray['tmp_name'], $path);
         return $fileName;
-    }
-
-    public static function createPath($fileName)
-    {
-        $destinationDir = self::$fileDirectory;
-        return $destinationDir . $fileName;
     }
 
     public static function testFile($filename)

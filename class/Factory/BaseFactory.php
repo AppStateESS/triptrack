@@ -22,6 +22,8 @@ use Canopy\Request;
 abstract class BaseFactory extends \phpws2\ResourceFactory
 {
 
+    static $fileDirectory = PHPWS_HOME_DIR . 'files/triptrack/';
+
     /**
      *
      * @param int $id
@@ -70,6 +72,12 @@ abstract class BaseFactory extends \phpws2\ResourceFactory
         $options['limit'] = $request->pullGetString('limit', true);
         $options['offset'] = $request->pullGetString('offset', true);
         return $options;
+    }
+
+    public static function createPath($fileName)
+    {
+        $destinationDir = self::$fileDirectory;
+        return $destinationDir . $fileName;
     }
 
 }
