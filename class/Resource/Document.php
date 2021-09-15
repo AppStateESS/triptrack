@@ -7,7 +7,9 @@
 
 namespace triptrack\Resource;
 
-class Document extends \phpws2\Resource
+use triptrack\Factory\DocumentFactory;
+
+class Document extends AbstractResource
 {
 
     protected $filePath;
