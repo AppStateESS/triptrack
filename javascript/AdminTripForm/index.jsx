@@ -1,28 +1,35 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 import Form from '../TripForm/Form'
-import {getTrip} from '../api/TripAjax'
+import {getTrip, getTripDocuments} from '../api/TripAjax'
 import {getList} from '../api/Fetch'
 import Loading from '../api/Loading'
 import NoAdminOrg from './NoAdminOrg'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry,
+hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions  */
 
 const AdminTripForm = (props) => {
   const [organizations, setOrganizations] = useState([])
   const [view, setView] = useState('loading')
   const [defaultTrip, setDefaultTrip] = useState({})
+  const tripDocuments = useRef([])
 
   const loadOrganizations = () => {
     return getList('./triptrack/Admin/Organization/')
   }
 
   useEffect(() => {
-    Promise.all([loadOrganizations(), getTrip(tripId, 'Admin')])
+    Promise.all([
+      loadOrganizations(),
+      getTrip(tripId, 'Admin'),
+      getTripDocuments(tripId, 'Admin'),
+    ])
       .then((response) => {
         const orgList = response[0].data
         const trip = response[1].data
+
         if (trip.contactPhone !== '') {
           trip.contactPhone = trip.contactPhone.toString()
         }
@@ -35,6 +42,7 @@ const AdminTripForm = (props) => {
           if (trip.organizationId == 0) {
             trip.organizationId = orgList[0].id
           }
+          tripDocuments.current = response[2].data
           setOrganizations(orgList)
           setDefaultTrip(trip)
           setView('form')
@@ -63,6 +71,7 @@ const AdminTripForm = (props) => {
           allowApproval={false}
           organizations={organizations}
           defaultTrip={defaultTrip}
+          tripDocuments={tripDocuments.current}
           role="Admin"
           hostLabel={hostLabel}
           organizationLabel={organizationLabel}
@@ -85,6 +94,9 @@ ReactDOM.render(
     tripId={tripId}
     defaultState={defaultState}
     defaultCountry={defaultCountry}
+    allowUpload={allowUpload}
+    uploadRequired={uploadRequired}
+    uploadInstructions={uploadInstructions}
   />,
   document.getElementById('AdminTripForm')
 )

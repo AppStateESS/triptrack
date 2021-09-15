@@ -7,6 +7,7 @@ import Contact from './Contact'
 import Submitter from './Submitter'
 import Schedule from './Schedule'
 import MemberChoice from './MemberChoice'
+import Documents from './Documents'
 import {postTrip, patchApproval} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
@@ -14,6 +15,7 @@ import {getList} from '../api/Fetch'
 import {addMembersToTrip} from '../api/TripAjax'
 
 const Form = ({
+  tripDocuments,
   organizations,
   defaultTrip,
   allowInternational,
@@ -24,21 +26,31 @@ const Form = ({
   organizationLabel,
   accommodationRequired,
   secondaryRequired,
+  allowUpload,
+  uploadRequired,
+  uploadInstructions,
 }) => {
   const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
   const [allowSave, setAllowSave] = useState(true)
   const [members, setMembers] = useState([])
   const [selectedMembers, setSelectedMembers] = useState([])
+  const [documents, setDocuments] = useState(tripDocuments)
 
   useEffect(() => {
-    Promise.all([
-      getList(`./triptrack/${role}/Member`, {orgId: trip.organizationId}),
-      getList(`./triptrack/${role}/Trip/${trip.id}/memberList`),
-    ]).then((response) => {
-      setMembers(response[0].data)
-      setSelectedMembers(response[1].data)
-    })
+    getList(`./triptrack/${role}/Member`, {orgId: trip.organizationId}).then(
+      (response) => {
+        setMembers(response.data)
+      }
+    )
+
+    if (trip.id > 0) {
+      getList(`./triptrack/${role}/Trip/${trip.id}/memberList`).then(
+        (response) => {
+          setSelectedMembers(response.data)
+        }
+      )
+    }
   }, [trip.organizationId])
 
   const setFormElement = (key, value) => {
@@ -211,10 +223,31 @@ const Form = ({
       />
       <a id="schedule-info"></a>
       <Schedule trip={trip} setFormElement={setFormElement} />
-      <a id="members"></a>
-      <MemberChoice
-        {...{members, organizationLabel, selectedMembers, setSelectedMembers}}
-      />
+      <div className="row mb-5">
+        <div className="col-sm-5">
+          <a id="members"></a>
+          <MemberChoice
+            {...{
+              members,
+              organizationLabel,
+              selectedMembers,
+              setSelectedMembers,
+            }}
+          />
+        </div>
+        <div className="col-sm-7">
+          <Documents
+            {...{
+              setDocuments,
+              documents,
+              allowUpload,
+              tripId: trip.id,
+              uploadRequired,
+              uploadInstructions,
+            }}
+          />
+        </div>
+      </div>
       <div className="text-center">
         <button
           className="btn btn-success"
@@ -241,6 +274,10 @@ Form.propTypes = {
   secondaryRequired: PropTypes.bool,
   organizations: PropTypes.array,
   defaultTrip: PropTypes.object,
+  allowUpload: PropTypes.bool,
+  uploadRequired: PropTypes.bool,
+  uploadInstructions: PropTypes.string,
+  tripDocuments: PropTypes.array,
 }
 
 export default Form
