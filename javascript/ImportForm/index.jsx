@@ -35,11 +35,6 @@ const ImportForm = () => {
     setOrganizations(response)
   }, [])
 
-  const listener = (e) => {
-    e.preventDefault()
-    e.returnValue = ''
-  }
-
   // useEffect(() => {
   //   if (formReady) {
   //     window.addEventListener('beforeunload', listener)
