@@ -134,8 +134,10 @@ abstract class SubController
         if ($request->isAjax() && in_array($method,
                         ['post', 'put', 'patch', 'delete'])) {
             $data = $request->getJsonData();
-            $funcName = 'set' . ucwords($method) . 'Vars';
-            $request->$funcName((array) $data);
+            if (!empty($data)) {
+                $funcName = 'set' . ucwords($method) . 'Vars';
+                $request->$funcName((array) $data);
+            }
         }
 
         $getCommand = $request->shiftCommand();
