@@ -9,6 +9,7 @@ namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
 use triptrack\Factory\TripFactory;
+use triptrack\Factory\MemberFactory;
 use triptrack\View\EmailView;
 use Canopy\Request;
 
@@ -45,6 +46,11 @@ class Trip extends SubController
     protected function createHtml()
     {
         return $this->view->adminForm();
+    }
+
+    public function memberListJson()
+    {
+        return MemberFactory::getTripParticipants($this->id);
     }
 
     protected function emailMembersHtml(Request $request)
