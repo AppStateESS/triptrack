@@ -9,6 +9,7 @@ const Upload = ({
   tripId,
   setDocuments,
   documents,
+  role,
 }) => {
   const [uploadFile, setUploadFile] = useState({})
   const [message, setMessage] = useState('')
@@ -16,15 +17,14 @@ const Upload = ({
 
   const send = () => {
     const form = new FormData()
-    if (uploadFile.target === undefined) {
+    if (uploadFile.name === undefined) {
       return
     }
-    const file = uploadFile.target.files[0]
 
-    form.append('file', file)
+    form.append('file', uploadFile)
     form.append('tripId', tripId)
     axios
-      .post('./triptrack/Admin/Document/upload', form, {
+      .post(`./triptrack/${role}/Document/upload`, form, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'X-Requested-With': 'XMLHttpRequest',
@@ -37,13 +37,12 @@ const Upload = ({
           setDocuments(copyDoc)
           setMessage('')
         } else {
-          fileRef.current.value = ''
-          setUploadFile({})
           setMessage('Problem with uploaded file: ' + response.data.error)
         }
+        setUploadFile({})
+        fileRef.current.value = ''
       })
   }
-
   return (
     <div>
       <h3>Upload documents</h3>
@@ -62,10 +61,13 @@ const Upload = ({
         <div className="col-sm-9">
           <input
             type="file"
+            accept="application/pdf, .docx, .xlsx"
             name="upload"
             className="form-control"
-            onChange={setUploadFile}
+            onChange={(e) => setUploadFile(e.target.files[0])}
+            ref={fileRef}
           />
+          <div className="small mt-2">Allowed file types: pdf, docx, xlsx</div>
         </div>
         <div className="col-sm-3">
           <button type="button" className="btn btn-primary" onClick={send}>
@@ -83,6 +85,7 @@ Upload.propTypes = {
   tripId: PropTypes.number,
   setDocuments: PropTypes.func,
   documents: PropTypes.array,
+  role: PropTypes.string,
 }
 
 export default Upload
