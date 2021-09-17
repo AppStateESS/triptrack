@@ -13,6 +13,7 @@ use triptrack\Factory\MemberFactory;
 use triptrack\Factory\SettingFactory;
 use triptrack\Factory\OrganizationFactory;
 use triptrack\View\MemberView;
+use triptrack\View\DocumentView;
 use triptrack\Resource\Trip;
 
 class TripView extends AbstractView
@@ -29,12 +30,22 @@ class TripView extends AbstractView
      */
     public static function createButton()
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-outline-dark">Create travel plan</a></div>';
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a></div>';
+    }
+
+    /**
+     * Member trip update button for home screen
+     * @param int $tripId
+     * @return string
+     */
+    public static function completeButton(int $tripId)
+    {
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/' . $tripId . '/edit" class="btn btn-outline-primary">Complete travel plan</a></div>';
     }
 
     public static function viewButton()
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-outline-dark">See upcoming trips</a></div>';
+        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-info">See upcoming trips</a></div>';
     }
 
     public function adminForm(int $tripId = 0)
@@ -54,6 +65,7 @@ class TripView extends AbstractView
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true]);
         $vars['memberList'] = MemberView::memberTable($members, true);
+        $vars['documents'] = DocumentView::tripList($tripId, 'Admin');
         $vars['approvalButton'] = $this->scriptView('Approval', ['approvedStatus' => $trip->approved, 'tripId' => $tripId]);
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/View.html');
@@ -66,18 +78,18 @@ class TripView extends AbstractView
         return $trip->getVariablesAsValue();
     }
 
-    public function memberForm($tripId = 0)
+    public function memberForm(Trip $trip)
     {
         if (!\triptrack\Factory\OrganizationFactory::exists()) {
             return '<p>No organizations were found. Please contact our office.</p>';
         }
-        if ($tripId) {
-            if (!\triptrack\Factory\MemberFactory::currentOwnsTrip($tripId)) {
-                exit('Member does not own trip');
-            }
+
+        if (!\triptrack\Factory\MemberFactory::currentOwnsTrip($trip)) {
+            throw new \triptrack\Exception\MemberDoesNotOwnTrip;
         }
+
         $vars = $this->getSettings();
-        $vars['tripId'] = $tripId;
+        $vars['tripId'] = $trip->id;
         $result = $this->scriptView('MemberTripForm', $vars);
         return $result;
     }
@@ -112,6 +124,8 @@ class TripView extends AbstractView
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $members = MemberFactory::list(['tripId' => $trip->id]);
         $vars['memberList'] = MemberView::memberTable($members);
+        $vars['documents'] = DocumentView::tripList($trip->id, 'Member');
+
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/View.html');
         return $template->get();
@@ -119,9 +133,18 @@ class TripView extends AbstractView
 
     public function memberList()
     {
+        $trip = TripFactory::getCurrentSubmitterIncomplete();
+
+        if (!empty($trip)) {
+            $vars['trip'] = $trip->getStringVars();
+        } else {
+            $vars['trip'] = false;
+        }
+
         $vars['rows'] = TripFactory::list(['submitUsername' => \Current_User::getUsername(),
                     'order' => 'submitDate']);
         $vars['hostLabel'] = SettingFactory::getHostLabel();
+
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/List.html');
         return $template->get();
