@@ -1,0 +1,5 @@
+<ul>
+<?php foreach ($documents as $doc):?>
+<li><a href="triptrack/<?=$role?>/Document/<?=$doc['id']?>" target="_blank" ref="noreferrer nofollow noopener"><?=$doc['filePath']?></a></li>
+<?php endforeach;?>
+</ul>
