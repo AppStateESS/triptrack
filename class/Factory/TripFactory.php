@@ -11,6 +11,7 @@ use phpws2\Database;
 use Canopy\Request;
 use triptrack\Resource\Trip;
 use triptrack\Factory\SettingFactory;
+use triptrack\Factory\DocumentFactory;
 
 class TripFactory extends BaseFactory
 {
@@ -35,8 +36,52 @@ class TripFactory extends BaseFactory
         $trip = new Trip;
         if ($id) {
             $trip = self::load($trip, $id, $throwException);
+        } else {
+            $trip->destinationState = SettingFactory::getDefaultState();
         }
         return $trip;
+    }
+
+    public static function buildMemberTrip(int $memberId)
+    {
+        $member = MemberFactory::build($memberId);
+        $trip = TripFactory::build();
+        $trip->contactName = $trip->submitName = $member->firstName . ' ' . $member->lastName;
+        $trip->contactEmail = $trip->submitEmail = $member->email;
+        $trip->contactPhone = $member->phone;
+        $trip->submitUsername = $member->username;
+        $trip->submitUserId = \Current_User::getId();
+
+        $trip = TripFactory::save($trip);
+        return $trip;
+    }
+
+    public static function buildAdminTrip()
+    {
+        $trip = TripFactory::build();
+        $trip->submitUserId = \Current_User::getId();
+        $trip->submitUsername = \Current_User::getUsername();
+        $trip->submitName = \Current_User::getDisplayName();
+        $trip->submitEmail = \Current_User::getEmail();
+
+        $trip = TripFactory::save($trip);
+        return $trip;
+    }
+
+    public static function getCurrentSubmitterIncomplete()
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_trip');
+        $tbl->addFieldConditional('submitUserId', \Current_User::getId());
+        $tbl->addFieldConditional('completed', 0);
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return;
+        } else {
+            $trip = self::build();
+            $trip->setVars($result);
+            return $trip;
+        }
     }
 
     public static function emailTripSubmissionToAdmin(Trip $trip, $approved = true)
@@ -85,6 +130,7 @@ class TripFactory extends BaseFactory
         $trip->submitName = $member->getFullName();
         $trip->contactName = $member->getFullName();
         $trip->submitUsername = $member->username;
+        $trip->submitUserId = \Current_User::getId();
         $trip->contactPhone = $member->phone;
         self::loadDefaults($trip);
 
@@ -142,8 +188,16 @@ class TripFactory extends BaseFactory
             $tbl->addFieldConditional('submitUsername', $options['submitUsername']);
         }
 
+        if (!empty($options['submitUserId'])) {
+            $tbl->addFieldConditional('submitUserId', $options['submitUserId']);
+        }
+
         if (!empty($options['unapprovedOnly'])) {
             $tbl->addFieldConditional('approved', 0);
+        }
+
+        if (empty($options['includeIncomplete'])) {
+            $tbl->addFieldConditional('completed', 1);
         }
 
         if (!empty($options['search'])) {
@@ -183,40 +237,6 @@ class TripFactory extends BaseFactory
         }
 
         return $db->select();
-    }
-
-    public static function post(Request $request, bool $approved = false)
-    {
-        $country = $request->pullPostString('destinationCountry', true);
-        if (!$country) {
-            $country = SettingFactory::getDefaultCountry();
-        }
-        $trip = new Trip;
-        /**
-         * If approval is required, then this is defaultly not approved.
-         * If not required, then the trip is preapproved.
-         */
-        $trip->approved = $approved;
-        $trip->host = $request->pullPostString('host');
-        $trip->contactName = $request->pullPostString('contactName');
-        $trip->contactEmail = $request->pullPostString('contactEmail');
-        $trip->contactPhone = $request->pullPostString('contactPhone');
-        $trip->destinationCity = $request->pullPostString('destinationCity');
-        $trip->destinationCountry = $country;
-        $trip->destinationState = $request->pullPostString('destinationState');
-        $trip->housingAddress = $request->pullPostString('housingAddress');
-        $trip->organizationId = $request->pullPostInteger('organizationId');
-        $trip->secContactName = $request->pullPostString('secContactName');
-        $trip->secContactEmail = $request->pullPostString('secContactEmail');
-        $trip->secContactPhone = $request->pullPostString('secContactPhone');
-        $trip->submitEmail = $request->pullPostString('submitEmail');
-        $trip->submitName = $request->pullPostString('submitName');
-        $trip->submitUsername = $request->pullPostString('submitUsername');
-        $trip->timeDeparting = $request->pullPostString('timeDeparting');
-        $trip->timeEventStarts = $request->pullPostString('timeEventStarts');
-        $trip->timeReturn = $request->pullPostString('timeReturn');
-        $trip->visitPurpose = $request->pullPostString('visitPurpose');
-        return $trip;
     }
 
     public static function put(int $id, Request $request, bool $isAdmin = false)
@@ -327,12 +347,18 @@ class TripFactory extends BaseFactory
         }
     }
 
+    /**
+     * Permanently deletes a trip
+     * @param int $tripId
+     */
     public static function delete(int $tripId)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_trip');
         $tbl->addFieldConditional('id', $tripId);
         $db->delete();
+        self::removeAllMembers($tripId);
+        DocumentFactory::deleteByTripId($tripId);
     }
 
 }
