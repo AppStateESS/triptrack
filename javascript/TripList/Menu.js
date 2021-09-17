@@ -5,6 +5,7 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 import './menu.css'
 
 const Menu = ({
+  incomplete,
   sendSearch,
   search,
   setSearch,
@@ -53,11 +54,19 @@ const Menu = ({
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
             <li className="nav-item mr-2">
-              <a
-                className="btn btn-success"
-                href="./triptrack/Admin/Trip/create">
-                Create trip
-              </a>
+              {incomplete ? (
+                <a
+                  className="btn btn-warning"
+                  href={`./triptrack/Admin/Trip/${incomplete.id}/edit`}>
+                  Finish incomplete trip
+                </a>
+              ) : (
+                <a
+                  className="btn btn-success"
+                  href="./triptrack/Admin/Trip/create">
+                  Create trip
+                </a>
+              )}
             </li>
             <li className="nav-item mr-2">{unapprovedOnlyButton()}</li>
             <li className="nav-item">
