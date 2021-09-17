@@ -18,6 +18,7 @@ use Canopy\Server;
 use Canopy\SettingDefaults;
 use triptrack\Controller\Controller;
 use triptrack\Factory\MemberFactory;
+use triptrack\Factory\TripFactory;
 
 $defineFile = PHPWS_SOURCE_DIR . 'mod/triptrack/config/defines.php';
 if (is_file($defineFile)) {
@@ -88,7 +89,12 @@ class Module extends \Canopy\Module implements SettingDefaults
     public function runTime(Request $request)
     {
         if (\phpws\PHPWS_Core::atHome() && MemberFactory::currentUserIsMember()) {
-            $content[] = View\TripView::createButton();
+            $trip = TripFactory::getCurrentSubmitterIncomplete();
+            if ($trip) {
+                $content[] = View\TripView::completeButton($trip->id);
+            } else {
+                $content[] = View\TripView::createButton();
+            }
             $content[] = View\TripView::viewButton();
             \Layout::add(implode('', $content), 'triptrack', 'triptrack-create');
         }
