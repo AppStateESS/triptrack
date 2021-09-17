@@ -88,6 +88,11 @@ class SettingFactory
         return Settings::get('triptrack', 'defaultCountry');
     }
 
+    public static function getDefaultState()
+    {
+        return Settings::get('triptrack', 'defaultState');
+    }
+
     /**
      * Returns a SwiftMailer ready reply-to address
      * @param bool $onlyNoReply If true, return the no-reply version
