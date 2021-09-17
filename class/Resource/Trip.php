@@ -23,6 +23,7 @@ class Trip extends AbstractResource
     protected $secContactName;
     protected $secContactEmail;
     protected $secContactPhone;
+    protected $submitUserId;
     protected $submitDate;
     protected $submitEmail;
     protected $submitName;
@@ -32,6 +33,7 @@ class Trip extends AbstractResource
     protected $timeReturn;
     protected $visitPurpose;
     protected $memberCount;
+    protected $completed;
     protected $table = 'trip_trip';
 
     public function __construct()
@@ -49,6 +51,7 @@ class Trip extends AbstractResource
         $this->secContactName = new \phpws2\Variable\TextOnly(null, 'secContactName', 255);
         $this->secContactEmail = new \phpws2\Variable\Email(null, 'secContactEmail');
         $this->secContactPhone = new \phpws2\Variable\PhoneNumber(null, 'secContactPhone', 30);
+        $this->submitUserId = new \phpws2\Variable\IntegerVar(0, 'submitUserId');
         $this->submitDate = new \phpws2\Variable\DateTime(0, 'submitDate');
         $this->submitDate->stamp();
         $this->submitEmail = new \phpws2\Variable\Email(null, 'submitEmail');
@@ -63,6 +66,7 @@ class Trip extends AbstractResource
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null, 'visitPurpose', 255);
         $this->memberCount = new \phpws2\Variable\SmallInteger(0, 'memberCount');
         $this->memberCount->setIsTableColumn(false);
+        $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');
         parent::__construct();
     }
 
