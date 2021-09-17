@@ -43,14 +43,19 @@ const addMembersToTrip = async (memberArray, tripId, role) => {
   }
 }
 
-const deleteTrip = async (tripId) => {
-  const url = 'triptrack/Admin/Trip/' + tripId
+const deleteTrip = async (tripId, role = 'Admin') => {
+  const url = `triptrack/${role}/Trip/${tripId}`
   return sendDelete(url)
 }
 
 const removeDocument = async (documentId, role) => {
   const url = `triptrack/${role}/Document/${documentId}`
   return sendDelete(url)
+}
+
+const getIncomplete = async () => {
+  const url = `triptrack/Admin/Trip/incomplete`
+  return await axios.get(url, {headers})
 }
 
 export {
@@ -61,4 +66,5 @@ export {
   addMembersToTrip,
   getTripDocuments,
   removeDocument,
+  getIncomplete,
 }
