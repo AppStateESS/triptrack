@@ -46,6 +46,7 @@ const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
           <div className="dropdown">
             <button
               className="btn btn-outline-dark dropdown-toggle btn-sm"
+              data-boundary="viewport"
               type="button"
               data-toggle="dropdown"
               aria-haspopup="true"
