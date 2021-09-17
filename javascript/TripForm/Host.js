@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import {states} from '../Share/States'
 import {countries} from '../Share/Countries'
 import {createOptions} from '../Share/CreateOptions'
+import Organizations from './Organizations'
 
 const Host = ({
   trip,
@@ -12,6 +13,9 @@ const Host = ({
   hostLabel,
   errors,
   accommodationRequired,
+  role,
+  organizationList,
+  organizationLabel,
 }) => {
   const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
   const stateList = createOptions(states)
@@ -70,9 +74,14 @@ const Host = ({
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">{hostString} information</legend>
-      <p>
-        Enter information about the {hostString.toLowerCase()} for your trip.
-      </p>
+      <Organizations
+        organizationList={organizationList}
+        trip={trip}
+        setFormElement={setFormElement}
+        role={role}
+        organizationLabel={organizationLabel}
+      />
+
       <div className="row form-group">
         <div className="col-sm-4">
           <label className="mb-0">
@@ -182,6 +191,9 @@ Host.propTypes = {
   hostLabel: PropTypes.string,
   touched: PropTypes.object,
   accommodationRequired: PropTypes.bool,
+  role: PropTypes.string,
+  organizationList: PropTypes.array,
+  organizationLabel: PropTypes.string,
 }
 
 export default Host
