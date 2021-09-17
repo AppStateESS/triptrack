@@ -1,29 +1,35 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 import Form from '../TripForm/Form'
-import {getTrip} from '../api/TripAjax'
+import {getTrip, getTripDocuments} from '../api/TripAjax'
 import {getList} from '../api/Fetch'
 import Loading from '../api/Loading'
 import NoMemberOrg from './NoMemberOrg'
 import PropTypes from 'prop-types'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions  */
 
 const MemberTripForm = (props) => {
   const [organizations, setOrganizations] = useState([])
   const [view, setView] = useState('loading')
   const [defaultTrip, setDefaultTrip] = useState({})
+  const tripDocuments = useRef([])
 
   const loadOrganizations = () => {
     return getList('./triptrack/Member/Organization/')
   }
 
   useEffect(() => {
-    Promise.all([loadOrganizations(), getTrip(props.tripId, 'Member')])
+    Promise.all([
+      loadOrganizations(),
+      getTrip(props.tripId, 'Member'),
+      getTripDocuments(tripId, 'Member'),
+    ])
       .then((response) => {
         const orgList = response[0].data
         const trip = response[1].data
+
         if (trip.contactPhone !== '') {
           trip.contactPhone = trip.contactPhone.toString()
         }
@@ -36,12 +42,15 @@ const MemberTripForm = (props) => {
           if (trip.organizationId == 0) {
             trip.organizationId = orgList[0].id
           }
+          if (tripId > 0) {
+            tripDocuments.current = response[2].data
+          }
           setOrganizations(orgList)
           setDefaultTrip(trip)
           setView('form')
         }
       })
-      .catch(() => {
+      .catch((e) => {
         setView('error')
       })
   }, [])
@@ -64,6 +73,7 @@ const MemberTripForm = (props) => {
           allowApproval={false}
           organizations={organizations}
           defaultTrip={defaultTrip}
+          tripDocuments={tripDocuments.current}
           role="Member"
           hostLabel={hostLabel}
           organizationLabel={organizationLabel}
@@ -90,6 +100,9 @@ ReactDOM.render(
     defaultState={defaultState}
     defaultCountry={defaultCountry}
     tripId={tripId}
+    allowUpload={allowUpload}
+    uploadRequired={uploadRequired}
+    uploadInstructions={uploadInstructions}
   />,
   document.getElementById('MemberTripForm')
 )
