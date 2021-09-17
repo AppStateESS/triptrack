@@ -1,14 +1,23 @@
-<div class="float-right w-25"><?=$approvalButton?></div>
+<div class="float-right w-25 text-center"><?=$approvalButton?>
+    <a class="btn btn-primary text-white mt-2" href="./triptrack/Admin/Trip/<?=$id?>/edit">Update</a>
+</div>
 <h2>Travel plan</h2>
-<p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>"><?=$submitName?></a> on <?=$submitDate?><br />
+<p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>">
+    <?=$submitName?></a> on <?=$submitDate?><br />
   <strong><?=$organizationLabel?>:</strong> <?=$organizationName?>
 </p>
-<h3>Destination</h3>
-<p><strong>Host:</strong> <?=$host?><br />
-  <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
-  <strong>Housing:</strong> <?=$housingAddress?>
-</p>
 <div class="row">
+  <div class="col-sm-6">
+    <h3>Destination</h3>
+    <p><strong>Host:</strong> <?=$host?><br />
+      <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+      <strong>Housing:</strong> <?=$housingAddress?>
+    </p>
+  </div>
+  <div class="col-sm-6">
+    <h3>Documents</h3>
+    <?=$documents?>
+  </div>
   <div class="col-sm-6">
     <h3>Primary contact</h3>
     <p><?=$contactName?><br />
@@ -26,12 +35,14 @@
     </p>
   </div>
   <?php endif;?>
+  <div class="col-sm-6">
+    <h3>Itinerary</h3>
+    <p>
+      <strong>Departing:</strong> <?=$timeDeparting?><br />
+      <strong>Event start:</strong> <?=$timeEventStarts?><br />
+      <strong>Returning:</strong> <?=$timeReturn?><br />
+    </p>
+  </div>
 </div>
-<h3>Itinerary</h3>
-<p>
-  <strong>Departing:</strong> <?=$timeDeparting?><br />
-  <strong>Event start:</strong> <?=$timeEventStarts?><br />
-  <strong>Returning:</strong> <?=$timeReturn?><br />
-</p>
 <h3>Attending</h3>
 <?=$memberList?>
