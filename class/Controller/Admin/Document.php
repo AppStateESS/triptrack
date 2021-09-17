@@ -57,4 +57,9 @@ class Document extends SubController
         return ['success' => true];
     }
 
+    protected function viewHtml()
+    {
+        DocumentFactory::download(DocumentFactory::build($this->id));
+    }
+
 }
