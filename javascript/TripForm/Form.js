@@ -4,11 +4,10 @@ import PropTypes from 'prop-types'
 import {tripSettings} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
-import Submitter from './Submitter'
 import Schedule from './Schedule'
 import MemberChoice from './MemberChoice'
 import Documents from './Documents'
-import {postTrip, patchApproval} from '../api/TripAjax'
+import {postTrip, patchApproval, deleteTrip} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 import {getList} from '../api/Fetch'
@@ -36,6 +35,7 @@ const Form = ({
   const [members, setMembers] = useState([])
   const [selectedMembers, setSelectedMembers] = useState([])
   const [documents, setDocuments] = useState(tripDocuments)
+  const [requiredFileMissing, setRequiredFileMissing] = useState(false)
 
   useEffect(() => {
     getList(`./triptrack/${role}/Member`, {orgId: trip.organizationId}).then(
@@ -53,10 +53,25 @@ const Form = ({
     }
   }, [trip.organizationId])
 
+  useEffect(() => {
+    if (allowUpload && uploadRequired && documents.length === 0) {
+      setRequiredFileMissing(true)
+    } else {
+      setRequiredFileMissing(false)
+    }
+  }, [documents])
+
   const setFormElement = (key, value) => {
     trip[key] = value
     setTrip(Object.assign({}, trip))
     errorCheck(key, value)
+  }
+
+  const cancelTrip = () => {
+    if (confirm('Are you sure you want to permanently delete this trip?')) {
+      deleteTrip(trip.id, 'Member')
+      location.href = './triptrack/Member/Trip'
+    }
   }
 
   const toggleApproval = (toggle) => {
@@ -188,7 +203,6 @@ const Form = ({
       })
     }
   }
-
   return (
     <div>
       {title}
@@ -196,14 +210,13 @@ const Form = ({
       {approvedIcon()}
 
       <a id="submitter-info"></a>
-      <Submitter
-        trip={trip}
-        setFormElement={setFormElement}
-        organizationLabel={organizationLabel}
-        organizationList={organizations}
-        errors={errors}
-        role={role}
-      />
+      <fieldset className="mb-4">
+        <legend className="border-bottom mb-3">Submitter</legend>
+        {trip.submitName}
+        <br />
+        <a href={`mailto:${trip.submitEmail}`}>{trip.submitEmail}</a>
+      </fieldset>
+
       <a id="host-info"></a>
       <Host
         trip={trip}
@@ -211,6 +224,9 @@ const Form = ({
         allowInternational={allowInternational}
         accommodationRequired={accommodationRequired}
         hostLabel={hostLabel}
+        organizationLabel={organizationLabel}
+        organizationList={organizations}
+        role={role}
         errors={errors}
       />
       <a id="contact-info"></a>
@@ -238,10 +254,12 @@ const Form = ({
         <div className="col-sm-7">
           <Documents
             {...{
+              completed: trip.completed,
               setDocuments,
               documents,
               allowUpload,
               tripId: trip.id,
+              role,
               uploadRequired,
               uploadInstructions,
             }}
@@ -250,11 +268,22 @@ const Form = ({
       </div>
       <div className="text-center">
         <button
-          className="btn btn-success"
+          className="btn btn-success mb-2"
           onClick={saveTrip}
-          disabled={!allowSave}>
-          {allowSave ? 'Save and continue' : 'Fill in all fields above'}
+          disabled={!allowSave || requiredFileMissing}>
+          {allowSave ? 'Save travel plan' : 'Fill in all fields above'}
         </button>
+        <div>
+          {!trip.completed ? (
+            <button className="btn btn-danger" onClick={cancelTrip}>
+              Cancel trip
+            </button>
+          ) : (
+            <a href={document.referrer} className="btn btn-danger">
+              Cancel changes
+            </a>
+          )}
+        </div>
       </div>
     </div>
   )
