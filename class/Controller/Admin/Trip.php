@@ -45,7 +45,9 @@ class Trip extends SubController
 
     protected function createHtml()
     {
-        return $this->view->adminForm();
+        $trip = TripFactory::buildAdminTrip();
+
+        return $this->view->adminForm($trip->id);
     }
 
     public function memberListJson()
@@ -88,25 +90,10 @@ class Trip extends SubController
         return ['success' => true];
     }
 
-    protected function post(Request $request)
-    {
-        $trip = TripFactory::post($request, true);
-        $trip->submitUsername = \Current_User::getUsername();
-        $trip->submitName = \Current_User::getDisplayName();
-
-        $errors = TripFactory::errorCheck($trip);
-
-        if ($errors === true) {
-            TripFactory::save($trip);
-            return ['success' => true, 'id' => $trip->id];
-        } else {
-            return ['success' => false, 'errors' => $errors];
-        }
-    }
-
     protected function put(Request $request)
     {
         $trip = TripFactory::put($this->id, $request, true);
+        $trip->completed = true;
         TripFactory::save($trip);
         return ['success' => true, 'id' => $trip->id];
     }
@@ -128,6 +115,16 @@ class Trip extends SubController
             return ['success' => true];
         } else {
             return ['success' => false];
+        }
+    }
+
+    protected function incompleteJson()
+    {
+        $trip = TripFactory::getCurrentSubmitterIncomplete();
+        if (empty($trip)) {
+            return null;
+        } else {
+            return $trip->getStringVars();
         }
     }
 
