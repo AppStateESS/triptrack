@@ -38,6 +38,10 @@ class DocumentFactory extends BaseFactory
     {
         $fileName = $fileArray['name'];
         $path = self::createPath($fileName);
+        if (is_file($path)) {
+            $fileName = preg_replace('/(\.(\w+))$/', '-' . time() . '$1', $fileName);
+            $path = self::createPath($fileName);
+        }
         move_uploaded_file($fileArray['tmp_name'], $path);
         return $fileName;
     }
@@ -68,7 +72,42 @@ class DocumentFactory extends BaseFactory
         if (!empty($options['tripId'])) {
             $tbl->addFieldConditional('tripId', $options['tripId']);
         }
-        return $db->select();
+        if (!empty($options['idOnly'])) {
+            $tbl->addField('id');
+
+            while ($id = $db->selectColumn()) {
+                $result[] = $id;
+            }
+            return $result ?? null;
+        } else {
+            return $db->select();
+        }
+    }
+
+    public static function download(Document $document)
+    {
+        $fullPath = DocumentFactory::createPath($document->filePath);
+        if (preg_match('/\.pdf$/', $document->filePath)) {
+            header('Content-Type: application/pdf');
+        } else {
+            header('Content-Type: application/octet-stream');
+        }
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: inline; filename=\"" . basename($fullPath) . "\"");
+        readfile($fullPath);
+        exit;
+    }
+
+    public static function deleteByTripId(int $tripId)
+    {
+        $documentIds = self::list(['tripId' => $tripId, 'idOnly' => true]);
+        if (empty($documentIds)) {
+            return;
+        }
+
+        foreach ($documentIds as $id) {
+            self::delete($id);
+        }
     }
 
 }
