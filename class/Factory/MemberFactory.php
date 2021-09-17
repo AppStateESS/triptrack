@@ -60,10 +60,9 @@ class MemberFactory extends BaseFactory
         return $db->delete();
     }
 
-    public static function currentOwnsTrip(int $tripId)
+    public static function currentOwnsTrip(\triptrack\Resource\Trip $trip)
     {
-        $trip = TripFactory::build($tripId);
-        return $trip->submitUsername === \Current_User::getUsername();
+        return $trip->submitUserId === (int) \Current_User::getId();
     }
 
     public static function list(array $options = [])
@@ -135,19 +134,6 @@ class MemberFactory extends BaseFactory
         $tbl->addFieldConditional('orgId', $orgId);
         $tbl->addFieldConditional('memberId', $memberId);
         $db->delete();
-    }
-
-    public static function post(Request $request)
-    {
-        $member = new Member;
-        $member->bannerId = (string) $request->pullPostInteger('bannerId');
-        $member->email = $request->pullPostString('email');
-        $member->firstName = $request->pullPostString('firstName');
-        $member->lastName = $request->pullPostString('lastName');
-        $member->phone = $request->pullPostString('phone');
-        $member->username = $request->pullPostString('username');
-        self::saveResource($member);
-        return $member;
     }
 
     public static function put(int $id, Request $request)
