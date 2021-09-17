@@ -5,7 +5,7 @@ import Grid from './Grid'
 import Menu from './Menu'
 import Message from '../Share/Message'
 import {getList} from '../api/Fetch'
-import {deleteTrip} from '../api/TripAjax'
+import {deleteTrip, getIncomplete} from '../api/TripAjax'
 
 /* global hostLabel, unapproved */
 
@@ -29,6 +29,7 @@ const TripList = ({hostLabel, unapproved}) => {
   const [unapprovedOnly, setUnapprovedOnly] = useState(unapproved)
   const [init, setInit] = useState(false)
   const [sort, setSort] = useState({column: '', dir: 0})
+  const [incomplete, setIncomplete] = useState(null)
   const [dateRange, setDateRange] = useState(() => {
     const startDate = localStorage.getItem('startDate')
     const endDate = localStorage.getItem('endDate')
@@ -97,6 +98,11 @@ const TripList = ({hostLabel, unapproved}) => {
         setLoading(false)
       } else {
         setTrips(response.data)
+        getIncomplete().then((response) => {
+          if (response.data) {
+            setIncomplete(response.data)
+          }
+        })
         setLoading(false)
       }
     })
@@ -131,6 +137,7 @@ const TripList = ({hostLabel, unapproved}) => {
     <Menu
       {...{
         search,
+        incomplete,
         setSearch,
         sendSearch: load,
         resetSearch,
