@@ -1,17 +1,29 @@
+<div class="float-right">
+    <?php if ($trip):?>
+    <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="btn btn-outline-primary">Complete travel plan</a>
+    <?php else:?>
+    <a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a>
+    <?php endif;?>
+</div>
 <h2>Your trip submissions</h2>
 <?php if (!empty($rows)):?>
 <table class="table table-striped">
     <tbody>
         <tr>
+            <th style="width: 15%">&nbsp;</th>
             <th>Approved</th>
             <th><?=$hostLabel?></th>
             <th>Destination</th>
             <th>Departing</th>
             <th>Returning</th>
-            <th>&nbsp;</th>
         </tr>
         <?php foreach ($rows as $trip):?>
         <tr>
+            <td><a href="./triptrack/Member/Trip/<?=$trip['id']?>" class="mr-1 btn btn-sm btn-success">View</a>
+                <?php if (!$trip['approved']):?>
+                <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="mr-1 btn btn-sm btn-primary">Update</a>
+                <?php endif;?>
+            </td>
             <td style="width:10%">
                 <?=$trip['approved'] ? '<div class="text-center text-success">Yes</div>' : '<div class="text-center text-danger">No</div>'?>
             </td>
@@ -19,7 +31,6 @@
             <td><?=$trip['destinationCity'], ', ', $trip['destinationState']?></td>
             <td><?=strftime('%b %e, %y', $trip['timeDeparting'])?></td>
             <td><?=strftime('%b %e, %y', $trip['timeReturn'])?></td>
-            <td><a href="./triptrack/Member/Trip/<?=$trip['id']?>">View</a></td>
         </tr>
         <?php endforeach;?>
     </tbody>
