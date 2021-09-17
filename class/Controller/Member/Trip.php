@@ -12,6 +12,7 @@ use triptrack\Factory\TripFactory;
 use triptrack\Factory\SettingFactory;
 use triptrack\Factory\MemberFactory;
 use triptrack\Exception\PrivilegeMissing;
+use triptrack\Exception\MemberDoesNotOwnTrip;
 use Canopy\Request;
 
 class Trip extends SubController
@@ -25,30 +26,34 @@ class Trip extends SubController
         $this->view = new \triptrack\View\TripView();
     }
 
-    public function createHtml()
+    protected function createHtml()
     {
-        return $this->view->memberForm();
+        $trip = TripFactory::getCurrentSubmitterIncomplete();
+        if (empty($trip)) {
+            $trip = TripFactory::buildMemberTrip(MemberFactory::getCurrentMemberId());
+        }
+
+        return $this->view->memberForm($trip);
     }
 
-    public function editHtml()
+    protected function editHtml()
     {
-        return $this->view->memberForm($this->id);
+        $trip = TripFactory::build($this->id);
+        return $this->view->memberForm($trip);
     }
 
-    public function viewJson(Request $request)
+    protected function viewJson(Request $request)
     {
         if ((int) $this->id === 0) {
             $trip = TripFactory::loadNewMemberTrip();
         } else {
             $trip = TripFactory::load(TripFactory::build(), $this->id);
-            if ($trip->submitUsername != \Current_User::getUsername()) {
-                throw new \Exception('Member is not trip submitter');
-            }
+            $this->testTrip($trip);
         }
         return $trip->getVariablesAsValue(false, null, true);
     }
 
-    public function viewHtml(Request $request)
+    protected function viewHtml(Request $request)
     {
         $trip = TripFactory::build($this->id, false);
         if (empty($trip)) {
@@ -59,32 +64,22 @@ class Trip extends SubController
         return $this->view->memberView($trip);
     }
 
-    public function listHtml()
+    protected function listHtml()
     {
         return $this->view->memberList();
     }
 
-    public function post(Request $request)
+    protected function testTrip(\triptrack\Resource\Trip $trip)
     {
-        $trip = TripFactory::post($request, !SettingFactory::getApprovalRequired());
-        $errorFree = TripFactory::errorCheck($trip);
-
-        if ($errorFree === true) {
-            $trip = TripFactory::save($trip);
-            \triptrack\Factory\MemberFactory::addToTrip($this->role->memberId, $trip->id);
-            TripFactory::emailTripSubmissionToAdmin($trip, !SettingFactory::getApprovalRequired());
-            return ['success' => true, 'id' => $trip->id];
-        } else {
-            return ['success' => false, 'errors' => $errorFree];
+        if (!MemberFactory::currentOwnsTrip($trip)) {
+            throw new MemberDoesNotOwnTrip;
         }
     }
 
-    public function put(Request $request)
+    protected function put(Request $request)
     {
         $trip = TripFactory::build($this->id);
-        if ($trip->submitUsername !== \Current_User::getUsername()) {
-            throw new PrivilegeMissing();
-        }
+        $this->testTrip($trip);
 
         if ($trip->approved) {
             throw new \Exception('Approved trips may not be updated by members.');
@@ -94,6 +89,7 @@ class Trip extends SubController
         $errorFree = TripFactory::errorCheck($updatedTrip);
 
         if ($errorFree === true) {
+            $updatedTrip->completed = true;
             TripFactory::save($updatedTrip);
             return ['success' => true, 'id' => $this->id];
         } else {
@@ -101,12 +97,12 @@ class Trip extends SubController
         }
     }
 
-    public function memberListJson()
+    protected function memberListJson()
     {
         return MemberFactory::getTripParticipants($this->id);
     }
 
-    public function addMembersPost(Request $request)
+    protected function addMembersPost(Request $request)
     {
         $tripId = $request->pullPostInteger('tripId');
         $members = $request->pullPostArray('members');
@@ -117,6 +113,17 @@ class Trip extends SubController
         } else {
             return ['success' => false];
         }
+    }
+
+    protected function delete(Request $request)
+    {
+        $trip = TripFactory::build($this->id);
+        $this->testTrip($trip);
+        if ($trip->completed) {
+            throw new \Exception('Member can not delete a completed trip.');
+        }
+        TripFactory::delete($trip->id);
+        return ['success' => true];
     }
 
 }
