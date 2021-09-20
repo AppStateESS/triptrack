@@ -41,7 +41,7 @@ if (!$useBannerId) {
 
 
 $data = array(
-    'ID' => $banner_id,
+    'bannerID' => $banner_id,
     'emailAddress' => $username . '@appstate.edu',
     'firstName' => $fn[rand(0, count($fn) - 1)],
     'preferredName' => rand(0, 1) ? $fn[rand(0, count($fn) - 1)] : null,
