@@ -136,6 +136,19 @@ class MemberFactory extends BaseFactory
         $db->delete();
     }
 
+    public static function post(Request $request)
+    {
+        $member = new Member;
+        $member->bannerId = (string) $request->pullPostInteger('bannerId');
+        $member->email = $request->pullPostString('email');
+        $member->firstName = $request->pullPostString('firstName');
+        $member->lastName = $request->pullPostString('lastName');
+        $member->phone = $request->pullPostString('phone');
+        $member->username = $request->pullPostString('username');
+        self::saveResource($member);
+        return $member;
+    }
+
     public static function put(int $id, Request $request)
     {
         $member = new Member;
@@ -326,7 +339,8 @@ class MemberFactory extends BaseFactory
     public static function buildMemberFromBannerData(\stdClass $valueObj)
     {
         $member = new Member();
-        $member->bannerId = $valueObj->ID;
+
+        $member->bannerId = $valueObj->bannerID;
         $member->email = $valueObj->emailAddress;
         $member->firstName = $valueObj->preferredName ?? $valueObj->firstName;
         $member->lastName = $valueObj->lastName;
