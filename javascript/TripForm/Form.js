@@ -187,7 +187,7 @@ const Form = ({
     if (allowSave) {
       Promise.all([
         postTrip(trip, role),
-        addMembersToTrip(selectedMembers, defaultTrip.id, 'Member'),
+        addMembersToTrip(selectedMembers, defaultTrip.id, role),
       ]).then((response) => {
         if (response[0].data.success) {
           const url = `triptrack/${role}/Trip/${response[0].data.id}`
