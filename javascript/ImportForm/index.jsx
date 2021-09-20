@@ -94,6 +94,10 @@ const ImportForm = () => {
               <td>{importStats.badRow}</td>
             </tr>
             <tr>
+              <th>Restricted from trips:</th>
+              <td>{importStats.restrictedTrip}</td>
+            </tr>
+            <tr>
               <th>Rows with errors:</th>
               <td>{errorRowOutput}</td>
             </tr>

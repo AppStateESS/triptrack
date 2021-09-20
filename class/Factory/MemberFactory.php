@@ -290,6 +290,7 @@ class MemberFactory extends BaseFactory
         $stats['previousMember'] = 0;
         $stats['added'] = 0;
         $stats['counting'] = 0;
+        $stats['restrictedTrip'] = 0;
 
         $handle = fopen($path, 'r');
         if ($startRow === 1) {
@@ -305,7 +306,11 @@ class MemberFactory extends BaseFactory
             } elseif ($member = self::pullByBannerId($bannerId)) {
                 $stats['previousMember']++;
                 if ($tripId) {
-                    self::addToTrip($member['id'], $tripId);
+                    if ($member['restricted'] == 1) {
+                        $stats['restrictedTrip']++;
+                    } else {
+                        self::addToTrip($member['id'], $tripId);
+                    }
                 }
                 if ($orgId) {
                     self::addToOrganization($member['id'], $orgId);
@@ -315,7 +320,11 @@ class MemberFactory extends BaseFactory
                     $member = self::buildMemberFromBannerData($result);
                     self::saveResource($member);
                     if ($tripId) {
-                        self::addToTrip($member->id, $tripId);
+                        if ($member['restricted'] == 0) {
+                            $stats['restrictedTrip']++;
+                        } else {
+                            self::addToTrip($member->id, $tripId);
+                        }
                     }
                     if ($orgId) {
                         self::addToOrganization($member->id, $orgId);
