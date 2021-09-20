@@ -29,7 +29,21 @@ const EmailMembers = ({orgId, tripId, organizationLabel}) => {
   if (loading) {
     return <div>Loading data.</div>
   } else if (members.length === 0) {
-    return <div>No members to email</div>
+    return (
+      <div>
+        {' '}
+        <h3>
+          Email members of {organizationLabel.toLowerCase()}:{' '}
+          {organization.name}
+        </h3>
+        <p>
+          No members to email.{' '}
+          <a href={`./triptrack/Admin/Trip/${tripId}/edit#members`}>
+            Go to the edit screen to add members.
+          </a>
+        </p>
+      </div>
+    )
   }
 
   let tripInformation
