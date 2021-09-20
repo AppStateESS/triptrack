@@ -23,7 +23,7 @@ class MemberView extends AbstractView
     public static function memberTable(array $memberList, bool $isAdmin = false)
     {
         if (count($memberList) === 0) {
-            return '<div>No members signed up for trip</div>';
+            return '<div class="alert alert-danger">No members signed up for trip</div>';
         }
         if ($isAdmin) {
             $filename = 'Admin/MemberListTable.tpl';
