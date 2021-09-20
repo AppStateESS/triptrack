@@ -2,25 +2,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
-import {patchApproval} from '../api/TripAjax'
 import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import SortButton from '../api/SortButton'
 import '../api/pointer.css'
 
-const approvedIcon = (approved, patch) => {
+const approvedIcon = (approved, tripId) => {
   return approved ? (
     <span className="text-success">
       <FontAwesomeIcon icon={faCheckCircle} size="lg" />
     </span>
   ) : (
-    <button className="text-danger btn btn-link">
-      <FontAwesomeIcon icon={faTimesCircle} size="lg" onClick={patch} />
+    <button className="btn btn-link">
+      <a
+        href={`triptrack/Admin/Trip/${tripId}`}
+        title="View trip"
+        className="text-danger">
+        <FontAwesomeIcon icon={faTimesCircle} size="lg" />
+      </a>
     </button>
   )
 }
 
-const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
+const Grid = ({trips, deleteRow, hostLabel, setSort, sort}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -28,14 +32,6 @@ const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
       ) === 'DELETE'
     ) {
       deleteRow(key)
-    }
-  }
-
-  const approveTrip = (tripId) => {
-    if (
-      confirm('Are you sure this trip meets all qualifications for approval?')
-    ) {
-      patchApproval(tripId).then(load)
     }
   }
 
@@ -90,7 +86,7 @@ const Grid = ({trips, deleteRow, hostLabel, load, setSort, sort}) => {
           </div>
         </td>
         <td className="text-center">
-          {approvedIcon(value.approved, () => approveTrip(value.id))}
+          {approvedIcon(value.approved, value.id)}
         </td>
         <td>
           <a href={`./triptrack/Admin/Trip/${value.id}`}>{value.host}</a>
