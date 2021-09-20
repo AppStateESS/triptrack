@@ -8,12 +8,13 @@ import Form from './Form'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Message from '../Share/Message'
 import 'regenerator-runtime'
+import PropTypes from 'prop-types'
 
-/* global deity */
+/* global deity, organizationLabel */
 
 const emptyOrg = {id: 0, name: ''}
 
-const OrgList = ({deity}) => {
+const OrgList = ({deity, organizationLabel}) => {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState(null)
@@ -109,6 +110,7 @@ const OrgList = ({deity}) => {
       <div>
         <Menu
           search={search}
+          organizationLabel={organizationLabel}
           setSearch={setSearch}
           sendSearch={sendSearch}
           showModal={() => {
@@ -128,4 +130,12 @@ const OrgList = ({deity}) => {
   }
 }
 
-ReactDOM.render(<OrgList deity={deity} />, document.getElementById('OrgList'))
+OrgList.propTypes = {
+  organizationLabel: PropTypes.string,
+  deity: PropTypes.bool,
+}
+
+ReactDOM.render(
+  <OrgList deity={deity} organizationLabel={organizationLabel} />,
+  document.getElementById('OrgList')
+)
