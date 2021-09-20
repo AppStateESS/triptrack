@@ -131,7 +131,7 @@ class MemberFactory extends BaseFactory
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_membertoorg');
-        $tbl->addFieldConditional('orgId', $orgId);
+        $tbl->addFieldConditional('organizationId', $orgId);
         $tbl->addFieldConditional('memberId', $memberId);
         $db->delete();
     }
@@ -304,6 +304,12 @@ class MemberFactory extends BaseFactory
                 $stats['errorRow'][] = $stats['counting'];
             } elseif ($member = self::pullByBannerId($bannerId)) {
                 $stats['previousMember']++;
+                if ($tripId) {
+                    self::addToTrip($member['id'], $tripId);
+                }
+                if ($orgId) {
+                    self::addToOrganization($member['id'], $orgId);
+                }
             } else {
                 if ($result = BannerAPI::getStudent($bannerId)) {
                     $member = self::buildMemberFromBannerData($result);
