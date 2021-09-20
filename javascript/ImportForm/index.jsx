@@ -32,21 +32,13 @@ const ImportForm = () => {
 
   useEffect(async () => {
     const response = await loadOrganizationList()
-    setOrganizations(response)
+    setOrganizations(response.data)
   }, [])
-
-  // useEffect(() => {
-  //   if (formReady) {
-  //     window.addEventListener('beforeunload', listener)
-  //   } else {
-  //     window.removeEventListener('beforeunload', listener)
-  //   }
-  // }, [formReady])
 
   useEffect(async () => {
     if (filter.orgId > 0) {
       const response = await loadTrips(filter.orgId)
-      setTrips(response)
+      setTrips(response.data)
     }
   }, [filter.orgId])
 
@@ -60,7 +52,6 @@ const ImportForm = () => {
         }
       )
       .then((response) => {
-        //window.removeEventListener('beforeunload', listener)
         setImportComplete(true)
         setImportStats(response.data.stats)
       })
