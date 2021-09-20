@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {tripSettings} from './TripDefaults'
 import Host from './Host'
@@ -36,21 +36,25 @@ const Form = ({
   const [selectedMembers, setSelectedMembers] = useState([])
   const [documents, setDocuments] = useState(tripDocuments)
   const [requiredFileMissing, setRequiredFileMissing] = useState(false)
+  const memberAnchor = useRef(null)
 
   useEffect(() => {
-    getList(`./triptrack/${role}/Member`, {orgId: trip.organizationId}).then(
-      (response) => {
-        setMembers(response.data)
-      }
-    )
+    let part1
+    let part2
+
+    part1 = getList(`./triptrack/${role}/Member`, {
+      orgId: trip.organizationId,
+    })
 
     if (trip.id > 0) {
-      getList(`./triptrack/${role}/Trip/${trip.id}/memberList`).then(
-        (response) => {
-          setSelectedMembers(response.data)
-        }
-      )
+      part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
     }
+    Promise.all([part1, part2]).then((response) => {
+      setMembers(response[0].data)
+      if (response[1]) {
+        setSelectedMembers(response[1].data)
+      }
+    })
   }, [trip.organizationId])
 
   useEffect(() => {
@@ -60,6 +64,15 @@ const Form = ({
       setRequiredFileMissing(false)
     }
   }, [documents])
+
+  useEffect(() => {
+    if (location.hash == '#members') {
+      const timer = setTimeout(() => {
+        memberAnchor.current.scrollIntoView()
+        window.scrollTo(memberAnchor.current)
+      }, 1000)
+    }
+  }, [])
 
   const setFormElement = (key, value) => {
     trip[key] = value
@@ -203,6 +216,7 @@ const Form = ({
       })
     }
   }
+  console.log('render')
   return (
     <div>
       {title}
@@ -241,7 +255,7 @@ const Form = ({
       <Schedule trip={trip} setFormElement={setFormElement} />
       <div className="row mb-5">
         <div className="col-sm-5">
-          <a id="members"></a>
+          <a name="members" id="members" ref={memberAnchor}></a>
           <MemberChoice
             {...{
               members,
