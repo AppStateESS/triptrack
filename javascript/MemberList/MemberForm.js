@@ -14,7 +14,6 @@ const MemberForm = ({
   loadMemberByUsername,
 }) => {
   const [orgId, setOrgId] = useState(0)
-
   const selectAssociation = () => {
     if (member.id === 0) {
       if (organizationList.length > 0) {
@@ -68,7 +67,7 @@ const MemberForm = ({
       </h3>
       {message}
       <div className="row mb-3 form-group">
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>Banner ID</label>
           <input
             type="text"
@@ -77,8 +76,11 @@ const MemberForm = ({
             value={member.bannerId}
             onChange={(e) => checkBannerId(e.target.value)}
           />
+          {member.notFound && member.bannerId.length === 9 ? (
+            <span className="badge badge-danger">Banner ID not found</span>
+          ) : null}
         </div>
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>Username</label>
           <input
             type="text"
@@ -88,7 +90,7 @@ const MemberForm = ({
             onChange={(e) => checkUsername(e.target.value)}
           />
         </div>
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>First name</label>
           <input
             type="text"
@@ -98,7 +100,7 @@ const MemberForm = ({
             onChange={(e) => update('firstName', e.target.value)}
           />
         </div>
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>Last name</label>
           <input
             type="text"
@@ -108,7 +110,7 @@ const MemberForm = ({
             onChange={(e) => update('lastName', e.target.value)}
           />
         </div>
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>Email</label>
           <input
             type="text"
@@ -118,7 +120,7 @@ const MemberForm = ({
             onChange={(e) => update('email', e.target.value)}
           />
         </div>
-        <div className="col-6">
+        <div className="col-6 mb-3">
           <label>Phone</label>
           <input
             type="text"
@@ -157,6 +159,7 @@ MemberForm.propTypes = {
   organizationList: PropTypes.array,
   formMessage: PropTypes.element,
   loadMember: PropTypes.func,
+  loadMemberByUsername: PropTypes.func,
 }
 
 export default MemberForm
