@@ -146,19 +146,20 @@ const MemberList = ({organizationLabel}) => {
       if (orgId > 0) {
         addMember(memberId, parseInt(orgId), 0)
       }
-      setShowModal(false)
+      resetModal()
       setCurrentMember(Object.assign({}, emptyMember))
       load()
     })
   }
 
   const loadMember = (bannerId) => {
-    loadByBannerId.then((response) => {
+    loadByBannerId(bannerId).then((response) => {
       if (response.data.success) {
         if (response.data.status === 'banner') {
           setFormMessage(
             <span>
-              Student in Banner but <strong>not saved</strong> to the system.
+              Student found in Banner but <strong>is not yet saved</strong> to
+              the system.
             </span>
           )
         } else if (response.data.status === 'system') {
@@ -178,6 +179,7 @@ const MemberList = ({organizationLabel}) => {
           email: '',
           phone: '',
           username: '',
+          notFound: true,
         })
       }
     })
