@@ -66,7 +66,11 @@ class TripView extends AbstractView
         $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true]);
         $vars['memberList'] = MemberView::memberTable($members, true);
         $vars['documents'] = DocumentView::tripList($tripId, 'Admin');
-        $vars['approvalButton'] = $this->scriptView('Approval', ['approvedStatus' => $trip->approved, 'tripId' => $tripId]);
+        if (count($members)) {
+            $vars['approvalButton'] = $this->scriptView('Approval', ['approvedStatus' => $trip->approved, 'tripId' => $tripId]);
+        } else {
+            $vars['approvalButton'] = null;
+        }
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/View.html');
         return $this->dashboardHTML('trip', $template->get());
