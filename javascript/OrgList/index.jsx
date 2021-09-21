@@ -23,7 +23,7 @@ const OrgList = ({deity, organizationLabel}) => {
   const [showModal, setShowModal] = useState(false)
   const [currentOrg, setCurrentOrg] = useState(Object.assign({}, emptyOrg))
   const [search, setSearch] = useState('')
-  let searchTimeout = useRef(null)
+  const searchTimeout = useRef(null)
 
   const load = async () => {
     setLoading(true)
