@@ -50,6 +50,11 @@ class OrganizationFactory extends BaseFactory
             }
             $tbl2->addFieldConditional('memberId', $options['memberId']);
         }
+
+        if (!empty($options['search'])) {
+            $tbl->addFieldConditional('name', '%' . $options['search'] . '%', 'like');
+        }
+
         $tbl->addOrderBy('name');
         return $db->select();
     }
