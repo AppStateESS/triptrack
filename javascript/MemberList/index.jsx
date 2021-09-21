@@ -61,6 +61,7 @@ const MemberList = ({organizationLabel}) => {
   const [search, setSearch] = useState('')
 
   const init = useRef(false)
+  const searchTimeout = useRef(null)
 
   useEffect(() => {
     getList('./triptrack/Admin/Organization').then((response) => {
@@ -88,6 +89,20 @@ const MemberList = ({organizationLabel}) => {
       }
     })
   }, [filter.tripId, tripList])
+
+  useEffect(() => {
+    if (!init) {
+      return
+    }
+    if (search.length > 3 || search.length === 0) {
+      searchTimeout.current = setTimeout(() => {
+        load()
+      }, 1000)
+    }
+    return () => {
+      clearTimeout(searchTimeout.current)
+    }
+  }, [search])
 
   useEffect(() => {
     updateUrl()

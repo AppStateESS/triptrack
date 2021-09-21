@@ -112,6 +112,21 @@ class MemberFactory extends BaseFactory
             $db->joinResources($tbl, $tbl2, $joinCond, 'left');
         }
 
+        if (!empty($options['search'])) {
+            $search = '%' . $options['search'] . '%';
+            $searchCond1 = $db->createConditional($tbl->getField('firstName'), $search, 'like');
+            $searchCond2 = $db->createConditional($tbl->getField('lastName'), $search, 'like');
+            $searchCond3 = $db->createConditional($tbl->getField('username'), $search, 'like');
+            $searchCond4 = $db->createConditional($tbl->getField('bannerId'), $search, 'like');
+
+            $subjoin1 = $db->createConditional($searchCond1, $searchCond2, 'or');
+            $subjoin2 = $db->createConditional($searchCond3, $searchCond4, 'or');
+
+            $join = $db->createConditional($subjoin1, $subjoin2, 'or');
+
+            $db->addConditional($join);
+        }
+
 
         $tbl->addOrderBy($orderBy, $direction);
 
