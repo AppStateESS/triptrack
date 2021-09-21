@@ -12,6 +12,7 @@ const MemberForm = ({
   formMessage,
   loadMember,
   loadMemberByUsername,
+  locked,
 }) => {
   const [orgId, setOrgId] = useState(0)
   const selectAssociation = () => {
@@ -36,6 +37,14 @@ const MemberForm = ({
     }
   }
 
+  const errorsFound = () => {
+    return (
+      member.firstName.length === 0 ||
+      member.lastName.length === 0 ||
+      member.email.length === 0
+    )
+  }
+
   const checkBannerId = (bannerId) => {
     if (bannerId.length === 9) {
       loadMember(bannerId)
@@ -43,14 +52,6 @@ const MemberForm = ({
     if (bannerId.length < 10) {
       update('bannerId', bannerId)
     }
-  }
-
-  const checkUsername = (username) => {
-    if (username.length > 4) {
-      loadMemberByUsername(username)
-    }
-
-    update('username', username)
   }
 
   let message
@@ -74,6 +75,7 @@ const MemberForm = ({
             name="bannerId"
             className="form-control"
             value={member.bannerId}
+            disabled={locked}
             onChange={(e) => checkBannerId(e.target.value)}
           />
           {member.notFound && member.bannerId.length === 9 ? (
@@ -81,17 +83,31 @@ const MemberForm = ({
           ) : null}
         </div>
         <div className="col-6 mb-3">
-          <label>Username</label>
-          <input
-            type="text"
-            name="username"
-            className="form-control"
-            value={member.username}
-            onChange={(e) => checkUsername(e.target.value)}
-          />
+          <label>Banner username</label>
+          <div className="input-group mb-3">
+            <input
+              type="text"
+              name="username"
+              disabled={locked}
+              className="form-control"
+              value={member.username}
+              onChange={(e) => update('username', e.target.value)}
+            />
+            <div className="input-group-append">
+              <button
+                className="btn btn-outline-secondary"
+                disabled={locked}
+                type="button"
+                onClick={loadMemberByUsername}>
+                <i className="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
         </div>
         <div className="col-6 mb-3">
-          <label>First name</label>
+          <label>
+            First name&nbsp;<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             name="firstName"
@@ -101,7 +117,9 @@ const MemberForm = ({
           />
         </div>
         <div className="col-6 mb-3">
-          <label>Last name</label>
+          <label>
+            Last name&nbsp;<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             name="lastName"
@@ -111,7 +129,9 @@ const MemberForm = ({
           />
         </div>
         <div className="col-6 mb-3">
-          <label>Email</label>
+          <label>
+            Email&nbsp;<span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             name="email"
@@ -137,6 +157,7 @@ const MemberForm = ({
         <div className="col-sm-4">
           <button
             className="btn btn-primary mr-2"
+            disabled={errorsFound()}
             onClick={() => saveMember(orgId)}>
             Save
           </button>
@@ -160,6 +181,7 @@ MemberForm.propTypes = {
   formMessage: PropTypes.element,
   loadMember: PropTypes.func,
   loadMemberByUsername: PropTypes.func,
+  locked: PropTypes.bool,
 }
 
 export default MemberForm
