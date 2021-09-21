@@ -395,6 +395,9 @@ class MemberFactory extends BaseFactory
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('username', $username);
         $result = $db->selectOneRow();
+        if (!$result) {
+            return null;
+        }
         if ($asObject) {
             $member = new Member();
             $member->setVars($result);
