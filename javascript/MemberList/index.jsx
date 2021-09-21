@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 import {getList} from '../api/Fetch'
 import {
@@ -49,6 +49,7 @@ const MemberList = ({organizationLabel}) => {
   const [sort, setSort] = useState({column: '', dir: 0})
   const [tripApproved, setTripApproved] = useState(false)
   const urlParams = new URLSearchParams(window.location.search)
+  const [locked, setLocked] = useState(false)
 
   const tripId =
     urlParams.get('tripId') === null ? 0 : parseInt(urlParams.get('tripId'))
@@ -57,8 +58,9 @@ const MemberList = ({organizationLabel}) => {
     urlParams.get('orgId') === null ? 0 : parseInt(urlParams.get('orgId'))
 
   const [filter, setFilter] = useState({orgId, tripId})
-
   const [search, setSearch] = useState('')
+
+  const init = useRef(false)
 
   useEffect(() => {
     getList('./triptrack/Admin/Organization').then((response) => {
@@ -91,6 +93,11 @@ const MemberList = ({organizationLabel}) => {
     updateUrl()
   }, [filter.orgId, filter.tripId])
 
+  useEffect(() => {
+    init.current = true
+    load()
+  }, [])
+
   const loadTripList = (orgId) => {
     return getList('./triptrack/Admin/Trip', {
       orgId,
@@ -98,6 +105,9 @@ const MemberList = ({organizationLabel}) => {
   }
 
   const load = () => {
+    if (!init.current) {
+      return
+    }
     const data = Object.assign({}, filter)
     data.search = encodeURIComponent(search)
     switch (sort.dir) {
@@ -162,6 +172,7 @@ const MemberList = ({organizationLabel}) => {
               the system.
             </span>
           )
+          setLocked(true)
         } else if (response.data.status === 'system') {
           setFormMessage(
             <span>
@@ -185,8 +196,9 @@ const MemberList = ({organizationLabel}) => {
     })
   }
 
-  const loadMemberByUsername = (username) => {
-    loadByUsername.then((response) => {
+  const loadMemberByUsername = () => {
+    const {username} = currentMember
+    loadByUsername(username).then((response) => {
       if (response.data.success) {
         if (response.data.status === 'banner') {
           setFormMessage(
@@ -194,6 +206,7 @@ const MemberList = ({organizationLabel}) => {
               Student in Banner but <strong>not saved</strong> to the system.
             </span>
           )
+          setLocked(true)
         } else if (response.data.status === 'system') {
           setFormMessage(
             <span>
@@ -201,6 +214,7 @@ const MemberList = ({organizationLabel}) => {
               cancel.
             </span>
           )
+          setLocked(true)
         }
         setCurrentMember(response.data.member)
       } else {
@@ -213,6 +227,7 @@ const MemberList = ({organizationLabel}) => {
           phone: '',
           username,
         })
+        setFormMessage(<span>Could not find student with that username.</span>)
       }
     })
   }
@@ -222,6 +237,7 @@ const MemberList = ({organizationLabel}) => {
     setShowModal(false)
     setModalType('member')
     setFormMessage(null)
+    setLocked(false)
   }
 
   const update = (varName, value) => {
@@ -253,7 +269,8 @@ const MemberList = ({organizationLabel}) => {
       setMessage('Error: could not load member')
       setMessageType('danger')
     } else {
-      setCurrentMember(response)
+      setCurrentMember(response.data)
+      setLocked(true)
       setShowModal(true)
     }
   }
@@ -317,14 +334,17 @@ const MemberList = ({organizationLabel}) => {
     if (modalType === 'member') {
       return (
         <MemberForm
-          update={update}
+          {...{
+            locked,
+            update,
+            saveMember,
+            formMessage,
+            loadMemberByUsername,
+            organizationList,
+            loadMember,
+          }}
           member={currentMember}
           close={resetModal}
-          saveMember={saveMember}
-          formMessage={formMessage}
-          loadMemberByUsername={loadMemberByUsername}
-          organizationList={organizationList}
-          loadMember={loadMember}
         />
       )
     } else if (filter.orgId > 0) {
