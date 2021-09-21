@@ -53,7 +53,8 @@ class SettingFactory
 
     public static function getOrganizationLabel()
     {
-        return Settings::get('triptrack', 'organizationLabel');
+        $label = Settings::get('triptrack', 'organizationLabel');
+        return empty($label) ? 'Organization' : $label;
     }
 
     public static function getSecondaryRequired()
@@ -68,7 +69,8 @@ class SettingFactory
 
     public static function getHostLabel()
     {
-        return Settings::get('triptrack', 'hostLabel');
+        $label = Settings::get('triptrack', 'hostLabel');
+        return empty($label) ? 'Host' : $label;
     }
 
     public static function getApprovalRequired()
