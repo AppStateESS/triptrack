@@ -78,10 +78,11 @@ class Member extends SubController
     protected function getByUsernameJson(Request $request)
     {
         $username = $request->pullGetString('username');
-        $member = MemberFactory::pullByUsername($username);
+        $member = MemberFactory::pullByUsername($username, false);
+
         if (empty($member)) {
             $bannerMember = \triptrack\BannerAPI::getStudent($username);
-            if (empty($bannerMember)) {
+            if (empty($bannerMember) || empty($bannerMember->bannerID)) {
                 return ['success' => false];
             } else {
                 $member = MemberFactory::buildMemberFromBannerData($bannerMember);
