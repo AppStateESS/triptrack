@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import ReactDOM from 'react-dom'
 import {getList, sendDelete} from '../api/Fetch'
 import Menu from './Menu'
@@ -17,13 +17,16 @@ const emptyOrg = {id: 0, name: ''}
 const OrgList = ({deity, organizationLabel}) => {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
+  const [init, setInit] = useState(false)
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState('danger')
   const [showModal, setShowModal] = useState(false)
   const [currentOrg, setCurrentOrg] = useState(Object.assign({}, emptyOrg))
   const [search, setSearch] = useState('')
+  let searchTimeout = useRef(null)
 
   const load = async () => {
+    setLoading(true)
     let response = await getList('./triptrack/Admin/Organization/', {search})
     if (response === false) {
       setMessage('Error: could not load organization list')
@@ -36,8 +39,24 @@ const OrgList = ({deity, organizationLabel}) => {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!init) {
+      return
+    }
+    if (search.length > 3 || search.length === 0) {
+      searchTimeout.current = setTimeout(() => {
+        load()
+      }, 1000)
+    }
+    return () => {
+      clearTimeout(searchTimeout.current)
+    }
+  }, [search])
+
   useEffect(() => {
     load()
+    setInit(true)
   }, [])
 
   const sendSearch = () => {
