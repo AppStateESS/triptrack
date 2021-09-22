@@ -7,6 +7,10 @@
 
 namespace triptrack\View;
 
+use triptrack\Factory\TripFactory;
+use triptrack\Factory\MemberFactory;
+use phpws2\Template;
+
 class MemberView extends AbstractView
 {
 
@@ -30,9 +34,27 @@ class MemberView extends AbstractView
         } else {
             $filename = 'Member/MemberListTable.tpl';
         }
-        $template = new \phpws2\Template(['listing' => $memberList]);
+        $template = new Template(['listing' => $memberList]);
         $template->setModuleTemplate('triptrack', $filename);
         return $template->get();
+    }
+
+    /**
+     *
+     * @param int $memberId
+     * @return string Member's trip listing.
+     */
+    public function listTrips(int $memberId)
+    {
+        $member = MemberFactory::build($memberId);
+        $vars['member'] = $member->getStringVars();
+        $trips = TripFactory::list(['memberId' => $memberId, 'orderBy' => 'timeDeparting', 'includeOrganizationName' => true]);
+        $vars['trips'] = $trips;
+
+        $template = new Template($vars);
+        $template->setModuleTemplate('triptrack', 'Admin/MemberTripList.html');
+
+        return $this->dashboardHTML('member', $template->get());
     }
 
 }

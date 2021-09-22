@@ -5,7 +5,7 @@ import {formatPhone} from '../api/String'
 import SortButton from '../api/SortButton'
 import '../api/pointer.css'
 import {restrictMember, unrestrictMember} from '../api/MemberAjax'
-import {faBan, faDoorOpen} from '@fortawesome/free-solid-svg-icons'
+import {faBan, faDoorOpen, faSuitcase} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const Grid = ({
@@ -150,6 +150,12 @@ const Grid = ({
             </button>
             <div className="dropdown-menu">
               {addMemberOption(key)}
+              <a
+                href={`./triptrack/Admin/Member/${value.id}/listTrips`}
+                className="dropdown-item">
+                <FontAwesomeIcon icon={faSuitcase} />
+                &nbsp;List trips
+              </a>
               {dropMemberOption(key)}
               <a
                 title="Edit member"
@@ -196,6 +202,13 @@ const Grid = ({
           {rows}
         </tbody>
       </table>
+      {members.length === 50 ? (
+        <div className="text-center">
+          <span className="badge badge-info text-white">
+            Limited to 50 rows. Use search to filter results.
+          </span>
+        </div>
+      ) : null}
     </div>
   )
 }

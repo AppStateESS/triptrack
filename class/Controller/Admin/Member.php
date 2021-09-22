@@ -104,6 +104,11 @@ class Member extends SubController
         return $this->view->listHtml();
     }
 
+    protected function listTripsHtml()
+    {
+        return $this->view->listTrips($this->id);
+    }
+
     protected function listJson(Request $request)
     {
         $options = [];
