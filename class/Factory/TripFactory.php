@@ -174,6 +174,12 @@ class TripFactory extends BaseFactory
             $tbl->addFieldConditional('organizationId', $options['orgId']);
         }
 
+        if (!empty($options['includeOrganizationName'])) {
+            $tbl4 = $db->addTable('trip_organization');
+            $tbl4->addField('name', 'organizationName');
+            $tbl->addFieldConditional('organizationId', $tbl4->getField('id'));
+        }
+
         if (!empty($options['memberCount'])) {
             $tbl2 = $db->addTable('trip_membertotrip');
             $counter = $tbl2->addField('memberId', 'memberCount');
@@ -198,6 +204,12 @@ class TripFactory extends BaseFactory
 
         if (empty($options['includeIncomplete'])) {
             $tbl->addFieldConditional('completed', 1);
+        }
+
+        if (!empty($options['memberId'])) {
+            $tbl3 = $db->addTable('trip_membertotrip');
+            $tbl3->addFieldConditional('memberId', $options['memberId']);
+            $db->joinResources($tbl, $tbl3, new Database\Conditional($db, $tbl->getField('id'), $tbl3->getField('tripId'), '='));
         }
 
         if (!empty($options['search'])) {
