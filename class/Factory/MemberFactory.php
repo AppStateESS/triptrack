@@ -127,7 +127,7 @@ class MemberFactory extends BaseFactory
             $db->addConditional($join);
         }
 
-
+        $db->setLimit(50);
         $tbl->addOrderBy($orderBy, $direction);
 
         return $db->select();
