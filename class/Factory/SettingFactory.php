@@ -44,10 +44,13 @@ class SettingFactory
                         'uploadRequired');
         $settings['uploadInstructions'] = Settings::get('triptrack',
                         'uploadInstructions');
+        $settings['confirmationInstructions'] = Settings::get('triptrack',
+                        'confirmationInstructions');
         $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
                         'contactBannerRequired');
         $settings['secondaryRequired'] = (bool) Settings::get('triptrack', 'secondaryRequired');
         $settings['accommodationRequired'] = (bool) Settings::get('triptrack', 'accommodationRequired');
+        $settings['confirmationRequired'] = (bool) Settings::get('triptrack', 'confirmationRequired');
         return $settings;
     }
 
@@ -135,6 +138,7 @@ class SettingFactory
             case 'contactBannerRequired':
             case 'accommodationRequired':
             case 'secondaryRequired':
+            case 'confirmationRequired':
                 Settings::set('triptrack', $varName, (bool) $value);
                 break;
 
@@ -150,6 +154,7 @@ class SettingFactory
             case 'defaultCountry':
             case 'defaultState':
             case 'uploadInstructions':
+            case 'confirmationInstructions':
                 Settings::set('triptrack', $varName,
                         filter_var($value, FILTER_SANITIZE_STRING));
                 break;
