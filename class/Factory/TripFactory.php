@@ -297,6 +297,12 @@ class TripFactory extends BaseFactory
 
         foreach ($keys as $tripVar) {
             switch ($tripVar) {
+                case 'housingAddress':
+                    if (SettingFactory::getAccommodationRequired() && $trip->isEmpty('housingAddress')) {
+                        $errors['housingAddress'] = 'empty';
+                    }
+                    break;
+
                 case 'contactName':
                 case 'contactEmail':
                 case 'contactPhone':
@@ -304,7 +310,6 @@ class TripFactory extends BaseFactory
                 case 'destinationCountry':
                 case 'destinationState':
                 case 'host':
-                case 'housingAddress':
                 case 'submitDate':
                 case 'submitEmail':
                 case 'submitName':
