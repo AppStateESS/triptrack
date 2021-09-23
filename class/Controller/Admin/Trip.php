@@ -45,7 +45,10 @@ class Trip extends SubController
 
     protected function createHtml()
     {
-        $trip = TripFactory::buildAdminTrip();
+        $trip = TripFactory::getCurrentSubmitterIncomplete();
+        if (!$trip) {
+            $trip = TripFactory::buildAdminTrip();
+        }
 
         return $this->view->adminForm($trip->id);
     }
@@ -94,6 +97,9 @@ class Trip extends SubController
     {
         $trip = TripFactory::put($this->id, $request, true);
         $trip->completed = true;
+        if ($trip->confirmedDate == 0) {
+            $trip->stampConfirmed();
+        }
         TripFactory::save($trip);
         return ['success' => true, 'id' => $trip->id];
     }
