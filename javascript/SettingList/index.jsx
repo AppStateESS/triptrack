@@ -15,6 +15,7 @@ import {createOptions} from '../Share/CreateOptions'
 
 const saveButtonDefault = {
   uploadInstructions: {disabled: true, saving: false},
+  confirmationInstructions: {disabled: true, saving: false},
   siteContactName: {disabled: true, saving: false},
   siteContactEmail: {disabled: true, saving: false},
   hostLabel: {disabled: true, saving: false},
@@ -81,6 +82,12 @@ const SettingList = ({currentSettings}) => {
       save('accommodationRequired')
     }
   }, [settings.accommodationRequired])
+
+  useEffect(() => {
+    if (rendered.current) {
+      save('confirmationRequired')
+    }
+  }, [settings.confirmationRequired])
 
   useEffect(() => {
     if (rendered.current) {
@@ -172,14 +179,6 @@ const SettingList = ({currentSettings}) => {
   }
 
   const uploadRequiredRow = () => {
-    /**
-     * This had to be removed due to an error from the update
-     *
-     *  <Slide direction="down" duration={duration}>
-     *      ...
-     *  </Slide>
-     *
-     */
     if (settings.allowUpload) {
       return (
         <div>
@@ -376,7 +375,6 @@ const SettingList = ({currentSettings}) => {
           />
         </div>
       </div>
-
       {uploadRequiredRow()}
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
@@ -480,6 +478,37 @@ const SettingList = ({currentSettings}) => {
               />
             </div>
           </div>
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Confirmation</strong>
+          <small className="form-text text-muted">
+            If enabled, the submitter cannot submit the trip until they confirm
+            the established travel conditionals.
+          </small>
+          <br />
+        </div>
+        <div className="col-sm-6 mb-2">
+          <BigCheckbox
+            label={settings.confirmationRequired ? 'Yes' : 'No'}
+            checked={settings.confirmationRequired}
+            handle={() => {
+              updateCheck('confirmationRequired')
+            }}
+          />
+          <textarea
+            className="form-control"
+            value={settings.confirmationInstructions}
+            onChange={(e) =>
+              updateText('confirmationInstructions', e.target.value)
+            }
+          />
+          <SaveButton
+            disabled={saveButton.confirmationInstructions.disabled}
+            saving={saveButton.confirmationInstructions.saving}
+            click={() => save('confirmationInstructions')}
+          />
         </div>
       </div>
     </div>
