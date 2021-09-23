@@ -34,6 +34,7 @@ class Trip extends AbstractResource
     protected $visitPurpose;
     protected $memberCount;
     protected $completed;
+    protected $confirmedDate;
     protected $table = 'trip_trip';
 
     public function __construct()
@@ -59,10 +60,14 @@ class Trip extends AbstractResource
         $this->submitName = new \phpws2\Variable\TextOnly(null, 'submitName', 60);
         $this->timeDeparting = new \phpws2\Variable\DateTime(0, 'timeDeparting');
         $this->timeDeparting->stamp();
+        $this->timeDeparting->setFormat('%A, %b. %e, %Y');
         $this->timeEventStarts = new \phpws2\Variable\DateTime(0, 'timeEventStarts');
         $this->timeEventStarts->stamp();
+        $this->timeEventStarts->setFormat('%A, %b. %e, %Y');
+        $this->confirmedDate = new \phpws2\Variable\DateTime(0, 'confirmedDate');
         $this->timeReturn = new \phpws2\Variable\DateTime(0, 'timeReturn');
         $this->timeReturn->stamp();
+        $this->timeReturn->setFormat('%A, %b. %e, %Y');
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null, 'visitPurpose', 255);
         $this->memberCount = new \phpws2\Variable\SmallInteger(0, 'memberCount');
         $this->memberCount->setIsTableColumn(false);
@@ -82,6 +87,11 @@ class Trip extends AbstractResource
                 'date' => strftime($dateFormat, $unix)];
         }
         return $values;
+    }
+
+    public function stampConfirmed()
+    {
+        $this->confirmedDate->stamp();
     }
 
 }
