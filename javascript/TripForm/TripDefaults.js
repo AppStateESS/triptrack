@@ -59,6 +59,7 @@ const tripSettings = {
     timeDeparting: true,
     timeEventStart: true,
     timeReturn: true,
+    memberCount: true,
   },
   no: {
     submitName: false,
@@ -74,6 +75,7 @@ const tripSettings = {
     timeDeparting: false,
     timeEventStart: false,
     timeReturn: false,
+    memberCount: false,
   },
 }
 
