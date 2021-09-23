@@ -44,7 +44,7 @@ class MemberView extends AbstractView
      * @param int $memberId
      * @return string Member's trip listing.
      */
-    public function listTrips(int $memberId)
+    public function view(int $memberId)
     {
         $member = MemberFactory::build($memberId);
         $vars['member'] = $member->getStringVars();
@@ -52,7 +52,7 @@ class MemberView extends AbstractView
         $vars['trips'] = $trips;
 
         $template = new Template($vars);
-        $template->setModuleTemplate('triptrack', 'Admin/MemberTripList.html');
+        $template->setModuleTemplate('triptrack', 'Admin/MemberView.html');
 
         return $this->dashboardHTML('member', $template->get());
     }
