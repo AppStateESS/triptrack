@@ -65,7 +65,18 @@ const Schedule = ({trip, setFormElement}) => {
             />
           </div>
         </div>
+        <div className="text-center">
+          <button
+            className="btn btn-info"
+            onClick={() => {
+              setFormElement('timeDeparting', trip.timeEventStarts)
+              setFormElement('timeReturn', trip.timeEventStarts)
+            }}>
+            One day event
+          </button>
+        </div>
       </div>
+      <hr />
     </fieldset>
   )
 }
