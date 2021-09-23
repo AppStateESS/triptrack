@@ -14,11 +14,8 @@ const Menu = ({
       case 'newMember':
         showModal()
         break
-      case 'addToOrg':
-        break
-      case 'addToTrip':
-        break
       case 'importMember':
+        location.href = 'triptrack/Admin/Member/import'
         break
     }
   }
@@ -46,26 +43,8 @@ const Menu = ({
                   Admin options
                 </option>
                 <option value="newMember">Add new member</option>
-                <option value="addToOrg">
-                  Add member to {organizationLabel}
-                </option>
-                <option value="addToTrip">Add member to trip</option>
                 <option value="importMember">Import members</option>
               </select>
-            </li>
-            <li className="nav-item">
-              <button
-                className="btn btn-primary btn-sm mr-2"
-                onClick={showModal}>
-                Add new member
-              </button>
-            </li>
-            <li className="nav-item">
-              <a
-                className="btn btn-success btn-sm"
-                href="triptrack/Admin/Member/import">
-                Import members
-              </a>
             </li>
           </ul>
           <div className="d-flex justify-content-end">
