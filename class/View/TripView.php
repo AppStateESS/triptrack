@@ -114,7 +114,9 @@ class TripView extends AbstractView
         $vars['siteContactEmail'] = $settings['siteContactEmail'];
         $vars['uploadRequired'] = (bool) $settings['uploadRequired'];
         $vars['uploadInstructions'] = $settings['uploadInstructions'];
+        $vars['confirmationInstructions'] = $settings['confirmationInstructions'];
         $vars['accommodationRequired'] = (bool) $settings['accommodationRequired'];
+        $vars['confirmationRequired'] = (bool) $settings['confirmationRequired'];
         $vars['secondaryRequired'] = (bool) $settings['secondaryRequired'];
         return $vars;
     }
@@ -123,6 +125,7 @@ class TripView extends AbstractView
     {
         $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
         $vars = $trip->getStringVars();
+
         $vars['organizationName'] = $organization->name;
         $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
