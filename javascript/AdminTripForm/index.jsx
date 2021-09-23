@@ -7,8 +7,7 @@ import {getList} from '../api/Fetch'
 import Loading from '../api/Loading'
 import NoAdminOrg from './NoAdminOrg'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry,
-hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions  */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions, confirmationRequired, confirmationInstructions  */
 
 const AdminTripForm = (props) => {
   const [organizations, setOrganizations] = useState([])
@@ -96,7 +95,9 @@ ReactDOM.render(
     defaultCountry={defaultCountry}
     allowUpload={allowUpload}
     uploadRequired={uploadRequired}
+    confirmationRequired={confirmationRequired}
     uploadInstructions={uploadInstructions}
+    confirmationInstructions={confirmationInstructions}
   />,
   document.getElementById('AdminTripForm')
 )
