@@ -37,8 +37,12 @@ class Trip extends SubController
                     true)];
         $options['orderBy'] = $request->pullGetString('orderBy', true);
         $options['dir'] = $request->pullGetString('dir', true);
-        $options['startDate'] = (int) $request->pullGetInteger('startDate', true);
-        $options['endDate'] = (int) $request->pullGetInteger('endDate', true);
+        if ($request->pullGetBoolean('upcomingOnly', true)) {
+            $options['startDate'] = time(0, 0, 0, 0, -1);
+        } else {
+            $options['startDate'] = (int) $request->pullGetInteger('startDate', true);
+            $options['endDate'] = (int) $request->pullGetInteger('endDate', true);
+        }
 
         return TripFactory::list($options);
     }
