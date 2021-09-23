@@ -1,0 +1,65 @@
+<h3><?=$member['firstName']?> <?=$member['lastName']?>
+    <?=$member['restricted'] ? '<span class="ml-3 badge badge-danger">Restricted</span>':null?></h3>
+<div>
+    <div class="row">
+        <div class="col-sm-6">
+            <table class="table table-sm w-sm-50">
+                <tbody>
+                    <tr>
+                        <th>Banner ID:</th>
+                        <td><?=$member['bannerId']?></td>
+                    </tr>
+                    <tr>
+                        <th>User:</th>
+                        <td><a href="mailto:<?=$member['email']?>"><?=$member['username']?></a></td>
+                    </tr>
+                    <tr>
+                        <th>Phone:</th>
+                        <td><a href="tel:+1<?=$member['phone']?>"><?=$member['phone']?></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<hr />
+<h4>Trips</h4>
+<?php if (empty($trips)):?>
+<div>No trips recorded for this member.</div>
+<?php else: foreach ($trips as $trip):extract($trip);?>
+<div class="card mb-4">
+    <div class="card-body">
+        <h4><a href="./triptrack/Admin/Trip/<?=$tripId?>"><?=$host?> &mdash; <?=strftime('%b. %d, %Y', $timeDeparting)?>
+                <?php if ($timeDeparting != $timeReturn):?>to
+                <?=strftime('%b. %d, %Y', $timeReturn)?>
+                <?php endif;?>
+            </a>
+        </h4>
+        <table class="table m-0">
+            <tbody>
+                <tr>
+                    <th>Organization</th>
+                    <td><a href="./triptrack/Admin/Member/?orgId=<?=$organizationId?>"><?=$organizationName?></a></td>
+                </tr>
+                <tr>
+                    <th>Destination:</th>
+                    <td><?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?></td>
+                </tr>
+                <tr>
+                    <th style="width: 20%">Primary Contact:</th>
+                    <td><?=$contactName?> | <a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a> |
+                        <?=$contactPhone?></td>
+                </tr>
+                <?php if (!empty($secContactName)):?>
+                <tr>
+                    <th>Secondary Contact:</th>
+                    <td><?=$secContactName?> | <a href="mailto:<?=$secContactEmail?>"><?=$secContactEmail?></a> |
+                        <?=$secContactPhone?></td>
+                </tr>
+                <?php endif;?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endforeach;?>
+<?php endif;?>
