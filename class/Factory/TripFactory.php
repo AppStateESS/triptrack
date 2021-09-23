@@ -231,11 +231,15 @@ class TripFactory extends BaseFactory
             $db->addConditional($finalSearchCondition);
         }
 
-        if (!empty($options['startDate']) && !empty($options['endDate'])) {
-            $timeCond1 = $db->createConditional($tbl->getField('timeReturn'), $options['startDate'], '>=');
-            $timeCond2 = $db->createConditional($tbl->getField('timeDeparting'), $options['endDate'], '<=');
-            $timeCond3 = $db->createConditional($timeCond1, $timeCond2, 'and');
-            $db->addConditional($timeCond3);
+        if (!empty($options['startDate'])) {
+            if (!empty($options['endDate'])) {
+                $timeCond1 = $db->createConditional($tbl->getField('timeReturn'), $options['startDate'], '>=');
+                $timeCond2 = $db->createConditional($tbl->getField('timeDeparting'), $options['endDate'], '<=');
+                $timeCond3 = $db->createConditional($timeCond1, $timeCond2, 'and');
+                $db->addConditional($timeCond3);
+            } else {
+                $tbl->addFieldConditional('timeReturn', $options['startDate'], '>=');
+            }
         }
 
         if (!empty($options['orderBy'])) {
