@@ -91,7 +91,7 @@ const MemberList = ({organizationLabel}) => {
   }, [filter.tripId, tripList])
 
   useEffect(() => {
-    if (!init) {
+    if (!init.current) {
       return
     }
     if (search.length > 3 || search.length === 0) {
@@ -114,7 +114,7 @@ const MemberList = ({organizationLabel}) => {
   }, [])
 
   const loadTripList = (orgId) => {
-    return getList('./triptrack/Admin/Trip', {
+    return getList('./triptrack/Admin/Trip/?upcomingOnly=1', {
       orgId,
     })
   }
@@ -397,7 +397,6 @@ const MemberList = ({organizationLabel}) => {
       </Overlay>
     )
   }
-
   return (
     <div>
       <Menu
@@ -408,7 +407,7 @@ const MemberList = ({organizationLabel}) => {
         showModal={() => setShowModal(true)}
       />
       <div className="row">
-        <div className="col-sm-2 align-self-center">Search by:</div>
+        <div className="col-sm-2 align-self-center">Filter by:</div>
         <div className="col-sm-10">
           <OrgTripSelect
             setFilter={setFilter}
