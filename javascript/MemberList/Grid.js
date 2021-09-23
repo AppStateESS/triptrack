@@ -5,7 +5,7 @@ import {formatPhone} from '../api/String'
 import SortButton from '../api/SortButton'
 import '../api/pointer.css'
 import {restrictMember, unrestrictMember} from '../api/MemberAjax'
-import {faBan, faDoorOpen, faSuitcase} from '@fortawesome/free-solid-svg-icons'
+import {faBan, faDoorOpen, faEye} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const Grid = ({
@@ -149,13 +149,13 @@ const Grid = ({
               Options
             </button>
             <div className="dropdown-menu">
-              {addMemberOption(key)}
               <a
                 href={`./triptrack/Admin/Member/${value.id}/listTrips`}
                 className="dropdown-item">
-                <FontAwesomeIcon icon={faSuitcase} />
-                &nbsp;List trips
+                <FontAwesomeIcon icon={faEye} />
+                &nbsp;View
               </a>
+              {addMemberOption(key)}
               {dropMemberOption(key)}
               <a
                 title="Edit member"
