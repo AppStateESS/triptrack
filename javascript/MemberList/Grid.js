@@ -172,7 +172,12 @@ const Grid = ({
         </td>
         <td>
           <span className={value.restricted === 1 ? 'text-danger' : null}>
-            {value.lastName}, {value.firstName}
+            {value.lastName}, {value.firstName}{' '}
+            {value.restricted === 1 ? (
+              <abbr title="Restricted from attending trips">
+                <FontAwesomeIcon icon={faBan} />
+              </abbr>
+            ) : null}
           </span>
         </td>
         <td>
@@ -185,9 +190,6 @@ const Grid = ({
 
   return (
     <div>
-      <span className="text-danger small">
-        Red names are restricted from joining trips.
-      </span>
       <table className="table table-striped">
         <tbody>
           <tr>
