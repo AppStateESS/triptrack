@@ -104,9 +104,9 @@ class Member extends SubController
         return $this->view->listHtml();
     }
 
-    protected function listTripsHtml()
+    protected function viewHtml()
     {
-        return $this->view->listTrips($this->id);
+        return $this->view->view($this->id);
     }
 
     protected function listJson(Request $request)
