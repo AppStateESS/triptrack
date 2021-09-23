@@ -90,6 +90,9 @@ class Trip extends SubController
 
         if ($errorFree === true) {
             $updatedTrip->completed = true;
+            if ($updatedTrip->confirmedDate == 0) {
+                $updatedTrip->stampConfirmed();
+            }
             TripFactory::save($updatedTrip);
             return ['success' => true, 'id' => $this->id];
         } else {
