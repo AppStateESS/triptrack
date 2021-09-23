@@ -62,7 +62,7 @@ const OrgTripSelect = ({
             onChange={(e) =>
               updateFilter(filter.orgId, parseInt(e.target.value))
             }>
-            <option value="0">Select trip below</option>
+            <option value="0">Select upcoming trip below</option>
             {tripOptions}
           </select>
         </div>
