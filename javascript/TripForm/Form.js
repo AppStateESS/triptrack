@@ -12,6 +12,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 import {getList} from '../api/Fetch'
 import {addMembersToTrip} from '../api/TripAjax'
+import Overlay from '@essappstate/canopy-react-overlay'
+import Confirmation from './Confirmation'
 
 const Form = ({
   tripDocuments,
@@ -28,6 +30,8 @@ const Form = ({
   allowUpload,
   uploadRequired,
   uploadInstructions,
+  confirmationRequired,
+  confirmationInstructions,
 }) => {
   const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
   const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
@@ -36,6 +40,8 @@ const Form = ({
   const [selectedMembers, setSelectedMembers] = useState([])
   const [documents, setDocuments] = useState(tripDocuments)
   const [requiredFileMissing, setRequiredFileMissing] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+
   const memberAnchor = useRef(null)
 
   useEffect(() => {
@@ -58,6 +64,10 @@ const Form = ({
   }, [trip.organizationId])
 
   useEffect(() => {
+    errorCheck('memberCount')
+  }, [selectedMembers])
+
+  useEffect(() => {
     if (allowUpload && uploadRequired && documents.length === 0) {
       setRequiredFileMissing(true)
     } else {
@@ -67,7 +77,7 @@ const Form = ({
 
   useEffect(() => {
     if (location.hash == '#members') {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         memberAnchor.current.scrollIntoView()
         window.scrollTo(memberAnchor.current)
       }, 1000)
@@ -85,6 +95,13 @@ const Form = ({
       deleteTrip(trip.id, role)
       location.href = `./triptrack/${role}/Trip`
     }
+  }
+
+  const completeConfirmation = (confirmResult) => {
+    if (confirmResult) {
+      saveTrip(true)
+    }
+    setConfirmModal(false)
   }
 
   const toggleApproval = (toggle) => {
@@ -132,6 +149,10 @@ const Form = ({
 
     let errorFound = false
     switch (name) {
+      case 'memberCount':
+        errorFound = selectedMembers.length === 0
+        break
+
       case 'contactPhone':
         errorFound = phoneMatch(value)
         break
@@ -159,6 +180,12 @@ const Form = ({
         }
         break
 
+      case 'housingAddress':
+        if (accommodationRequired) {
+          errorFound = value.length === 0
+        }
+        break
+
       default:
         errorFound = value.length === 0
         break
@@ -173,31 +200,55 @@ const Form = ({
     })
     setAllowSave(checkSave)
     setErrors(Object.assign({}, errors))
+    return errorFound
   }
 
-  let title
-  if (trip.id > 0) {
-    title = <h3>Update trip</h3>
-  } else {
-    title = <h3>Create trip</h3>
-  }
   const finalErrorCheck = () => {
-    errorCheck('contactName', trip.contactName)
-    errorCheck('contactEmail', trip.contactEmail)
-    errorCheck('contactPhone', trip.contactPhone)
-    errorCheck('destinationCity', trip.destinationCity)
-    errorCheck('host', trip.host)
-    errorCheck('housingAddress', trip.housingAddress)
-    errorCheck('secContactName', trip.secContactName)
-    errorCheck('secContactEmail', trip.secContactEmail)
-    errorCheck('secContactPhone', trip.secContactPhone)
-    errorCheck('submitName', trip.submitName)
-    errorCheck('submitEmail', trip.submitEmail)
+    let foundError = false
+    if (errorCheck('contactName', trip.contactName)) {
+      foundError = true
+    }
+    if (errorCheck('contactEmail', trip.contactEmail)) {
+      foundError = true
+    }
+    if (errorCheck('contactPhone', trip.contactPhone)) {
+      foundError = true
+    }
+    if (errorCheck('destinationCity', trip.destinationCity)) {
+      foundError = true
+    }
+    if (errorCheck('host', trip.host)) {
+      foundError = true
+    }
+    if (errorCheck('housingAddress', trip.housingAddress)) {
+      foundError = true
+    }
+    if (errorCheck('secContactEmail', trip.secContactEmail)) {
+      foundError = true
+    }
+    if (errorCheck('secContactName', trip.secContactName)) {
+      foundError = true
+    }
+    if (errorCheck('secContactPhone', trip.secContactPhone)) {
+      foundError = true
+    }
+
+    if (errorCheck('memberCount')) {
+      foundError = true
+    }
+    return !foundError
   }
 
-  const saveTrip = () => {
-    finalErrorCheck()
-    if (allowSave) {
+  const saveTrip = (confirmed = false) => {
+    if (finalErrorCheck()) {
+      if (
+        confirmationRequired &&
+        trip.confirmedDate === 0 &&
+        confirmed === false
+      ) {
+        setConfirmModal(true)
+        return
+      }
       Promise.all([
         postTrip(trip, role),
         addMembersToTrip(selectedMembers, defaultTrip.id, role),
@@ -216,10 +267,9 @@ const Form = ({
       })
     }
   }
-  console.log('render')
   return (
     <div>
-      {title}
+      <h3>Enter trip information</h3>
       <p>Please enter all requested, required information below:</p>
       {approvedIcon()}
 
@@ -264,6 +314,11 @@ const Form = ({
               setSelectedMembers,
             }}
           />
+          {errors.memberCount ? (
+            <span className="badge badge-danger">
+              Select one or more members to attend
+            </span>
+          ) : null}
         </div>
         <div className="col-sm-7">
           <Documents
@@ -283,9 +338,9 @@ const Form = ({
       <div className="text-center">
         <button
           className="btn btn-success mb-2"
-          onClick={saveTrip}
+          onClick={() => saveTrip()}
           disabled={!allowSave || requiredFileMissing}>
-          {allowSave ? 'Save travel plan' : 'Fill in all fields above'}
+          {allowSave ? 'Save travel plan' : 'Complete missing information'}
         </button>
         <div>
           {!trip.completed ? (
@@ -299,6 +354,15 @@ const Form = ({
           )}
         </div>
       </div>
+      <Overlay
+        show={confirmModal}
+        close={() => setConfirmModal(false)}
+        title="Confirmation of travel requirements">
+        <Confirmation
+          {...{confirmationInstructions, completeConfirmation}}
+          cancel={() => setConfirmModal(false)}
+        />
+      </Overlay>
     </div>
   )
 }
@@ -321,6 +385,8 @@ Form.propTypes = {
   uploadRequired: PropTypes.bool,
   uploadInstructions: PropTypes.string,
   tripDocuments: PropTypes.array,
+  confirmationInstructions: PropTypes.string,
+  confirmationRequired: PropTypes.bool,
 }
 
 export default Form
