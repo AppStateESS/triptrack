@@ -24,7 +24,7 @@ class Member extends AbstractResource
         $this->bannerId = new \phpws2\Variable\IntegerVar(0, 'bannerId');
         $this->email = new \phpws2\Variable\Email(null, 'email', 100);
         $this->firstName = new \phpws2\Variable\TextOnly(null, 'firstName', 50);
-        $this->phone = new \phpws2\Variable\TextOnly(null, 'phone', 15);
+        $this->phone = new \phpws2\Variable\PhoneNumber(null, 'phone');
         $this->lastName = new \phpws2\Variable\TextOnly(null, 'lastName', 50);
         $this->username = new \phpws2\Variable\TextOnly(null, 'username', 50);
         $this->restricted = new \phpws2\Variable\BooleanVar(false, 'restricted');
