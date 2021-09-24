@@ -58,9 +58,9 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort}) => {
               </a>
               <a
                 className="dropdown-item"
-                href={`triptrack/Admin/Member/?orgId=${value.organizationId}&tripId=${value.id}`}
-                title="View members">
-                <i className="fas fa-users"></i>&nbsp;Members
+                href={`triptrack/Admin/Report/trip/?tripId=${value.id}`}
+                title="Member report">
+                <i className="fas fa-users"></i>&nbsp;Member report
               </a>
               <a
                 className="dropdown-item"

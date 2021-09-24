@@ -30,9 +30,9 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
             <div className="dropdown-menu">
               <a
                 className="dropdown-item"
-                href={`triptrack/Admin/Member/?orgId=${value.id}`}
-                title="View members">
-                <i className="fas fa-users"></i>&nbsp;Members
+                href={`triptrack/Admin/Report/organization/?orgId=${value.id}`}
+                title="Member report">
+                <i className="fas fa-users"></i>&nbsp;Member report
               </a>
               <a
                 className="dropdown-item"
