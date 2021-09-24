@@ -2,23 +2,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Menu = ({
-  showModal,
-  sendSearch,
-  search,
-  setSearch,
-  organizationLabel,
-}) => {
-  const adminOption = (e) => {
-    switch (e.target.value) {
-      case 'newMember':
-        showModal()
-        break
-      case 'importMember':
-        location.href = 'triptrack/Admin/Member/import'
-        break
-    }
-  }
+const Menu = ({showModal, sendSearch, search, setSearch}) => {
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-md navbar-light bg-light">
@@ -35,16 +19,18 @@ const Menu = ({
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
             <li className="nav-item mr-2">
-              <select
-                defaultValue="0"
-                className="form-control"
-                onChange={adminOption}>
-                <option value="0" disabled={true}>
-                  Admin options
-                </option>
-                <option value="newMember">Add new member</option>
-                <option value="importMember">Import members</option>
-              </select>
+              <button
+                className="btn btn-primary mr-2"
+                onClick={() => {
+                  showModal()
+                }}>
+                Add new member
+              </button>
+              <a
+                href="./triptrack/Admin/Member/import"
+                className="btn btn-success">
+                Import members
+              </a>
             </li>
           </ul>
           <div className="d-flex justify-content-end">
