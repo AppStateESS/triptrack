@@ -154,14 +154,26 @@ class TripFactory extends BaseFactory
 
     /**
      * Options
-     * orgId (int): only trips with organization id
-     * memberCount (bool): include a count of members column on return
-     * unapprovedOnly (bool): only returned unapproved trips
-     * search (string): search for string in the host, contact name, secondary
-     *                  contact name, or submit name
-     * submitUsername (string): only return trip submitted using this username
-     * order (string): column to order by
-     * dir (string): direction to order by. order must be set
+     * FILTERS
+     * - orgId (int): only trips with organization id
+     * - unapprovedOnly (bool): only returned unapproved trips
+     * - approvedOnly (bool): only returned approved trips
+     * - search (string): search for string in the host, contact name, secondary
+     *                    contact name, or submit name
+     * - submitUserId (string): only return trip submitted using this user id
+     * - submitUsername (string): only return trip submitted using this username
+     * - memberId (int): return trips attended by this member
+     * - startDate (int): return trips with a return date after this date
+     * - endDate (int): return trips with a departure date after this date
+     *
+     * ADDITIONAL DATA
+     * - memberCount (bool): include a count of members column on return
+     * - includeOrganizationName (bool): organizationName column added to trip array
+     * - includeIncomplete (bool): if true, incomplete trips are returned
+     *
+     * SORTING
+     * - order (string): column to order by
+     * - dir (string): direction to order by. order must be set
      *
      * @param array $options
      * @return type
@@ -200,6 +212,10 @@ class TripFactory extends BaseFactory
 
         if (!empty($options['unapprovedOnly'])) {
             $tbl->addFieldConditional('approved', 0);
+        }
+
+        if (!empty($options['approvedOnly'])) {
+            $tbl->addFieldConditional('approved', 1);
         }
 
         if (empty($options['includeIncomplete'])) {
