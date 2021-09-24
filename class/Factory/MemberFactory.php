@@ -80,9 +80,16 @@ class MemberFactory extends BaseFactory
             $tbl->addField('phone');
             $tbl->addField('restricted');
             if (!empty($options['isAdmin'])) {
+                $tbl->addField('deleted');
                 $tbl->addField('bannerId');
                 $tbl->addField('username');
             }
+        }
+
+        if (!empty($options['onlyDeleted'])) {
+            $tbl->addFieldConditional('deleted', 1);
+        } elseif (empty($options['includeDeleted'])) {
+            $tbl->addFieldConditional('deleted', 0);
         }
 
         if (!empty($options['orderBy'])) {
@@ -189,14 +196,19 @@ class MemberFactory extends BaseFactory
     public static function unlinkAllTrips(int $memberId, $unapprovedOnly = false)
     {
         $db = Database::getDB();
-        $tbl = $db->addTable('trip_membertotrip');
-        $tbl->addFieldConditional('memberId', $memberId);
         if ($unapprovedOnly) {
-            $tbl2 = $db->addTable('trip_trip');
-            $tbl2->addWhereConditional('approved', 0);
-            $db->addConditional(new Database\Conditional($db, $tbl->getField('tripId'), $tbl2->getField('id'), '='));
+            $pdo = $db->getPDO();
+            $deleteSql = <<<EOF
+DELETE trip_membertotrip FROM `trip_membertotrip` LEFT OUTER JOIN `trip_trip` ON
+    (`trip_membertotrip`.`tripId` = `trip_trip`.`id`) WHERE ((`trip_membertotrip`.`memberId` = :memberId) AND (`trip_trip`.`approved` = 0))
+EOF;
+            $prep = $pdo->prepare($deleteSql);
+            $prep->execute([':memberId' => $memberId]);
+        } else {
+            $tbl = $db->addTable('trip_membertotrip');
+            $tbl->addFieldConditional('memberId', $memberId);
+            $db->delete();
         }
-        $db->delete();
     }
 
     public static function unlinkAllOrganizations(int $memberId)
@@ -207,13 +219,28 @@ class MemberFactory extends BaseFactory
         $db->delete();
     }
 
-    public static function delete(int $memberId)
+    public static function delete(int $memberId, $permanent = false)
     {
+        /**
+         * See if there are any approved trips containing this member.
+         * If there aren't any, then we can delete this member permanently.
+         */
+        $trips = TripFactory::list(['memberId' => $memberId, 'approvedOnly' => 1]);
+        if (empty($trips)) {
+            $permanent = true;
+        }
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
         $tbl->addFieldConditional('id', $memberId);
-        $db->delete();
-        self::unlinkAllTrips($memberId);
+        if ($permanent) {
+            $db->delete();
+            $unapprovedOnly = false;
+        } else {
+            $tbl->addValue('deleted', 1);
+            $db->update();
+            $unapprovedOnly = true;
+        }
+        self::unlinkAllTrips($memberId, $unapprovedOnly);
         self::unlinkAllOrganizations($memberId);
     }
 

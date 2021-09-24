@@ -63,7 +63,9 @@ class TripView extends AbstractView
         $vars['organizationName'] = $organization->name;
         $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
-        $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true]);
+
+        // if trip is approved, we show deleted members
+        $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true, 'includeDeleted' => $trip->approved]);
         $vars['memberList'] = MemberView::memberTable($members, true);
         $vars['documents'] = DocumentView::tripList($tripId, 'Admin');
         if (count($members)) {

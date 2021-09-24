@@ -17,6 +17,7 @@ class Member extends AbstractResource
     protected $phone;
     protected $username;
     protected $restricted;
+    protected $deleted;
     protected $table = 'trip_member';
 
     public function __construct()
@@ -28,6 +29,7 @@ class Member extends AbstractResource
         $this->lastName = new \phpws2\Variable\TextOnly(null, 'lastName', 50);
         $this->username = new \phpws2\Variable\TextOnly(null, 'username', 50);
         $this->restricted = new \phpws2\Variable\BooleanVar(false, 'restricted');
+        $this->deleted = new \phpws2\Variable\BooleanVar(false, 'deleted');
         parent::__construct();
     }
 

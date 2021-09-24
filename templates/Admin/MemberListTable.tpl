@@ -8,7 +8,10 @@
     </tr>
     <?php foreach ($listing as $member):extract($member);?>
     <tr>
-      <td><?=$lastName, ', ', $firstName?></td>
+      <td><span class="<?=$deleted == 1 ? 'text-danger' : null?>"><?=$lastName, ', ', $firstName?>
+          <?php if($deleted == 1):?><abbr title="Member deleted after trip approval"><i
+              class="fas fa-trash fa-sm"></i></abbr><?php endif;?>
+        </span></td>
       <td><?=$bannerId?></td>
       <td><a href="mailto:<?=$email?>"><?=$username?></a></td>
       <td><a href="tel:+1<?=$phone?>"><?=$phone?></a></td>
