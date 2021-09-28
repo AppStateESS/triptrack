@@ -3,8 +3,6 @@ import React, {useState, useEffect, useRef} from 'react'
 import SaveButton from '../Share/SaveButton'
 import ReactDOM from 'react-dom'
 import BigCheckbox from '@essappstate/canopy-react-bigcheckbox'
-// Removed due to update issue. Check later to restore.
-//import {Slide} from 'react-awesome-reveal'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import {countries} from '../Share/Countries'
