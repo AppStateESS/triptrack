@@ -68,6 +68,25 @@ class TripFactory extends BaseFactory
         return $trip;
     }
 
+    /**
+     * Returns a list of distinct states used in trips.
+     * @return array
+     */
+    public static function getUsedStates()
+    {
+        $states = [];
+        $db = Database::getDB();
+
+        $tbl = $db->addTable('trip_trip');
+        $tbl->addOrderBy('destinationState');
+        $stateColumn = $tbl->addField('destinationState');
+        $stateColumn->showDistinct();
+        while ($column = $db->selectColumn()) {
+            $states[] = $column;
+        }
+        return $states;
+    }
+
     public static function getCurrentSubmitterIncomplete()
     {
         $db = Database::getDB();
@@ -165,6 +184,7 @@ class TripFactory extends BaseFactory
      * - memberId (int): return trips attended by this member
      * - startDate (int): return trips with a return date after this date
      * - endDate (int): return trips with a departure date after this date
+     * - tripState (string): returns trip with the same destination state
      *
      * ADDITIONAL DATA
      * - memberCount (bool): include a count of members column on return
@@ -256,6 +276,10 @@ class TripFactory extends BaseFactory
             } else {
                 $tbl->addFieldConditional('timeReturn', $options['startDate'], '>=');
             }
+        }
+
+        if (!empty($options['tripState'])) {
+            $tbl->addFieldConditional('destinationState', $options['tripState']);
         }
 
         if (!empty($options['orderBy'])) {
