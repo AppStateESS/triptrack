@@ -47,4 +47,14 @@ class Report extends SubController
         return $this->view->trip($request->pullGetInteger('tripId'), true);
     }
 
+    protected function stateMembersHtml(Request $request)
+    {
+        return $this->view->stateMembers($request->pullGetString('state'), $request->pullGetBoolean('upcomingOnly', false), true);
+    }
+
+    protected function stateTripsHtml(Request $request)
+    {
+        return $this->view->stateTrips($request->pullGetString('state'), $request->pullGetBoolean('upcomingOnly', false), true);
+    }
+
 }

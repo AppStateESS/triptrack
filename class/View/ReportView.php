@@ -47,4 +47,16 @@ class ReportView extends AbstractView
         CSV::makeCSV($memberList, $name . '-' . strftime('%Y%m%d', time()) . '.csv');
     }
 
+    public function stateMembers(string $state, bool $upcomingOnly)
+    {
+        $memberList = MemberFactory::list(['isAdmin' => true, 'includeDeleted' => true, 'upcomingOnly' => $upcomingOnly, 'tripState' => $state]);
+        CSV::makeCSV($memberList, 'Members-traveling-to-' . str_replace(' ', '-', $state) . '-' . strftime('%Y%m%d', time()) . '.csv');
+    }
+
+    public function stateTrips(string $state, bool $upcomingOnly)
+    {
+        $tripList = TripFactory::list(['isAdmin' => true, 'upcomingOnly' => $upcomingOnly, 'tripState' => $state]);
+        CSV::makeCSV($tripList, 'Trips-in-' . str_replace(' ', '-', $state) . '-' . strftime('%Y%m%d', time()) . '.csv');
+    }
+
 }
