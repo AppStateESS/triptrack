@@ -65,6 +65,22 @@ class MemberFactory extends BaseFactory
         return $trip->submitUserId === (int) \Current_User::getId();
     }
 
+    /**
+     * FILTERS
+     * onlyDelete :    Only return deleted flagged members
+     * includeDeleted: If true, deleted members will be returned with active members.
+     *                 Default is only active.
+     * tripId:         Only return members of a specific trip. Does not work with orgId or tripState.
+     * orgId:          Only return members of organization. Does not work with tripId or tripState.
+     * tripState:      Only return members of trips that went to a specific state.
+     *                 Does not work with tripId or orgId.
+     * search:         Look for string in first and last name, username, and banner Id
+     * emailOnly:      Only return the member's email addresses.
+     * isAdmin:        If true, members deleted status, banner id, and username are returned.
+     *
+     * @param array $options
+     * @return type
+     */
     public static function list(array $options = [])
     {
         $db = Database::getDB();
@@ -117,6 +133,13 @@ class MemberFactory extends BaseFactory
             $joinCond = new Database\Conditional($db, $tbl->getField('id'),
                     $tbl2->getField('memberId'), '=');
             $db->joinResources($tbl, $tbl2, $joinCond, 'left');
+        } elseif (!empty($options['tripState'])) {
+            $tripTbl = $db->addTable('trip_trip', null, false);
+            $pivot = $db->addTable('trip_membertotrip', null, false);
+            $tripTbl->addFieldConditional('destinationState', $options['tripState']);
+            $pivot->addFieldConditional('tripId', $tripTbl->getField('id'));
+            $tbl->addFieldConditional('id', $pivot->getField('memberId'));
+            $db->setDistinct(true);
         }
 
         if (!empty($options['search'])) {
@@ -133,7 +156,6 @@ class MemberFactory extends BaseFactory
 
             $db->addConditional($join);
         }
-
         $db->setLimit(50);
         $tbl->addOrderBy($orderBy, $direction);
 
