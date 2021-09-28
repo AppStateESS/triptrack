@@ -38,7 +38,7 @@ class Trip extends SubController
         $options['orderBy'] = $request->pullGetString('orderBy', true);
         $options['dir'] = $request->pullGetString('dir', true);
         if ($request->pullGetBoolean('upcomingOnly', true)) {
-            $options['startDate'] = mktime(0, 0, 0, 0, -1);
+            $options['startDate'] = time() - 86400;
         } else {
             $options['startDate'] = (int) $request->pullGetInteger('startDate', true);
             $options['endDate'] = (int) $request->pullGetInteger('endDate', true);
@@ -88,6 +88,11 @@ class Trip extends SubController
     protected function viewHtml(Request $request)
     {
         return $this->view->adminView($this->id);
+    }
+
+    protected function usedStatesJson()
+    {
+        return TripFactory::getUsedStates();
     }
 
     protected function delete(Request $request)
