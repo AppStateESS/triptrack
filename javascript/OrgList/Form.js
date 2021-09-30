@@ -2,10 +2,12 @@
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
+import {searchEngageOrganizations} from '../api/Engage'
 
 const Form = ({currentOrg, close, reload}) => {
   const [id, setId] = useState(0)
   const [name, setName] = useState(currentOrg.name)
+  const [matchingOrgs, setMatchingOrgs] = useState([])
   const closeForm = () => {
     setName('')
     reload()
@@ -16,6 +18,14 @@ const Form = ({currentOrg, close, reload}) => {
     setId(currentOrg.id)
     setName(currentOrg.name)
   }, [currentOrg])
+
+  useEffect(() => {
+    if (name.length > 3) {
+      searchEngageOrganizations(name).then((response) => {
+        console.log(response.data)
+      })
+    }
+  }, [name])
 
   const save = () => {
     let url = './triptrack/Admin/Organization'
@@ -31,13 +41,9 @@ const Form = ({currentOrg, close, reload}) => {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
       },
+    }).then(() => {
+      closeForm()
     })
-      .then(() => {
-        closeForm()
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
   }
 
   const checkForEnter = (keyPress) => {
@@ -46,16 +52,36 @@ const Form = ({currentOrg, close, reload}) => {
     }
   }
 
+  const getMatchingOrgs = () => {
+    if (matchingOrgs.length === 0) {
+      return (
+        <span>
+          <em>
+            Engage organizations will be recommended based on the name above.
+          </em>
+        </span>
+      )
+    }
+  }
+
   return (
     <div>
       <div className="mb-3">
-        <label>Name of organization</label>
+        <label>
+          <strong>Name of organization</strong>
+        </label>
         <input
           className="form-control"
           value={name}
           onKeyDown={(e) => checkForEnter(e)}
           onChange={(e) => setName(e.target.value)}
         />
+      </div>
+      <div className="mb-3">
+        <div>
+          <strong>Matching Engage organizations</strong>
+        </div>
+        <div className="border p-3 border-curved">{getMatchingOrgs()}</div>
       </div>
       <div className="mb-3">
         <button
