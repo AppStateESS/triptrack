@@ -19,10 +19,14 @@ function triptrack_install(&$content)
         $memberToTripTable = createMemberToTripTable();
         $memberToOrgTable = createMemberToOrgTable();
         $documentTable = createDocumentTable();
+        $engageOrgTable = createEngageOrgTable();
     } catch (\Exception $e) {
         \phpws2\Error::log($e);
         $db->rollback();
 
+        if (isset($engageOrgTable)) {
+            $engageOrgTable->drop();
+        }
         if (isset($documentTable)) {
             $documentTable->drop();
         }
@@ -101,6 +105,21 @@ function createMemberToTripTable()
     $foreign->add();
 
     return $memberToTripTable;
+}
+
+function createEngageOrgTable()
+{
+    $db = phpws2\Database::getDB();
+    $engageOrgTable = $db->buildTable('trip_engageorg');
+    $nameField = $engageOrgTable->addDataType('name', 'varchar');
+    $nameField->setSize(255);
+    $idField = $engageOrgTable->addDataType('engageId', 'int');
+    $websiteKey = $engageOrgTable->addDataType('websiteKey', 'varchar');
+    $websiteKey->setSize(255);
+    $engageOrgTable->create();
+
+    $unique = new phpws2\Database\Unique($idField);
+    $unique->add();
 }
 
 function createMemberToOrgTable()
