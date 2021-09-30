@@ -23,4 +23,16 @@ define('TRIPTRACK_ALLOWED_TAGS',
 
 define('TRIPTRACK_BANNER_API', '');
 
+/**
+ * Should point to a configuration file with the following
+ * defines for the essapi library
+ *
+ * WAREHOUSE_INSTALL_DIR
+ * ENGAGE_API_KEY
+ * ENGAGE_API_V3_KEY
+ * ENGAGE_BASE_URL
+ * ENGAGE_BASE_URL_V3
+ */
+define('TRIPTRACK_ENGAGE_CONFIG', '');
+
 define('TRIPTRACK_SWIFT_OLD_VERSION', true);
