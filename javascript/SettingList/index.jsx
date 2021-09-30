@@ -8,6 +8,9 @@ import axios from 'axios'
 import {countries} from '../Share/Countries'
 import {states} from '../Share/States'
 import {createOptions} from '../Share/CreateOptions'
+import {orgCount, updateOrganizations} from '../api/Engage'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 
 /* global settings */
 
@@ -29,11 +32,21 @@ const SettingList = ({currentSettings}) => {
   const countryList = createOptions(countries)
   const stateList = createOptions(states)
   const [duration, setDuration] = useState(1000)
+  const [engageCount, setEngageCount] = useState(0)
+  const [engageUpdate, setEngageUpdate] = useState(false)
+  const [updateMessage, setUpdateMessage] = useState('')
+
+  const getEngageOrgCount = () => {
+    orgCount().then((response) => {
+      setEngageCount(response.data)
+    })
+  }
 
   useEffect(() => {
     if (settings.allowUpload) {
       setDuration(0)
     }
+    getEngageOrgCount()
   }, [])
 
   useEffect(() => {
@@ -98,6 +111,35 @@ const SettingList = ({currentSettings}) => {
       save('defaultState')
     }
   }, [settings.defaultState])
+
+  const sendEngageUpdate = () => {
+    setEngageUpdate(true)
+    updateOrganizations()
+      .then((response) => {
+        if (response.data.success) {
+          setEngageUpdate(false)
+          setEngageCount(response.data.count)
+          setUpdateMessage(
+            <div className="alert alert-success">Import complete.</div>
+          )
+        } else {
+          setUpdateMessage(
+            <div className="alert alert-danger">Import failed.</div>
+          )
+        }
+      })
+      .catch(() => {
+        setEngageUpdate(false)
+        setUpdateMessage(
+          <div className="alert alert-danger">Import failed.</div>
+        )
+      })
+      .then(() => {
+        setTimeout(() => {
+          setUpdateMessage('')
+        }, 5000)
+      })
+  }
 
   const updateText = (settingName, value) => {
     rendered.current = true
@@ -164,16 +206,12 @@ const SettingList = ({currentSettings}) => {
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
       },
+    }).then(() => {
+      wait(1000).then(() => {
+        savingStatus(settingName, false)
+        disableButton(settingName)
+      })
     })
-      .then(() => {
-        wait(1000).then(() => {
-          savingStatus(settingName, false)
-          disableButton(settingName)
-        })
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
   }
 
   const uploadRequiredRow = () => {
@@ -225,6 +263,16 @@ const SettingList = ({currentSettings}) => {
         </div>
       )
     }
+  }
+
+  let importLabel = 'Import/Update Engage Listing'
+  if (engageUpdate) {
+    importLabel = (
+      <span>
+        <FontAwesomeIcon icon={faSpinner} spin /> Importing Engage
+        organizations...
+      </span>
+    )
   }
 
   return (
@@ -507,6 +555,24 @@ const SettingList = ({currentSettings}) => {
             saving={saveButton.confirmationInstructions.saving}
             click={() => save('confirmationInstructions')}
           />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Engage Organization import</strong>
+          <small className="form-text text-muted">
+            Imports all <strong>active</strong> Engage organizations locally.
+            There are currently {engageCount} organizations in the system.
+          </small>
+        </div>
+        <div className="col-sm-6 mb-2 text-center">
+          <button
+            disabled={engageUpdate}
+            className="btn btn-success"
+            onClick={sendEngageUpdate}>
+            {importLabel}
+          </button>
+          {updateMessage}
         </div>
       </div>
     </div>
