@@ -37,7 +37,7 @@ class Engage extends SubController
     public static function searchJson(Request $request)
     {
         $name = $request->pullGetString('name');
-        $result = EngageFactory::list(['name' => $name, 'limit' => 10]);
+        return EngageFactory::list(['name' => $name, 'limit' => 50, 'noDuplicates' => true]);
     }
 
 }
