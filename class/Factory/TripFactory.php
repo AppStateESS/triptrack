@@ -22,11 +22,8 @@ class TripFactory extends BaseFactory
         $tbl = $db->addTable('trip_trip');
         $tbl->addField('id');
         $tbl->addFieldConditional('organizationId', $organizationId);
-        $rows = $db->selectColumn();
-        if (!empty($rows)) {
-            foreach ($rows as $orgId) {
-                MemberFactory::unlinkOrganization($id);
-            }
+        while ($tripId = $db->selectColumn()) {
+            MemberFactory::unlinkTrip($tripId);
         }
         $db->delete();
     }
