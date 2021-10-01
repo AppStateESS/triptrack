@@ -72,7 +72,19 @@ class OrganizationFactory extends BaseFactory
     {
         $org = new \triptrack\Resource\Organization;
         $org->name = $request->pullPostString('name');
+        $org->engageId = (int) $request->pullPostInteger('engageId', true);
+        if (self::getByEngageId($org->engageId)) {
+            throw new \Exception('Duplicate Engage id used.');
+        }
         self::saveResource($org);
+    }
+
+    public static function getByEngageId(int $engageId)
+    {
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_organization');
+        $tbl->addFieldConditional('engageId', $engageId);
+        return $db->selectOneRow();
     }
 
     public static function put(Organization $organization, Request $request)
