@@ -1,4 +1,4 @@
-import {getList} from './Fetch'
+import {getList, postItem} from './Fetch'
 
 const orgCount = () => {
   const url = './triptrack/Admin/Engage/count'
@@ -15,4 +15,13 @@ const searchEngageOrganizations = (name) => {
   return getList(url, {name})
 }
 
-export {orgCount, updateOrganizations, searchEngageOrganizations}
+const postOrganization = (organization) => {
+  return postItem(organization, 'Organization', 'Admin')
+}
+
+export {
+  orgCount,
+  updateOrganizations,
+  searchEngageOrganizations,
+  postOrganization,
+}

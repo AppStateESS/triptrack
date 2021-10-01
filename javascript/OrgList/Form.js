@@ -1,8 +1,8 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
-import {searchEngageOrganizations} from '../api/Engage'
+import {postOrganization, searchEngageOrganizations} from '../api/Engage'
 
 const Form = ({currentOrg, close, reload}) => {
   const [id, setId] = useState(0)
@@ -13,6 +13,7 @@ const Form = ({currentOrg, close, reload}) => {
     reload()
     close()
   }
+  const searchTimeout = useRef()
 
   useEffect(() => {
     setId(currentOrg.id)
@@ -21,9 +22,16 @@ const Form = ({currentOrg, close, reload}) => {
 
   useEffect(() => {
     if (name.length > 3) {
-      searchEngageOrganizations(name).then((response) => {
-        console.log(response.data)
-      })
+      searchTimeout.current = setTimeout(() => {
+        searchEngageOrganizations(name).then((response) => {
+          setMatchingOrgs(response.data)
+        })
+      }, 1000)
+    } else if (name.length === 0) {
+      setMatchingOrgs([])
+    }
+    return () => {
+      clearTimeout(searchTimeout.current)
     }
   }, [name])
 
@@ -46,6 +54,15 @@ const Form = ({currentOrg, close, reload}) => {
     })
   }
 
+  const addEngageOrganization = (key) => {
+    const engageOrg = matchingOrgs[key]
+    const newOrg = {name: engageOrg.name, engageId: engageOrg.engageId}
+    postOrganization(newOrg).then(() => {
+      close()
+      reload()
+    })
+  }
+
   const checkForEnter = (keyPress) => {
     if (keyPress.keyCode === 13 && name.length > 0) {
       save()
@@ -60,6 +77,22 @@ const Form = ({currentOrg, close, reload}) => {
             Engage organizations will be recommended based on the name above.
           </em>
         </span>
+      )
+    } else {
+      return (
+        <ul className="list-unstyled">
+          {matchingOrgs.map((value, key) => {
+            return (
+              <li
+                key={`engageorg-${value.engageId}`}
+                title="Add Engage organization"
+                className="pointer"
+                onClick={() => addEngageOrganization(key)}>
+                <span className="badge badge-success">+</span>&nbsp;{value.name}
+              </li>
+            )
+          })}
+        </ul>
       )
     }
   }
@@ -81,7 +114,11 @@ const Form = ({currentOrg, close, reload}) => {
         <div>
           <strong>Matching Engage organizations</strong>
         </div>
-        <div className="border p-3 border-curved">{getMatchingOrgs()}</div>
+        <div
+          className="border p-3 border-curved"
+          style={{overflow: 'auto', maxHeight: '400px'}}>
+          {getMatchingOrgs()}
+        </div>
       </div>
       <div className="mb-3">
         <button
