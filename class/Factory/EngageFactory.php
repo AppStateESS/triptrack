@@ -57,9 +57,23 @@ class EngageFactory
         $db = Database::getDB();
         $tbl = $db->addTable('trip_engageorg');
         if (!empty($options['name'])) {
-            $tbl->addFieldConditional('name', $options['name']);
+            $tbl->addFieldConditional('name', '%' . $options['name'] . '%', 'like');
         }
+
+        if (!empty($options['limit'])) {
+            $db->setLimit((int) $options['limit']);
+        }
+
+        if (!empty($options['noDuplicates'])) {
+            $tbl2 = $db->addTable('trip_organization', null, false);
+            $cond = new Database\Conditional($db, $tbl->getField('engageId'), $tbl2->getField('engageId'), '=');
+            $db->joinResources($tbl, $tbl2, $cond, 'left');
+            $tbl2->addFieldConditional($tbl2->getField('id'), null, 'is');
+        }
+
         $tbl->addOrderBy('name');
+
+        return $db->select();
     }
 
 }
