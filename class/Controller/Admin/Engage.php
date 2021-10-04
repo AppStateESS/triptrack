@@ -15,18 +15,27 @@ namespace triptrack\Controller\Admin;
 use triptrack\Controller\SubController;
 use Canopy\Request;
 use triptrack\Factory\EngageFactory;
+use triptrack\Factory\OrganizationFactory;
 
 class Engage extends SubController
 {
 
-    public static function countJson()
+    protected $view;
+
+    public function __construct(\triptrack\Role\Base $role)
+    {
+        parent::__construct($role);
+        $this->view = new \triptrack\View\EngageView();
+    }
+
+    protected function countJson()
     {
         return EngageFactory::totalOrganizations();
     }
 
-    public static function importJson()
+    protected function importOrganizationsJson()
     {
-        $result = EngageFactory::import();
+        $result = EngageFactory::importOrganizations();
         if (!$result) {
             return ['success' => false];
         } else {
@@ -34,10 +43,23 @@ class Engage extends SubController
         }
     }
 
-    public static function searchJson(Request $request)
+    protected function searchOrganizationsJson(Request $request)
     {
         $name = $request->pullGetString('name');
-        return EngageFactory::list(['name' => $name, 'limit' => 50, 'noDuplicates' => true]);
+        return EngageFactory::listOrganizations(['name' => $name, 'limit' => 50, 'noDuplicates' => true]);
+    }
+
+    protected function memberImportHtml(Request $request)
+    {
+        $orgId = $request->pullGetInteger('orgId');
+
+        return $this->view->memberImport($orgId);
+    }
+
+    protected function memberListByOrganizationJson(Request $request)
+    {
+        $orgId = $request->pullGetInteger('orgId');
+        return EngageFactory::getMembersByOrganizationId($orgId);
     }
 
 }
