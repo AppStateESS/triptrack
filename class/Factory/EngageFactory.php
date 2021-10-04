@@ -31,7 +31,7 @@ class EngageFactory
         return $db->selectColumn();
     }
 
-    public static function import()
+    public static function importOrganizations()
     {
         $result = \Organization::getAllOrgs(true);
         if (empty($result) || !is_array($result)) {
@@ -52,7 +52,7 @@ class EngageFactory
         return $count;
     }
 
-    public static function list(array $options)
+    public static function listOrganizations(array $options)
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_engageorg');
@@ -74,6 +74,30 @@ class EngageFactory
         $tbl->addOrderBy('name');
 
         return $db->select();
+    }
+
+    public static function getMembersByOrganizationId(int $organizationEngageId)
+    {
+        $org = new \Organization($organizationEngageId);
+        $memberships = $org->getMembershipsV2();
+        $rows = [];
+        $bannerIds = [];
+        if (!empty($memberships)) {
+            foreach ($memberships as $member) {
+                if ($member->deleted || in_array($member->username, $bannerIds) ||
+                        $member->positionRecordedEndDate !== null) {
+                    continue;
+                }
+                $rows[] = ['bannerId' => $member->username, 'firstName' => $member->userFirstName,
+                    'username' => str_ireplace('@' . CAMPUS_EMAIL_DOMAIN, '', $member->userCampusEmail),
+                    'lastName' => $member->userLastName, 'email' => $member->userCampusEmail, 'engageId' => $member->userId];
+                $bannerIds[] = $member->username;
+            }
+        }
+        usort($rows, function($a, $b) {
+            return strcmp($a['lastName'], $b['lastName']);
+        });
+        return $rows;
     }
 
 }
