@@ -188,4 +188,12 @@ class Member extends SubController
         return ['success' => true];
     }
 
+    protected function addListByOrganizationIdPost(Request $request)
+    {
+        $members = $request->pullPostArray('members');
+        $organizationId = $request->pullPostInteger('organizationId');
+        MemberFactory::addToOrganizationByBannerIdList($organizationId, $members);
+        \Canopy\Server::forward('./triptrack/Admin/Member/?orgId=' . $organizationId);
+    }
+
 }
