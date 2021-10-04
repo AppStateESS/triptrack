@@ -13,4 +13,5 @@ exports.entry = {
   EmailMembers: exports.APP_DIR + '/EmailMembers/index.jsx',
   Reports: exports.APP_DIR + '/Reports/index.jsx',
   Approval: exports.APP_DIR + '/Approval/index.jsx',
+  EngageMember: exports.APP_DIR + '/EngageMember/index.jsx',
 }
