@@ -30,12 +30,6 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
             <div className="dropdown-menu">
               <a
                 className="dropdown-item"
-                href={`triptrack/Admin/Report/organization/?orgId=${value.id}`}
-                title="Member report">
-                <i className="fas fa-users"></i>&nbsp;Member report
-              </a>
-              <a
-                className="dropdown-item"
                 href={`triptrack/Admin/Organization/emailMembers?orgId=${value.id}`}
                 title="Email members">
                 <i className="fas fa-envelope"></i>&nbsp;Email
@@ -47,6 +41,18 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
                   edit(value.id)
                 }}>
                 <i className="fas fa-edit"></i>&nbsp;Edit
+              </a>
+              <a
+                href={`triptrack/Admin/Engage/memberImport?orgId=${value.id}`}
+                title="Import Engage members"
+                className="dropdown-item">
+                <i className="fas fa-users"></i>&nbsp;Engage members
+              </a>
+              <a
+                className="dropdown-item"
+                href={`triptrack/Admin/Report/organization/?orgId=${value.id}`}
+                title="Member report">
+                <i className="fas fa-file-csv"></i>&nbsp;Member report
               </a>
               <a
                 title="Delete trip"
