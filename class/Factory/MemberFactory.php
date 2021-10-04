@@ -573,4 +573,23 @@ EOF;
         return $result;
     }
 
+    public static function addToOrganizationByBannerIdList(int $organizationId, array $bannerIdList)
+    {
+        if (empty($bannerIdList)) {
+            return false;
+        }
+
+        foreach ($bannerIdList as $bannerId) {
+            $member = self::pullByBannerId($bannerId);
+            if ($member) {
+                self::addToOrganization($member['id'], $organizationId);
+            } else {
+                $result = BannerAPI::getStudent($bannerId);
+                $member = self::buildMemberFromBannerData($result);
+                self::saveResource($member);
+                self::addToOrganization($member->id, $organizationId);
+            }
+        }
+    }
+
 }
