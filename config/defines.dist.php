@@ -35,4 +35,6 @@ define('TRIPTRACK_BANNER_API', '');
  */
 define('TRIPTRACK_ENGAGE_CONFIG', '');
 
+define('CAMPUS_EMAIL_DOMAIN', 'appstate.edu');
+
 define('TRIPTRACK_SWIFT_OLD_VERSION', true);
