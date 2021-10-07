@@ -187,6 +187,7 @@ class TripFactory extends BaseFactory
      * - memberCount (bool): include a count of members column on return
      * - includeOrganizationName (bool): organizationName column added to trip array
      * - includeIncomplete (bool): if true, incomplete trips are returned
+     * - formatDates (bool): changes unix timestamps to formatted dates
      *
      * SORTING
      * - order (string): column to order by
@@ -202,6 +203,26 @@ class TripFactory extends BaseFactory
         if (!empty($options['orgId'])) {
             $tbl->addFieldConditional('organizationId', $options['orgId']);
         }
+
+        $tbl->addField('id');
+        $tbl->addField('approved');
+        $tbl->addField('contactName');
+        $tbl->addField('contactEmail');
+        $tbl->addField('contactPhone');
+        $tbl->addField('destinationCity');
+        $tbl->addField('destinationCountry');
+        $tbl->addField('destinationState');
+        $tbl->addField('host');
+        $tbl->addField('housingAddress');
+        $tbl->addField('secContactName');
+        $tbl->addField('secContactEmail');
+        $tbl->addField('secContactPhone');
+        $tbl->addField('submitEmail');
+        $tbl->addField('submitName');
+        $tbl->addField('submitUsername');
+        $tbl->addField('visitPurpose');
+        $tbl->addField('completed');
+
 
         if (!empty($options['includeOrganizationName'])) {
             $tbl4 = $db->addTable('trip_organization');
@@ -279,6 +300,20 @@ class TripFactory extends BaseFactory
             $tbl->addFieldConditional('destinationState', $options['tripState']);
         }
 
+        if (!empty($options['formatDates'])) {
+            $tbl->addField(new Database\Expression('from_unixtime(submitDate, "%Y-%m-%d")', 'submitDate'));
+            $tbl->addField(new Database\Expression('from_unixtime(timeDeparting, "%Y-%m-%d")', 'timeDeparting'));
+            $tbl->addField(new Database\Expression('from_unixtime(timeEventStarts, "%Y-%m-%d")', 'timeEventStarts'));
+            $tbl->addField(new Database\Expression('from_unixtime(timeReturn, "%Y-%m-%d")', 'timeReturn'));
+            $tbl->addField(new Database\Expression('from_unixtime(confirmedDate, "%Y-%m-%d")', 'confirmedDate'));
+        } else {
+            $tbl->addField('submitDate');
+            $tbl->addField('timeDeparting');
+            $tbl->addField('timeEventStarts');
+            $tbl->addField('timeReturn');
+            $tbl->addField('confirmedDate');
+        }
+
         if (!empty($options['orderBy'])) {
             $orderBy = $options['orderBy'];
             if (empty($options['dir'])) {
@@ -288,7 +323,6 @@ class TripFactory extends BaseFactory
             }
             $tbl->addOrderBy($orderBy, $dir);
         }
-
         return $db->select();
     }
 
