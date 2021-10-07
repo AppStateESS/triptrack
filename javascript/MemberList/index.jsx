@@ -123,6 +123,7 @@ const MemberList = ({organizationLabel}) => {
     if (!init.current) {
       return
     }
+    setLoading(true)
     const data = Object.assign({}, filter)
     data.search = encodeURIComponent(search)
     switch (sort.dir) {
