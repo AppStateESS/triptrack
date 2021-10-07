@@ -19,6 +19,7 @@ require_once '/var/www/html/essapi_config.php';
 
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Curl.php';
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Organization.php';
+require_once WAREHOUSE_INSTALL_DIR . 'lib/Event.php';
 
 class EngageFactory
 {
@@ -98,6 +99,25 @@ class EngageFactory
             return strcmp($a['lastName'], $b['lastName']);
         });
         return $rows;
+    }
+
+    public static function getUpcomingEventsByOrganizationId(int $organizationEngageId)
+    {
+        $org = new \Organization($organizationEngageId);
+        $event = new \Event();
+        return $event->getOrgEvents($organizationEngageId, strftime('%Y-%m-%d'));
+    }
+
+    public static function getEventsByOrganizationId(int $organizationEngageId)
+    {
+
+        $event = new \Event();
+        $events = $event->getOrgEvents($organizationEngageId, strftime('%Y-%m-%d'));
+        if (empty($events)) {
+            return [];
+        } else {
+            return $events;
+        }
     }
 
 }
