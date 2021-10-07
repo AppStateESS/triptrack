@@ -13,7 +13,6 @@ const Host = ({
   hostLabel,
   errors,
   accommodationRequired,
-  role,
   organizationList,
   organizationLabel,
 }) => {
@@ -70,7 +69,6 @@ const Host = ({
       return null
     }
   }
-
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">{hostString} information</legend>
@@ -78,7 +76,6 @@ const Host = ({
         organizationList={organizationList}
         trip={trip}
         setFormElement={setFormElement}
-        role={role}
         organizationLabel={organizationLabel}
       />
 
