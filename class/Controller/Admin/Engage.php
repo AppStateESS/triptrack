@@ -58,8 +58,19 @@ class Engage extends SubController
 
     protected function memberListByOrganizationJson(Request $request)
     {
+        $engageOrgId = $request->pullGetInteger('engageOrgId');
+        return EngageFactory::getMembersByOrganizationId($engageOrgId);
+    }
+
+    protected function eventListByOrganizationJson(Request $request)
+    {
         $orgId = $request->pullGetInteger('orgId');
-        return EngageFactory::getMembersByOrganizationId($orgId);
+        $organization = OrganizationFactory::build($orgId);
+        if (empty($organization)) {
+            throw new \Exception('Organization not found');
+        }
+
+        return EngageFactory::getEventsByOrganizationId($organization->engageId);
     }
 
 }
