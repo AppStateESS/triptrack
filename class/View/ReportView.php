@@ -55,7 +55,7 @@ class ReportView extends AbstractView
 
     public function stateTrips(string $state, bool $upcomingOnly)
     {
-        $tripList = TripFactory::list(['isAdmin' => true, 'upcomingOnly' => $upcomingOnly, 'tripState' => $state]);
+        $tripList = TripFactory::list(['isAdmin' => true, 'upcomingOnly' => $upcomingOnly, 'tripState' => $state, 'formatDates' => true]);
         CSV::makeCSV($tripList, 'Trips-in-' . str_replace(' ', '-', $state) . '-' . strftime('%Y%m%d', time()) . '.csv');
     }
 
