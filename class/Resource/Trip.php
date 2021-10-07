@@ -35,6 +35,7 @@ class Trip extends AbstractResource
     protected $memberCount;
     protected $completed;
     protected $confirmedDate;
+    protected $engageEventId;
     protected $table = 'trip_trip';
 
     public function __construct()
@@ -71,6 +72,7 @@ class Trip extends AbstractResource
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null, 'visitPurpose', 255);
         $this->memberCount = new \phpws2\Variable\SmallInteger(0, 'memberCount');
         $this->memberCount->setIsTableColumn(false);
+        $this->engageEventId = new \phpws2\Variable\IntegerVar(0, 'engageEventId');
         $this->completed = new \phpws2\Variable\BooleanVar(false, 'completed');
         parent::__construct();
     }
