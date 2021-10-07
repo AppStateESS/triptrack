@@ -33,7 +33,11 @@ class Document extends SubController
 
         $fileType = $_FILES['file']['type'];
         if (!in_array($fileType, $allowedTypes)) {
-            return ['success' => false, 'error' => "incorrect file type [$fileType]"];
+            if (empty($fileType)) {
+                return ['success' => false, 'error' => "server cannot verify the file type"];
+            } else {
+                return ['success' => false, 'error' => "incorrect file type [$fileType]"];
+            }
         }
 
         $file = $_FILES['file'];
