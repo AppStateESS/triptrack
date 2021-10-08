@@ -19,6 +19,7 @@ const defaultTrip = {
   timeReturn: 0,
   visitPurpose: '',
   memberCount: 0,
+  engageEventId: 0,
 }
 
 const testTrip = {
@@ -42,6 +43,7 @@ const testTrip = {
   timeReturn: 1603394481,
   visitPurpose: 'Attending big event',
   memberCount: 0,
+  engageEventId: 0,
 }
 
 const tripSettings = {
