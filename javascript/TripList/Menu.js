@@ -19,7 +19,7 @@ const Menu = ({
     if (unapprovedOnly) {
       return (
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           onClick={() => {
             setUnapprovedOnly(false)
           }}>
@@ -29,7 +29,7 @@ const Menu = ({
     } else {
       return (
         <button
-          className="btn btn-outline-primary"
+          className="btn btn-outline-primary btn-sm"
           onClick={() => {
             setUnapprovedOnly(true)
           }}>
@@ -56,13 +56,13 @@ const Menu = ({
             <li className="nav-item mr-2">
               {incomplete ? (
                 <a
-                  className="btn btn-warning"
+                  className="btn btn-warning btn-sm"
                   href={`./triptrack/Admin/Trip/${incomplete.id}/edit`}>
                   Finish incomplete trip
                 </a>
               ) : (
                 <a
-                  className="btn btn-success"
+                  className="btn btn-success btn-sm"
                   href="./triptrack/Admin/Trip/create">
                   Create trip
                 </a>
@@ -121,6 +121,7 @@ Menu.propTypes = {
   setUnapprovedOnly: PropTypes.func,
   setDateRange: PropTypes.func,
   dateRange: PropTypes.array,
+  incomplete: PropTypes.object,
 }
 
 Menu.defaultProps = {}
