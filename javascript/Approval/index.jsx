@@ -18,9 +18,11 @@ const Approval = ({approved, tripId}) => {
   return (
     <div>
       {approvedState ? (
-        <div className="alert alert-success">Approved</div>
+        <div className="btn btn-success float-left mr-2">Approved</div>
       ) : (
-        <button className="btn btn-outline-danger" onClick={approveTrip}>
+        <button
+          className="btn btn-outline-danger float-left mr-2"
+          onClick={approveTrip}>
           Not approved
         </button>
       )}
