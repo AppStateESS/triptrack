@@ -11,15 +11,12 @@ const plugTripSession = (trip) => {
   if (!tripSession) {
     return false
   } else {
-    //console.log('combining', tripSession)
     return {...trip, ...tripSession}
   }
 }
 
 const setTripSession = (trip) => {
-  console.log('setting', trip)
   const cloneTrip = Object.assign({}, trip)
-  delete cloneTrip.organizationId
   delete cloneTrip.id
   delete cloneTrip.submitEmail
   delete cloneTrip.submitName
