@@ -11,6 +11,7 @@ use phpws2\Database;
 use triptrack\Factory\TripFactory;
 use triptrack\Factory\MemberFactory;
 use triptrack\Factory\SettingFactory;
+use triptrack\Factory\EngageFactory;
 use triptrack\Factory\OrganizationFactory;
 use triptrack\View\MemberView;
 use triptrack\View\DocumentView;
@@ -59,7 +60,19 @@ class TripView extends AbstractView
     {
         $trip = TripFactory::build($tripId);
         $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
+
         $vars = $trip->getStringVars();
+        if ($trip->engageEventId > 0) {
+            $event = EngageFactory::getEvent($trip->engageEventId);
+            if ($event) {
+                $vars['event']['name'] = $event[0]->name;
+                $vars['event']['url'] = 'https://engage.appstate.edu/event/' . $event[0]->id;
+                $vars['event']['imageUrl'] = $event[0]->imageUrl;
+                $vars['event']['startsOn'] = $event[0]->startsOn;
+            } else {
+                $vars['event'] = null;
+            }
+        }
         $vars['organizationName'] = $organization->name;
         $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
