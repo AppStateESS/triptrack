@@ -120,4 +120,10 @@ class EngageFactory
         }
     }
 
+    public static function getEvent(int $eventId)
+    {
+        $engageEvent = new \Event;
+        return $engageEvent->getEventV3($eventId);
+    }
+
 }
