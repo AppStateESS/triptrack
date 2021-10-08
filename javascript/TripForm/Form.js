@@ -11,9 +11,25 @@ import {postTrip, patchApproval, deleteTrip} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 import {getList} from '../api/Fetch'
+import {getOrganizationEvents} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
+import UpcomingEvents from './UpcomingEvents'
+import {clearTripSession, setTripSession, plugTripSession} from './Session'
+import CurrentAssociation from './CurrentAssociation'
+
+const findAssociatedEvent = (eventList, engageEventId) => {
+  const found = eventList.find((value) => {
+    return value.id === parseInt(engageEventId)
+  })
+
+  return found
+}
+
+const unixTime = (stamp) => {
+  return parseInt((new Date(stamp).getTime() / 1000).toFixed(0))
+}
 
 const Form = ({
   tripDocuments,
@@ -33,47 +49,21 @@ const Form = ({
   confirmationRequired,
   confirmationInstructions,
 }) => {
-  const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
-  const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
+  const [associatedEvent, setAssociatedEvent] = useState({name: ''})
   const [allowSave, setAllowSave] = useState(true)
-  const [members, setMembers] = useState([])
-  const [selectedMembers, setSelectedMembers] = useState([])
-  const [documents, setDocuments] = useState(tripDocuments)
-  const [requiredFileMissing, setRequiredFileMissing] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false)
+  const [documents, setDocuments] = useState(tripDocuments)
+  const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
+  const [events, setEvents] = useState([])
+  const [loadingEvents, setLoadingEvents] = useState(true)
+  const [members, setMembers] = useState([])
+  const [membersLoaded, setMembersLoaded] = useState(false)
+  const [requiredFileMissing, setRequiredFileMissing] = useState(false)
+  const [selectedMembers, setSelectedMembers] = useState([])
+  const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
 
   const memberAnchor = useRef(null)
-
-  useEffect(() => {
-    let part1
-    let part2
-
-    part1 = getList(`./triptrack/${role}/Member`, {
-      orgId: trip.organizationId,
-    })
-
-    if (trip.id > 0) {
-      part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
-    }
-    Promise.all([part1, part2]).then((response) => {
-      setMembers(response[0].data)
-      if (response[1]) {
-        setSelectedMembers(response[1].data)
-      }
-    })
-  }, [trip.organizationId])
-
-  useEffect(() => {
-    errorCheck('memberCount')
-  }, [selectedMembers])
-
-  useEffect(() => {
-    if (allowUpload && uploadRequired && documents.length === 0) {
-      setRequiredFileMissing(true)
-    } else {
-      setRequiredFileMissing(false)
-    }
-  }, [documents])
+  const renderReady = useRef(false)
 
   useEffect(() => {
     if (location.hash == '#members') {
@@ -82,7 +72,73 @@ const Form = ({
         window.scrollTo(memberAnchor.current)
       }, 1000)
     }
+    if (!trip.completed) {
+      const tripSession = plugTripSession(trip)
+      if (tripSession) {
+        setTrip(tripSession)
+      }
+    }
+    renderReady.current = true
   }, [])
+
+  useEffect(() => {
+    plugAssociatedEvent(trip.engageEventId)
+  }, [trip.id])
+
+  useEffect(() => {
+    if (renderReady.current) {
+      let part1
+      let part2
+
+      part1 = getList(`./triptrack/${role}/Member`, {
+        orgId: trip.organizationId,
+      })
+
+      if (trip.id > 0) {
+        part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
+      }
+      Promise.all([part1, part2]).then((response) => {
+        setMembers(response[0].data)
+        if (response[1]) {
+          setSelectedMembers(response[1].data)
+        }
+        setMembersLoaded(true)
+      })
+      setLoadingEvents(true)
+      getOrganizationEvents(trip.organizationId).then((response) => {
+        setLoadingEvents(false)
+        setEvents(response.data)
+      })
+
+      setTrip(Object.assign({}, trip))
+    }
+  }, [trip.organizationId])
+
+  useEffect(() => {
+    if (renderReady.current) {
+      plugAssociatedEvent(trip.engageEventId)
+    }
+  }, [events])
+
+  useEffect(() => {
+    if (renderReady.current) {
+      errorCheck('memberCount')
+    }
+  }, [selectedMembers])
+
+  useEffect(() => {
+    if (renderReady.current) {
+      if (allowUpload && uploadRequired && documents.length === 0) {
+        setRequiredFileMissing(true)
+      } else {
+        setRequiredFileMissing(false)
+      }
+    }
+  }, [documents])
+
+  window.addEventListener('beforeunload', () => {
+    setTripSession(trip)
+  })
 
   const setFormElement = (key, value) => {
     trip[key] = value
@@ -92,9 +148,47 @@ const Form = ({
 
   const cancelTrip = () => {
     if (confirm('Are you sure you want to permanently delete this trip?')) {
-      deleteTrip(trip.id, role)
-      location.href = `./triptrack/${role}/Trip`
+      deleteTrip(trip.id, role).then(() => {
+        clearTripSession(() => (location.href = `./triptrack/${role}/Trip`))
+      })
     }
+  }
+
+  const plugAssociatedEvent = (eventId) => {
+    const matchingEvent = findAssociatedEvent(events, eventId)
+    if (matchingEvent !== undefined) {
+      setAssociatedEvent(matchingEvent)
+    } else {
+      setAssociatedEvent({name: ''})
+    }
+  }
+
+  const associateEvent = (eventId) => {
+    const event = findAssociatedEvent(events, eventId)
+    const tripCopy = Object.assign({}, trip)
+
+    tripCopy.timeDeparting = unixTime(event.startsOn)
+    tripCopy.timeEventStarts = unixTime(event.startsOn)
+    tripCopy.timeReturn = unixTime(event.endsOn)
+    if (tripCopy.host.length === 0) {
+      tripCopy.host = event.name
+    }
+    if (tripCopy.visitPurpose.length === 0) {
+      tripCopy.visitPurpose = event.name
+    }
+    if (event.address.city !== null) {
+      tripCopy.destinationCity = event.address.city
+    }
+    if (event.address.state !== null) {
+      tripCopy.destinationState = event.address.state
+    }
+    if (tripCopy.housingAddress.length === 0) {
+      tripCopy.housingAddress = event.address.line1 + ' ' + event.address.line2
+    }
+    tripCopy.engageEventId = event.id
+    plugAssociatedEvent(event.id)
+
+    setTrip(tripCopy)
   }
 
   const completeConfirmation = (confirmResult) => {
@@ -255,7 +349,7 @@ const Form = ({
       ]).then((response) => {
         if (response[0].data.success) {
           const url = `triptrack/${role}/Trip/${response[0].data.id}`
-          location.href = url
+          clearTripSession(() => (location.href = url))
         } else {
           const errClone = response[0].data.errors
           const errorResult = Object.keys(errClone)
@@ -267,19 +361,50 @@ const Form = ({
       })
     }
   }
+
   return (
     <div>
       <h3>Enter trip information</h3>
       <p>Please enter all requested, required information below:</p>
       {approvedIcon()}
+      {members.length === 0 && membersLoaded ? (
+        <div className="alert alert-danger">
+          There are no members in this {organizationLabel.toLowerCase()}.
+        </div>
+      ) : null}
 
       <a id="submitter-info"></a>
-      <fieldset className="mb-4">
-        <legend className="border-bottom mb-3">Submitter</legend>
-        {trip.submitName}
-        <br />
-        <a href={`mailto:${trip.submitEmail}`}>{trip.submitEmail}</a>
-      </fieldset>
+      <div className="row">
+        <div className="col-sm-6">
+          <fieldset className="mb-4">
+            <legend className="border-bottom mb-3">Submitter</legend>
+            {trip.submitName}
+            <br />
+            <a href={`mailto:${trip.submitEmail}`}>{trip.submitEmail}</a>
+          </fieldset>
+        </div>
+        <div className="col-sm-6">
+          <fieldset>
+            <legend className="border-bottom mb-3">Associated Event</legend>
+            {trip.engageEventId === 0 ? (
+              <UpcomingEvents
+                events={events}
+                loadingEvents={loadingEvents}
+                associateEvent={associateEvent}
+                engageEventId={trip.engageEventId}
+              />
+            ) : (
+              <CurrentAssociation
+                associatedEvent={associatedEvent}
+                clear={() => {
+                  trip.engageEventId = 0
+                  setTrip(Object.assign({}, trip))
+                }}
+              />
+            )}
+          </fieldset>
+        </div>
+      </div>
 
       <a id="host-info"></a>
       <Host
