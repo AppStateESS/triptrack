@@ -1,49 +1,64 @@
-<div class="float-right w-25 text-center"><?=$approvalButton?>
-    <a class="btn btn-primary text-white mt-2" href="./triptrack/Admin/Trip/<?=$id?>/edit">Update</a>
+<div class="float-right w-25">
+  <?=$approvalButton?>
+  <a class="btn btn-primary text-white" href="./triptrack/Admin/Trip/<?=$id?>/edit">Update</a>
 </div>
 <h2>Travel plan</h2>
-<p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>">
-    <?=$submitName?></a> on <?=$submitDate?><br />
-  <strong><?=$organizationLabel?>:</strong> <?=$organizationName?><br />
-    <strong>Purpose:</strong> <?=$visitPurpose?>
-</p>
-<div class="row">
-  <div class="col-sm-6">
-    <h3>Destination</h3>
-    <p><strong>Host:</strong> <?=$host?><br />
-      <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
-      <strong>Housing:</strong> <?=$housingAddress?>
-    </p>
-  </div>
-  <div class="col-sm-6">
-    <h3>Documents</h3>
-    <?=$documents?>
-  </div>
-  <div class="col-sm-6">
-    <h3>Primary contact</h3>
-    <p><?=$contactName?><br />
-      <a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a><br />
-      <a href="tel:+1<?=$contactPhone?>"><?=$contactPhoneFormat?></a>
-    </p>
-  </div>
-  <?php if (!empty($secContactName)):?>
-  <div class="col-sm-6">
-    <h3>Secondary contact</h3>
-    <p>
-      <?=$secContactName?><br />
-      <?=empty($secContactEmail) ? '' : "<a href=\"mailto:$secContactEmail\">$secContactEmail</a><br />"?>
-      <?=empty($secContactPhone) ? '' : "<a href=\"mailto:$secContactPhone\">$secContactPhone</a>"?>
-    </p>
-  </div>
+
+<?php if (!empty($event)):?>
+<div class="mb-3 float-right text-center">
+  <h3>Associated Event</h3>
+  <?php if (!empty($event['imageUrl'])):?>
+  <div><a href="<?=$event['url']?>"><img style="max-height: 200px" src="<?=$event['imageUrl']?>" /></a></div>
   <?php endif;?>
-  <div class="col-sm-6">
-    <h3>Itinerary</h3>
-    <p>
-      <strong>Departing:</strong> <?=$timeDeparting?><br />
-      <strong>Event start:</strong> <?=$timeEventStarts?><br />
-      <strong>Returning:</strong> <?=$timeReturn?><br />
-    </p>
-  </div>
+  <div class="lead"><a href="<?=$event['url']?>"><?=$event['name']?></a></div>
 </div>
+<?php endif;?>
+<div class="mb-3">
+  <p><strong>Submitted by</strong>: <a href="mailto:<?=$submitEmail?>">
+      <?=$submitName?></a> on <?=$submitDate?><br />
+    <strong><?=$organizationLabel?>:</strong> <?=$organizationName?><br />
+    <strong>Purpose:</strong> <?=$visitPurpose?>
+  </p>
+</div>
+<div class="mb-3">
+  <h3>Destination</h3>
+  <p><strong>Host:</strong> <?=$host?><br />
+    <strong>Location:</strong> <?=$destinationCity?>, <?=$destinationState?>, <?=$destinationCountry?><br />
+    <strong>Housing:</strong> <?=$housingAddress?>
+  </p>
+</div>
+<div class="mb-3">
+  <h3>Documents</h3>
+  <?=$documents?>
+</div>
+
+<div class="mb-3">
+  <h3>Primary contact</h3>
+  <p><?=$contactName?><br />
+    <a href="mailto:<?=$contactEmail?>"><?=$contactEmail?></a><br />
+    <a href="tel:+1<?=$contactPhone?>"><?=$contactPhoneFormat?></a>
+  </p>
+</div>
+<?php if (!empty($secContactName)):?>
+<div class="mb-3">
+  <h3>Secondary contact</h3>
+  <p>
+    <?=$secContactName?><br />
+    <?=empty($secContactEmail) ? '' : "<a href=\"mailto:$secContactEmail\">$secContactEmail</a><br />"?>
+    <?=empty($secContactPhone) ? '' : "<a href=\"mailto:$secContactPhone\">$secContactPhone</a>"?>
+  </p>
+</div>
+<?php endif;?>
+
+<div class="mb-3">
+  <h3>Itinerary</h3>
+  <p>
+    <strong>Departing:</strong> <?=$timeDeparting?><br />
+    <strong>Event start:</strong> <?=$timeEventStarts?><br />
+    <strong>Returning:</strong> <?=$timeReturn?><br />
+  </p>
+</div>
+
+
 <h3>Attending</h3>
 <?=$memberList?>
