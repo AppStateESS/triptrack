@@ -345,6 +345,7 @@ class TripFactory extends BaseFactory
         $trip->secContactName = $request->pullPutString('secContactName');
         $trip->secContactEmail = $request->pullPutString('secContactEmail');
         $trip->secContactPhone = $request->pullPutString('secContactPhone');
+        $trip->engageEventId = (int) $request->pullPutInteger('engageEventId', true);
         if ($isAdmin) {
             $trip->submitEmail = $request->pullPutString('submitEmail');
             $trip->submitName = $request->pullPutString('submitName');
