@@ -153,7 +153,7 @@ const TripList = ({hostLabel, unapproved}) => {
   } else if (trips.length === 0) {
     let emptyMessage = (
       <span>
-        No {unapprovedOnly ? 'unapproved' : ''}
+        No{unapprovedOnly ? ' unapproved ' : ' '}
         trips found.
       </span>
     )
