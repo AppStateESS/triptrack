@@ -1,16 +1,13 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 const Organizations = ({
   trip,
   setFormElement,
-  role,
   organizationLabel,
   organizationList,
 }) => {
-  const [loading, setLoading] = useState(true)
-
   const organizationString =
     organizationLabel.length > 0 ? organizationLabel : 'Organization'
 
@@ -24,11 +21,10 @@ const Organizations = ({
       )
     })
   }
-
   return (
     <div className="row form-group">
       <div className="col-sm-4">
-        <label>Attending {organizationString}</label>
+        <label>Attending {organizationString.toLowerCase()}</label>
       </div>
       <div className="col-sm-8">
         <select
