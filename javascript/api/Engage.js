@@ -19,8 +19,13 @@ const postOrganization = (organization) => {
   return postItem(organization, 'Organization', 'Admin')
 }
 
-const getOrganizationList = (organizationId) => {
+const getOrganizationList = (engageOrgId) => {
   const url = './triptrack/Admin/Engage/memberListByOrganization'
+  return getList(url, {engageOrgId})
+}
+
+const getOrganizationEvents = (organizationId) => {
+  const url = './triptrack/Admin/Engage/eventListByOrganization'
   return getList(url, {orgId: organizationId})
 }
 
@@ -30,4 +35,5 @@ export {
   searchEngageOrganizations,
   postOrganization,
   getOrganizationList,
+  getOrganizationEvents,
 }
