@@ -16,15 +16,17 @@ const plugTripSession = (trip) => {
 }
 
 const setTripSession = (trip) => {
-  const cloneTrip = Object.assign({}, trip)
-  delete cloneTrip.id
-  delete cloneTrip.submitEmail
-  delete cloneTrip.submitName
-  delete cloneTrip.submitUsername
-  delete cloneTrip.memberCount
-  delete cloneTrip.engageEventId
+  if (trip) {
+    const cloneTrip = {...trip}
+    delete cloneTrip.id
+    delete cloneTrip.submitEmail
+    delete cloneTrip.submitName
+    delete cloneTrip.submitUsername
+    delete cloneTrip.memberCount
+    delete cloneTrip.engageEventId
 
-  sessionStorage.setItem('trip', JSON.stringify(cloneTrip))
+    sessionStorage.setItem('trip', JSON.stringify(cloneTrip))
+  }
 }
 
 export {clearTripSession, plugTripSession, setTripSession}
