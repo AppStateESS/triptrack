@@ -73,8 +73,9 @@ class OrganizationFactory extends BaseFactory
         $org = new \triptrack\Resource\Organization;
         $org->name = $request->pullPostString('name');
         $org->engageId = (int) $request->pullPostInteger('engageId', true);
-        if (self::getByEngageId($org->engageId)) {
-            throw new \Exception('Duplicate Engage id used.');
+        if ($org->engageId > 0 && self::getByEngageId($org->engageId)) {
+
+            throw new \Exception("Duplicate Engage id ({$org->engageId}) used.");
         }
         self::saveResource($org);
     }
