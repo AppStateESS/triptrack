@@ -11,7 +11,7 @@ import {postTrip, patchApproval, deleteTrip} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 import {getList} from '../api/Fetch'
-import {getOrganizationEvents} from '../api/Engage'
+import {getOrganizationEvents, getRSVPBannerIds} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
@@ -53,14 +53,14 @@ const Form = ({
   const [allowSave, setAllowSave] = useState(true)
   const [confirmModal, setConfirmModal] = useState(false)
   const [documents, setDocuments] = useState(tripDocuments)
-  const [errors, setErrors] = useState(Object.assign({}, tripSettings.no))
+  const [errors, setErrors] = useState({...tripSettings.no})
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
   const [members, setMembers] = useState([])
   const [membersLoaded, setMembersLoaded] = useState(false)
   const [requiredFileMissing, setRequiredFileMissing] = useState(false)
   const [selectedMembers, setSelectedMembers] = useState([])
-  const [trip, setTrip] = useState(Object.assign({}, defaultTrip))
+  const [trip, setTrip] = useState({...defaultTrip})
 
   const memberAnchor = useRef(null)
   const renderReady = useRef(false)
@@ -87,6 +87,12 @@ const Form = ({
 
   useEffect(() => {
     if (renderReady.current) {
+      if (trip.organizationId === 0) {
+        setMembers([])
+        setEvents([])
+        return
+      }
+
       let part1
       let part2
 
@@ -104,13 +110,12 @@ const Form = ({
         }
         setMembersLoaded(true)
       })
+
       setLoadingEvents(true)
       getOrganizationEvents(trip.organizationId).then((response) => {
         setLoadingEvents(false)
         setEvents(response.data)
       })
-
-      setTrip(Object.assign({}, trip))
     }
   }, [trip.organizationId])
 
@@ -140,21 +145,30 @@ const Form = ({
     setTripSession(trip)
   })
 
+  const resetTrip = (url) => {
+    setTrip({...defaultTrip})
+    clearTripSession(() => (location.href = url))
+  }
+
   const setFormElement = (key, value) => {
     trip[key] = value
-    setTrip(Object.assign({}, trip))
+    setTrip({...trip})
     errorCheck(key, value)
   }
 
   const cancelTrip = () => {
     if (confirm('Are you sure you want to permanently delete this trip?')) {
       deleteTrip(trip.id, role).then(() => {
-        clearTripSession(() => (location.href = `./triptrack/${role}/Trip`))
+        const url = `./triptrack/${role}/Trip`
+        resetTrip(url)
       })
     }
   }
 
   const plugAssociatedEvent = (eventId) => {
+    if (eventId === 0) {
+      return
+    }
     const matchingEvent = findAssociatedEvent(events, eventId)
     if (matchingEvent !== undefined) {
       setAssociatedEvent(matchingEvent)
@@ -165,7 +179,22 @@ const Form = ({
 
   const associateEvent = (eventId) => {
     const event = findAssociatedEvent(events, eventId)
-    const tripCopy = Object.assign({}, trip)
+    getRSVPBannerIds(eventId, 'Admin').then((response) => {
+      if (response.data && response.data.length > 0) {
+        const rsvp = response.data
+        rsvp.forEach((bannerId) => {
+          const result = members.find((element) => element.bannerId == bannerId)
+          if (result) {
+            if (selectedMembers.indexOf(result.id > -1)) {
+              selectedMembers.push(result.id)
+            }
+          }
+        })
+        setSelectedMembers([...selectedMembers])
+      }
+    })
+
+    const tripCopy = {...trip}
 
     tripCopy.timeDeparting = unixTime(event.startsOn)
     tripCopy.timeEventStarts = unixTime(event.startsOn)
@@ -183,7 +212,10 @@ const Form = ({
       tripCopy.destinationState = event.address.state
     }
     if (tripCopy.housingAddress.length === 0) {
-      tripCopy.housingAddress = event.address.line1 + ' ' + event.address.line2
+      tripCopy.housingAddress += event.address.line1 ?? ''
+      tripCopy.housingAddress +=
+        event.address.line1 && event.address.line2 ? ' ' : ''
+      tripCopy.housingAddress += event.address.line2 ?? ''
     }
     tripCopy.engageEventId = event.id
     plugAssociatedEvent(event.id)
@@ -293,7 +325,7 @@ const Form = ({
       }
     })
     setAllowSave(checkSave)
-    setErrors(Object.assign({}, errors))
+    setErrors({...errors})
     return errorFound
   }
 
@@ -349,7 +381,7 @@ const Form = ({
       ]).then((response) => {
         if (response[0].data.success) {
           const url = `triptrack/${role}/Trip/${response[0].data.id}`
-          clearTripSession(() => (location.href = url))
+          resetTrip(url)
         } else {
           const errClone = response[0].data.errors
           const errorResult = Object.keys(errClone)
@@ -386,21 +418,25 @@ const Form = ({
         <div className="col-sm-6">
           <fieldset>
             <legend className="border-bottom mb-3">Associated Event</legend>
-            {trip.engageEventId === 0 ? (
+            {trip.engageEventId === 0 && trip.organizationId > 0 ? (
               <UpcomingEvents
                 events={events}
                 loadingEvents={loadingEvents}
                 associateEvent={associateEvent}
                 engageEventId={trip.engageEventId}
               />
-            ) : (
+            ) : trip.organizationId > 0 ? (
               <CurrentAssociation
                 associatedEvent={associatedEvent}
                 clear={() => {
                   trip.engageEventId = 0
-                  setTrip(Object.assign({}, trip))
+                  setTrip({...trip})
                 }}
               />
+            ) : (
+              <div>
+                <em>No association</em>
+              </div>
             )}
           </fieldset>
         </div>
