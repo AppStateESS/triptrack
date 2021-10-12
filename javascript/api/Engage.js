@@ -10,8 +10,8 @@ const updateOrganizations = () => {
   return getList(url)
 }
 
-const searchEngageOrganizations = (name) => {
-  const url = './triptrack/Admin/Engage/searchOrganizations'
+const searchEngageOrganizations = (name, role = 'Admin') => {
+  const url = `./triptrack/${role}/Engage/searchOrganizations`
   return getList(url, {name})
 }
 
