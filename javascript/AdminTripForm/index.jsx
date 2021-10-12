@@ -38,9 +38,6 @@ const AdminTripForm = (props) => {
         if (orgList.length === 0) {
           setView('noorg')
         } else {
-          if (trip.organizationId == 0) {
-            trip.organizationId = orgList[0].id
-          }
           tripDocuments.current = response[2].data
           setOrganizations(orgList)
           setDefaultTrip(trip)
