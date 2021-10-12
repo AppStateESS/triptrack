@@ -112,7 +112,7 @@ const Form = ({
       })
 
       setLoadingEvents(true)
-      getOrganizationEvents(trip.organizationId).then((response) => {
+      getOrganizationEvents(trip.organizationId, role).then((response) => {
         setLoadingEvents(false)
         setEvents(response.data)
       })
@@ -179,9 +179,10 @@ const Form = ({
 
   const associateEvent = (eventId) => {
     const event = findAssociatedEvent(events, eventId)
-    getRSVPBannerIds(eventId, 'Admin').then((response) => {
+    getRSVPBannerIds(eventId, role).then((response) => {
       if (response.data && response.data.length > 0) {
         const rsvp = response.data
+
         rsvp.forEach((bannerId) => {
           const result = members.find((element) => element.bannerId == bannerId)
           if (result) {
@@ -518,7 +519,9 @@ const Form = ({
           className="btn btn-success mb-2"
           onClick={() => saveTrip()}
           disabled={!allowSave || requiredFileMissing}>
-          {allowSave ? 'Save travel plan' : 'Complete missing information'}
+          {allowSave
+            ? 'Save travel plan'
+            : 'Complete missing information above'}
         </button>
         <div>
           {!trip.completed ? (
