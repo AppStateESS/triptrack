@@ -24,9 +24,14 @@ const getOrganizationList = (engageOrgId) => {
   return getList(url, {engageOrgId})
 }
 
-const getOrganizationEvents = (organizationId) => {
-  const url = './triptrack/Admin/Engage/eventListByOrganization'
+const getOrganizationEvents = (organizationId, role = 'Admin') => {
+  const url = `./triptrack/${role}/Engage/eventListByOrganization`
   return getList(url, {orgId: organizationId})
+}
+
+const getRSVPBannerIds = (eventId, role = 'Admin') => {
+  const url = `./triptrack/${role}/Engage/rsvpListByEvent`
+  return getList(url, {eventId})
 }
 
 export {
@@ -36,4 +41,5 @@ export {
   postOrganization,
   getOrganizationList,
   getOrganizationEvents,
+  getRSVPBannerIds,
 }
