@@ -62,6 +62,7 @@ const tripSettings = {
     timeEventStart: true,
     timeReturn: true,
     memberCount: true,
+    organizationId: true,
   },
   no: {
     submitName: false,
@@ -78,6 +79,7 @@ const tripSettings = {
     timeEventStart: false,
     timeReturn: false,
     memberCount: false,
+    organizationId: false,
   },
 }
 
