@@ -29,8 +29,13 @@ const Organizations = ({
       <div className="col-sm-8">
         <select
           className="form-control"
-          onChange={(e) => setFormElement('organizationId', e.target.value)}
+          onChange={(e) => {
+            setFormElement('organizationId', e.target.value)
+          }}
           value={trip.organizationId}>
+          <option value="0">
+            Choose {organizationLabel.toLowerCase()} below
+          </option>
           {options}
         </select>
       </div>
