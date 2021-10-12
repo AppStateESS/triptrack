@@ -40,7 +40,10 @@ const UpcomingEvents = ({
               )
             })}
           </select>
-          <button className="btn btn-success" onClick={associate}>
+          <button
+            className="btn btn-success"
+            onClick={associate}
+            disabled={engageId === 0}>
             Associate event with trip
           </button>
         </div>
