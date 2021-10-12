@@ -9,7 +9,6 @@ const Form = ({currentOrg, close, reload}) => {
   const [name, setName] = useState(currentOrg.name)
   const [matchingOrgs, setMatchingOrgs] = useState([])
   const closeForm = () => {
-    setName('')
     reload()
     close()
   }
