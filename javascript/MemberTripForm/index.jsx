@@ -39,9 +39,6 @@ const MemberTripForm = (props) => {
         if (orgList.length === 0) {
           setView('noorg')
         } else {
-          if (trip.organizationId == 0) {
-            trip.organizationId = orgList[0].id
-          }
           if (tripId > 0) {
             tripDocuments.current = response[2].data
           }
