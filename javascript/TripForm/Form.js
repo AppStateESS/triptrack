@@ -87,7 +87,7 @@ const Form = ({
 
   useEffect(() => {
     if (renderReady.current) {
-      if (trip.organizationId === 0) {
+      if (parseInt(trip.organizationId) === 0) {
         setMembers([])
         setEvents([])
         return
@@ -275,6 +275,10 @@ const Form = ({
 
     let errorFound = false
     switch (name) {
+      case 'organizationId':
+        errorFound = parseInt(trip.organizationId) === 0
+        break
+
       case 'memberCount':
         errorFound = selectedMembers.length === 0
         break
@@ -362,6 +366,10 @@ const Form = ({
     if (errorCheck('memberCount')) {
       foundError = true
     }
+
+    if (errorCheck('organizationId')) {
+      foundError = true
+    }
     return !foundError
   }
 
@@ -394,16 +402,25 @@ const Form = ({
     }
   }
 
+  let memberWarning
+  if (
+    members.length === 0 &&
+    membersLoaded &&
+    parseInt(trip.organizationId) > 1
+  ) {
+    memberWarning = (
+      <div className="alert alert-danger">
+        There are no members in this {organizationLabel.toLowerCase()}.
+      </div>
+    )
+  }
+
   return (
     <div>
       <h3>Enter trip information</h3>
       <p>Please enter all requested, required information below:</p>
       {approvedIcon()}
-      {members.length === 0 && membersLoaded ? (
-        <div className="alert alert-danger">
-          There are no members in this {organizationLabel.toLowerCase()}.
-        </div>
-      ) : null}
+      {memberWarning}
 
       <a id="submitter-info"></a>
       <div className="row">
