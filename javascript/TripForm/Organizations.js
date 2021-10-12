@@ -7,6 +7,7 @@ const Organizations = ({
   setFormElement,
   organizationLabel,
   organizationList,
+  orgError,
 }) => {
   const organizationString =
     organizationLabel.length > 0 ? organizationLabel : 'Organization'
@@ -38,6 +39,11 @@ const Organizations = ({
           </option>
           {options}
         </select>
+        {orgError ? (
+          <span className="badge badge-danger">
+            Please choose the attending {organizationLabel.toLowerCase()}.
+          </span>
+        ) : null}
       </div>
     </div>
   )
@@ -50,6 +56,7 @@ Organizations.propTypes = {
   organizationLabel: PropTypes.string,
   organizationList: PropTypes.array,
   organizationId: PropTypes.number,
+  orgError: PropTypes.bool,
 }
 
 export default Organizations
