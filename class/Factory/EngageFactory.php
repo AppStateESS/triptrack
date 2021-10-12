@@ -126,4 +126,19 @@ class EngageFactory
         return $engageEvent->getEventV3($eventId);
     }
 
+    public static function getRsvpListByEventId(int $eventId)
+    {
+        $engageEvent = new \Event;
+        $attending = $engageEvent->getEventRSVP($eventId);
+
+        if (empty($attending)) {
+            return false;
+        }
+        $bannerId = [];
+        foreach ($attending as $row) {
+            $bannerIds[] = $row->userId->username;
+        }
+        return $bannerIds;
+    }
+
 }
