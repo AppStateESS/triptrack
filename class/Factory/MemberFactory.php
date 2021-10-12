@@ -95,9 +95,9 @@ class MemberFactory extends BaseFactory
             $tbl->addField('lastName');
             $tbl->addField('phone');
             $tbl->addField('restricted');
+            $tbl->addField('bannerId');
             if (!empty($options['isAdmin'])) {
                 $tbl->addField('deleted');
-                $tbl->addField('bannerId');
                 $tbl->addField('username');
             }
         }
