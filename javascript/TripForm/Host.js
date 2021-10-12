@@ -69,6 +69,7 @@ const Host = ({
       return null
     }
   }
+
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">{hostString} information</legend>
@@ -77,8 +78,8 @@ const Host = ({
         trip={trip}
         setFormElement={setFormElement}
         organizationLabel={organizationLabel}
+        orgError={errors.organizationId}
       />
-
       <div className="row form-group">
         <div className="col-sm-4">
           <label className="mb-0">
