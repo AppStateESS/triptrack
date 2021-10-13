@@ -446,12 +446,12 @@ class TripFactory extends BaseFactory
      */
     public static function delete(int $tripId)
     {
+        DocumentFactory::deleteByTripId($tripId);
+        self::removeAllMembers($tripId);
         $db = Database::getDB();
         $tbl = $db->addTable('trip_trip');
         $tbl->addFieldConditional('id', $tripId);
         $db->delete();
-        self::removeAllMembers($tripId);
-        DocumentFactory::deleteByTripId($tripId);
     }
 
 }
