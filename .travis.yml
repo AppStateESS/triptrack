@@ -1,0 +1,29 @@
+sudo: false
+matrix:
+  include:
+  - language: php
+    php:
+    - 7
+    script:
+    - ".travis-build/phplint ."
+  - language: node.js
+    node_js: 10.20.1
+before_install:
+- npm i -g npm@v6.14.8
+install:
+- npm install
+after_success:
+- npm run build
+- rm -rf node_modules
+- tar -czf triptrack.tar.gz *
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api-key:
+    secure: "zZeCEoXALb1nmAgRaCUhMoG6TyvPOomaNdtLa1CQkE52N4SA90LYeif6M1pZQ8uwGWX24hk1ojCNglN6XFS8XWyAQlRoQklVro1nl24cd9y0d71hoWm71iSZ5laCXxwCAvpHAK5brt+E+6MnXiUtY5V0FxKvmHdmMqPI7Y/7UGRDcTKugeSDN5Qn2zkxX/sLEbMTXKYwlq9wI2cgKSw4P8MLVMKTiaDAb65cT/K6wQdv5qtIRv6T08wq79HV5CkxRasbJkEOmcjOqdSOpT54b5o4mTGp4sskazVnbnJs0SieZAgp01EUVS/fHLz5Brr4aPA/PyH8rnT8XfAhKjJ56R5W2NCEoYpz/4qdaMz3pPCcdw/qkERYnFC4K6fEx9JXuzgMDHheBZ256T0GJoF1dfAogT3W0YsheZV+edEDm0n9JtzGHp/UhMUC73SpALITfG4mw9Qun2llIouN5QvWg6tYA5dvOXsI8jWRi5JaqtTvQsVNVfn3FSCn+51J2cLbbjHUTKr2ogITNusOw8ln2mUw8oIjxVw9z0F+LVgxuXDHX2PjhbAuPiomoqRDU3ijT9N9LLjjvZ411OEoAx81Lo2/L2QQnHC246FMib4ioIduCa92wsVDMelbnq7EU+Xxpi11W4DsMAdLT73bwYIyzyx3BeY3c9iF3Ka8Oia4oVk="
+  file: triptrack.tar.gz
+  overwrite: true
+  on:
+    repo: AppStateESS/triptrack
+    branch: master
+    tags: true
