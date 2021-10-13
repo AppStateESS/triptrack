@@ -74,7 +74,8 @@ const Form = ({
     }
     if (!trip.completed) {
       const tripSession = plugTripSession(trip)
-      if (tripSession) {
+
+      if (tripSession && !tripSession.completed) {
         setTrip(tripSession)
       }
     }
@@ -415,7 +416,6 @@ const Form = ({
       </div>
     )
   }
-
   return (
     <div>
       <h3>Enter trip information</h3>
@@ -443,7 +443,7 @@ const Form = ({
                 associateEvent={associateEvent}
                 engageEventId={trip.engageEventId}
               />
-            ) : trip.organizationId > 0 ? (
+            ) : trip.organizationId > 0 && associatedEvent.id > 0 ? (
               <CurrentAssociation
                 associatedEvent={associatedEvent}
                 clear={() => {
@@ -519,7 +519,7 @@ const Form = ({
           className="btn btn-success mb-2"
           onClick={() => saveTrip()}
           disabled={!allowSave || requiredFileMissing}>
-          {allowSave
+          {allowSave && !requiredFileMissing
             ? 'Save travel plan'
             : 'Complete missing information above'}
         </button>
