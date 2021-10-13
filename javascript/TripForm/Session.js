@@ -1,9 +1,11 @@
-const clearTripSession = (callback) => {
+const clearTripSession = (callback = null) => {
   const waitHere = new Promise((resolve) => {
     sessionStorage.removeItem('trip')
     resolve()
   })
-  waitHere.then(callback)
+  if (callback) {
+    waitHere.then(callback)
+  }
 }
 
 const plugTripSession = (trip) => {
@@ -16,7 +18,7 @@ const plugTripSession = (trip) => {
 }
 
 const setTripSession = (trip) => {
-  if (trip) {
+  if (trip && !trip.completed) {
     const cloneTrip = {...trip}
     delete cloneTrip.id
     delete cloneTrip.submitEmail
