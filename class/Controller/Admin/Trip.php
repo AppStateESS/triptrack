@@ -97,7 +97,6 @@ class Trip extends SubController
 
     protected function delete(Request $request)
     {
-        TripFactory::removeAllMembers($this->id);
         TripFactory::delete($this->id);
         return ['success' => true];
     }
