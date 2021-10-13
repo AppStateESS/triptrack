@@ -9,6 +9,7 @@ function triptrack_uninstall(&$content)
     $db->buildTable('trip_member')->drop(true);
     $db->buildTable('trip_document')->drop(true);
     $db->buildTable('trip_trip')->drop(true);
+    $db->buildTable('trip_engageorg')->drop(true);
 
     // From previous version
     return true;
