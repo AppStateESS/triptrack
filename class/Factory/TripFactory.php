@@ -214,14 +214,19 @@ class TripFactory extends BaseFactory
         $tbl->addField('destinationState');
         $tbl->addField('host');
         $tbl->addField('housingAddress');
+        $tbl->addField('organizationId');
         $tbl->addField('secContactName');
         $tbl->addField('secContactEmail');
         $tbl->addField('secContactPhone');
+        $tbl->addField('submitUserId');
+        $tbl->addField('submitDate');
         $tbl->addField('submitEmail');
         $tbl->addField('submitName');
         $tbl->addField('submitUsername');
         $tbl->addField('visitPurpose');
         $tbl->addField('completed');
+        $tbl->addField('engageEventId');
+
 
 
         if (!empty($options['includeOrganizationName'])) {
@@ -235,7 +240,7 @@ class TripFactory extends BaseFactory
             $counter = $tbl2->addField('memberId', 'memberCount');
             $counter->showCount();
             $joinConditional = $db->createConditional($tbl->getField('id'),
-                    $tbl2->getField('tripId'));
+                $tbl2->getField('tripId'));
             $db->joinResources($tbl, $tbl2, $joinConditional, 'left');
             $db->setGroupBy([$tbl->getField('id')]);
         }
