@@ -74,6 +74,7 @@ class TripView extends AbstractView
             }
         }
         $vars['organizationName'] = $organization->name;
+        $vars['organizationId'] = $organization->id;
         $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
 
@@ -164,7 +165,7 @@ class TripView extends AbstractView
         }
 
         $vars['rows'] = TripFactory::list(['submitUsername' => \Current_User::getUsername(),
-                    'order' => 'submitDate']);
+                'order' => 'submitDate']);
         $vars['hostLabel'] = SettingFactory::getHostLabel();
 
         $template = new \phpws2\Template($vars);
