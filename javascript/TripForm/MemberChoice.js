@@ -1,5 +1,5 @@
 'use strict'
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 
 const MemberChoice = ({
@@ -8,6 +8,21 @@ const MemberChoice = ({
   selectedMembers,
   setSelectedMembers,
 }) => {
+  const [checkAll, setCheckAll] = useState(false)
+
+  const selectAll = () => {
+    if (checkAll) {
+      setSelectedMembers([])
+    } else {
+      const selected = []
+      members.forEach((member) => {
+        selected.push(member.id)
+      })
+      setSelectedMembers(selected)
+    }
+    setCheckAll(!checkAll)
+  }
+
   const pegMembers = (id) => {
     const selected = [...selectedMembers]
     const memberIdx = selected.indexOf(id)
@@ -53,6 +68,12 @@ const MemberChoice = ({
   return (
     <div>
       <h3>Attending members</h3>
+      <button
+        className={`btn btn-${checkAll ? 'outline-' : ''}primary btn-sm mb-3`}
+        onClick={selectAll}>
+        <i className="fas fa-check"></i>&nbsp;
+        {checkAll ? 'Select none' : 'Select all'}
+      </button>
       {memberSelection}
     </div>
   )
