@@ -29,9 +29,9 @@ class TripView extends AbstractView
      * Member trip create button for home screen
      * @return string
      */
-    public static function createButton()
+    public static function createButton(bool $isAdmin = false)
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a></div>';
+        return '<a href="./triptrack/' . ($isAdmin ? 'Admin' : 'Member') . '/Trip/create" class="btn btn-success">Create travel plan</a>';
     }
 
     /**
@@ -39,14 +39,14 @@ class TripView extends AbstractView
      * @param int $tripId
      * @return string
      */
-    public static function completeButton(int $tripId)
+    public static function completeButton(int $tripId, bool $isAdmin = false)
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip/' . $tripId . '/edit" class="btn btn-outline-primary">Complete travel plan</a></div>';
+        return '<a href="./triptrack/' . ($isAdmin ? 'Admin' : 'Member') . '/Trip/' . $tripId . '/edit" class="btn btn-outline-success">Complete travel plan</a>';
     }
 
-    public static function viewButton()
+    public static function viewButton(bool $isAdmin = false)
     {
-        return '<div class="text-center mb-2"><a href="./triptrack/Member/Trip" class="btn btn-info">See upcoming trips</a></div>';
+        return '<a href="./triptrack/' . ($isAdmin ? 'Admin' : 'Member') . '/Trip" class="btn btn-info">See upcoming trips</a>';
     }
 
     public function adminForm(int $tripId = 0)

@@ -90,15 +90,14 @@ class Module extends \Canopy\Module implements SettingDefaults
 
     public function runTime(Request $request)
     {
-        if (\phpws\PHPWS_Core::atHome() && MemberFactory::currentUserIsMember()) {
-            $trip = TripFactory::getCurrentSubmitterIncomplete();
-            if ($trip) {
-                $content[] = View\TripView::completeButton($trip->id);
+        if (\phpws\PHPWS_Core::atHome()) {
+            if (\Current_User::allow('triptrack')) {
+                \Layout::add(View\FrontPageView::admin());
+            } elseif (MemberFactory::currentUserIsMember()) {
+                \Layout::add(View\FrontPageView::member());
             } else {
-                $content[] = View\TripView::createButton();
+                \Layout::add(View\FrontPageView::user());
             }
-            $content[] = View\TripView::viewButton();
-            \Layout::add(implode('', $content), 'triptrack', 'triptrack-create');
         }
     }
 
