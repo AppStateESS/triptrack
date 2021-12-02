@@ -1,12 +1,12 @@
 sudo: false
-matrix:
+jobs:
   include:
   - language: php
     php:
     - 7
     script:
     - ".travis-build/phplint ."
-  - language: node.js
+  - language: node_js
     node_js:
     - 16
 before_install:
