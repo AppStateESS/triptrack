@@ -101,19 +101,6 @@ class Module extends \Canopy\Module implements SettingDefaults
         }
     }
 
-    public static function loadAdminBar()
-    {
-        $auth = \Current_User::getAuthorization();
-
-        $vars['is_deity'] = \Current_User::isDeity();
-        $vars['logout_uri'] = $auth->logout_link;
-        $vars['username'] = \Current_User::getDisplayName();
-        $template = new \phpws2\Template($vars);
-        $template->setModuleTemplate('triptrack', 'navbar.html');
-        $content = $template->get();
-        \Layout::plug($content, 'NAV_LINKS');
-    }
-
     public function getController(Request $request)
     {
         try {
