@@ -29,7 +29,8 @@ class FrontPageView
         }
         $vars['viewButton'] = TripView::viewButton(true);
         $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-
+        $auth = \Current_User::getAuthorization();
+        $vars['logoutUrl'] = $auth->logout_link;
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/FrontPage.html');
         return $template->get();
@@ -52,7 +53,8 @@ class FrontPageView
 
     public static function user()
     {
-        $template = new \phpws2\Template();
+        $auth = \Current_User::getAuthorization();
+        $template = new \phpws2\Template(['loginUrl' => $auth->login_link]);
         $template->setModuleTemplate('triptrack', 'User/FrontPage.html');
         return $template->get();
     }
