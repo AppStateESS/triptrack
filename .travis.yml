@@ -7,7 +7,8 @@ matrix:
     script:
     - ".travis-build/phplint ."
   - language: node.js
-    node_js: 16.13.1
+    node_js:
+      - 16
 before_install:
 - npm i -g npm@v8.1.2
 install:
