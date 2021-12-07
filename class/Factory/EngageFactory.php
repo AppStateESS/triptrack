@@ -14,7 +14,7 @@ namespace triptrack\Factory;
 
 use phpws2\Database;
 
-require_once '/var/www/html/essapi_config.php';
+require_once TRIPTRACK_ENGAGE_CONFIG;
 
 
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Curl.php';
@@ -86,7 +86,7 @@ class EngageFactory
         if (!empty($memberships)) {
             foreach ($memberships as $member) {
                 if ($member->deleted || in_array($member->username, $bannerIds) ||
-                        $member->positionRecordedEndDate !== null) {
+                    $member->positionRecordedEndDate !== null) {
                     continue;
                 }
                 $rows[] = ['bannerId' => $member->username, 'firstName' => $member->userFirstName,
