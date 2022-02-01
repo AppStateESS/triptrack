@@ -1,5 +1,6 @@
 *~
-/config/defines.php
+/config/*
+~/config/defines.dist.php
 **/javascript/dev/
 **/javascript/build/
 **/assets.json
