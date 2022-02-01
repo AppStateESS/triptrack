@@ -2,7 +2,7 @@
 
 /**
  * MIT License
- * Copyright (c) 2021 Electronic Student Services @ Appalachian State University
+ * Copyright (c) 2022 Electronic Student Services @ Appalachian State University
  *
  * See LICENSE file in root directory for copyright and distribution permissions.
  *
@@ -14,8 +14,10 @@ namespace triptrack\Factory;
 
 use phpws2\Database;
 
+if (!defined('TRIPTRACK_ENGAGE_CONFIG') || empty(TRIPTRACK_ENGAGE_CONFIG)) {
+    throw new \Exception('Engage configuration not set.');
+}
 require_once TRIPTRACK_ENGAGE_CONFIG;
-
 
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Curl.php';
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Organization.php';
@@ -95,7 +97,7 @@ class EngageFactory
                 $bannerIds[] = $member->username;
             }
         }
-        usort($rows, function($a, $b) {
+        usort($rows, function ($a, $b) {
             return strcmp($a['lastName'], $b['lastName']);
         });
         return $rows;
@@ -110,7 +112,6 @@ class EngageFactory
 
     public static function getEventsByOrganizationId(int $organizationEngageId)
     {
-
         $event = new \Event();
         $events = $event->getOrgEvents($organizationEngageId, strftime('%Y-%m-%d'));
         if (empty($events)) {
