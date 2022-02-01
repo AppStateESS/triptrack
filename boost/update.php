@@ -17,6 +17,9 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = 'Added link to member listing by organization in admin view.';
             $content[] = 'Created front page interaction';
             $content[] = 'Added check all button for member selection';
+        case version_compare($currentVersion, '1.2.0'):
+            $content[] = 'Added setting for Engage organizations only.';
+            $content[] = 'Organization form changed to only allow organizations in Engage is setting is set.';
     }
     return true;
 }
