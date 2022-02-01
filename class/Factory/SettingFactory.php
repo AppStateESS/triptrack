@@ -23,35 +23,41 @@ class SettingFactory
     {
         $settings = [];
         $settings['approvalRequired'] = (bool) Settings::get('triptrack',
-                        'approvalRequired');
+                'approvalRequired');
         $settings['defaultCountry'] = Settings::get('triptrack',
-                        'defaultCountry');
+                'defaultCountry');
         $settings['bannerImport'] = (bool) Settings::get('triptrack',
-                        'bannerImport');
+                'bannerImport');
         $settings['defaultState'] = Settings::get('triptrack', 'defaultState');
         $settings['siteContactName'] = Settings::get('triptrack',
-                        'siteContactName');
+                'siteContactName');
         $settings['siteContactEmail'] = Settings::get('triptrack',
-                        'siteContactEmail');
+                'siteContactEmail');
         $settings['hostLabel'] = Settings::get('triptrack', 'hostLabel');
         $settings['organizationLabel'] = Settings::get('triptrack',
-                        'organizationLabel');
+                'organizationLabel');
         $settings['allowInternational'] = (bool) Settings::get('triptrack',
-                        'allowInternational');
+                'allowInternational');
         $settings['allowUpload'] = (bool) Settings::get('triptrack',
-                        'allowUpload');
+                'allowUpload');
         $settings['uploadRequired'] = (bool) Settings::get('triptrack',
-                        'uploadRequired');
+                'uploadRequired');
         $settings['uploadInstructions'] = Settings::get('triptrack',
-                        'uploadInstructions');
+                'uploadInstructions');
         $settings['confirmationInstructions'] = Settings::get('triptrack',
-                        'confirmationInstructions');
+                'confirmationInstructions');
         $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
-                        'contactBannerRequired');
+                'contactBannerRequired');
+        $settings['forceEngageOrg'] = (bool) Settings::get('triptrack', 'forceEngageOrg');
         $settings['secondaryRequired'] = (bool) Settings::get('triptrack', 'secondaryRequired');
         $settings['accommodationRequired'] = (bool) Settings::get('triptrack', 'accommodationRequired');
         $settings['confirmationRequired'] = (bool) Settings::get('triptrack', 'confirmationRequired');
         return $settings;
+    }
+
+    public static function getForceEngageOrg()
+    {
+        return Settings::get('triptrack', 'forceEngageOrg');
     }
 
     public static function getOrganizationLabel()
@@ -84,7 +90,7 @@ class SettingFactory
     public static function getContact()
     {
         return ['siteContactName' => Settings::get('triptrack',
-                    'siteContactName'),
+                'siteContactName'),
             'siteContactEmail' => Settings::get('triptrack', 'siteContactEmail')];
     }
 
@@ -108,7 +114,7 @@ class SettingFactory
         $contact = self::getContact();
         if ($onlyNoReply || empty($contact['email'])) {
             $contact['email'] = 'noreply@' . \Canopy\Server::getSiteUrl(false,
-                            false, false);
+                    false, false);
         }
 
         if ($onlyNoReply || empty($contact['name'])) {
@@ -139,13 +145,13 @@ class SettingFactory
             case 'accommodationRequired':
             case 'secondaryRequired':
             case 'confirmationRequired':
+            case 'forceEngageOrg':
                 Settings::set('triptrack', $varName, (bool) $value);
                 break;
 
-
             case 'siteContactEmail':
                 Settings::set('triptrack', $varName,
-                        filter_var($value, FILTER_SANITIZE_EMAIL));
+                    filter_var($value, FILTER_SANITIZE_EMAIL));
                 break;
 
             case 'siteContactName':
@@ -156,7 +162,7 @@ class SettingFactory
             case 'uploadInstructions':
             case 'confirmationInstructions':
                 Settings::set('triptrack', $varName,
-                        filter_var($value, FILTER_SANITIZE_STRING));
+                    filter_var($value, FILTER_SANITIZE_STRING));
                 break;
 
             default:
