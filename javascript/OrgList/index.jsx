@@ -10,11 +10,11 @@ import Message from '../Share/Message'
 import 'regenerator-runtime'
 import PropTypes from 'prop-types'
 
-/* global deity, organizationLabel */
+/* global deity, organizationLabel, forceEngageOrg */
 
 const emptyOrg = {id: 0, name: ''}
 
-const OrgList = ({deity, organizationLabel}) => {
+const OrgList = ({deity, organizationLabel, forceEngageOrg}) => {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
   const [init, setInit] = useState(false)
@@ -104,7 +104,12 @@ const OrgList = ({deity, organizationLabel}) => {
         )
       }>
       <div>
-        <Form currentOrg={currentOrg} close={resetModal} reload={load} />
+        <Form
+          currentOrg={currentOrg}
+          close={resetModal}
+          reload={load}
+          forceEngageOrg={forceEngageOrg}
+        />
       </div>
     </Overlay>
   )
@@ -152,9 +157,14 @@ const OrgList = ({deity, organizationLabel}) => {
 OrgList.propTypes = {
   organizationLabel: PropTypes.string,
   deity: PropTypes.bool,
+  forceEngageOrg: PropTypes.bool,
 }
 
 ReactDOM.render(
-  <OrgList deity={deity} organizationLabel={organizationLabel} />,
+  <OrgList
+    deity={deity}
+    forceEngageOrg={forceEngageOrg}
+    organizationLabel={organizationLabel}
+  />,
   document.getElementById('OrgList')
 )
