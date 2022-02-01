@@ -28,6 +28,7 @@ const SettingList = ({currentSettings}) => {
   const [saveButton, setSaveButton] = useState(
     Object.assign({}, saveButtonDefault)
   )
+  const [errorMessage, setErrorMessage] = useState(null)
   const rendered = useRef(false)
   const countryList = createOptions(countries)
   const stateList = createOptions(states)
@@ -37,9 +38,15 @@ const SettingList = ({currentSettings}) => {
   const [updateMessage, setUpdateMessage] = useState('')
 
   const getEngageOrgCount = () => {
-    orgCount().then((response) => {
-      setEngageCount(response.data)
-    })
+    orgCount()
+      .then((response) => {
+        setEngageCount(response.data)
+      })
+      .catch(() => {
+        setErrorMessage(
+          'An error occurred when trying to access Engage information.'
+        )
+      })
   }
 
   useEffect(() => {
@@ -54,6 +61,12 @@ const SettingList = ({currentSettings}) => {
       save('allowInternational')
     }
   }, [settings.allowInternational])
+
+  useEffect(() => {
+    if (rendered.current) {
+      save('forceEngageOrg')
+    }
+  }, [settings.forceEngageOrg])
 
   useEffect(() => {
     if (rendered.current) {
@@ -278,6 +291,9 @@ const SettingList = ({currentSettings}) => {
   return (
     <div>
       <h2>Trip Track Settings</h2>
+      {errorMessage ? (
+        <div className="alert alert-danger text-center">{errorMessage}</div>
+      ) : null}
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
           <strong>Allow international</strong>
@@ -417,6 +433,24 @@ const SettingList = ({currentSettings}) => {
             checked={settings.allowUpload}
             handle={() => {
               updateCheck('allowUpload')
+            }}
+          />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Force Engage Organizations</strong>
+          <br />
+          <small className="form-text text-muted">
+            If enabled, organization creation will require Engage pairing.
+          </small>
+        </div>
+        <div className="col-sm-6">
+          <BigCheckbox
+            label={settings.forceEngageOrg ? 'Yes' : 'No'}
+            checked={settings.forceEngageOrg}
+            handle={() => {
+              updateCheck('forceEngageOrg')
             }}
           />
         </div>
