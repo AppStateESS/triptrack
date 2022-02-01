@@ -13,7 +13,7 @@ class OrganizationView extends AbstractView
     public function listHtml()
     {
         return $this->dashboardScript('org', 'OrgList',
-                        ['deity' => (bool) \Current_User::isDeity()]);
+                ['deity' => (bool) \Current_User::isDeity(), 'forceEngageOrg' => (bool) \triptrack\Factory\SettingFactory::getForceEngageOrg()]);
     }
 
 }
