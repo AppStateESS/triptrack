@@ -66,9 +66,6 @@ class Organization extends SubController
 
     protected function delete(Request $request)
     {
-        if (!\Current_User::isDeity()) {
-            throw new PrivilegeMissing();
-        }
         $organization = self::load();
         OrganizationFactory::delete($organization);
         return ['success' => 1];
@@ -79,9 +76,9 @@ class Organization extends SubController
         $orgId = $request->pullGetInteger('orgId');
         $tripId = $request->pullGetInteger('tripId');
         $organization = OrganizationFactory::load(OrganizationFactory::build(),
-                        $this->id);
+                $this->id);
         $trip = OrganizationFactory::load(OrganizationFactory::build(),
-                        $this->id);
+                $this->id);
     }
 
 }
