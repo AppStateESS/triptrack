@@ -2,7 +2,7 @@
 
 /**
  * MIT License
- * Copyright (c) 2021 Electronic Student Services @ Appalachian State University
+ * Copyright (c) 2022 Electronic Student Services @ Appalachian State University
  *
  * See LICENSE file in root directory for copyright and distribution permissions.
  *
@@ -82,6 +82,7 @@ class Module extends \Canopy\Module implements SettingDefaults
             'uploadInstructions' => '',
             'confirmationInstructions' => '',
             'secondaryRequired' => true,
+            'forceEngageOrg' => false,
             'accommodationRequired' => true,
             'confirmationRequired' => false,
         );
