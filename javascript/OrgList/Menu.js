@@ -70,6 +70,7 @@ Menu.propTypes = {
   sendSearch: PropTypes.func,
   search: PropTypes.string,
   setSearch: PropTypes.func,
+  organizationLabel: PropTypes.string,
 }
 
 Menu.defaultProps = {}
