@@ -4,8 +4,9 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import {postOrganization, searchEngageOrganizations} from '../api/Engage'
 
-const Form = ({currentOrg, close, reload}) => {
+const Form = ({currentOrg, close, reload, forceEngageOrg}) => {
   const [id, setId] = useState(0)
+  const [searching, setSearching] = useState(false)
   const [name, setName] = useState(currentOrg.name)
   const [matchingOrgs, setMatchingOrgs] = useState([])
   const closeForm = () => {
@@ -22,8 +23,10 @@ const Form = ({currentOrg, close, reload}) => {
   useEffect(() => {
     if (name.length > 3) {
       searchTimeout.current = setTimeout(() => {
+        setSearching(true)
         searchEngageOrganizations(name).then((response) => {
           setMatchingOrgs(response.data)
+          setSearching(false)
         })
       }, 1000)
     } else if (name.length === 0) {
@@ -69,7 +72,9 @@ const Form = ({currentOrg, close, reload}) => {
   }
 
   const getMatchingOrgs = () => {
-    if (matchingOrgs.length === 0) {
+    if (searching) {
+      return <span>Searching</span>
+    } else if (matchingOrgs.length === 0) {
       return (
         <span>
           <em>
@@ -96,6 +101,8 @@ const Form = ({currentOrg, close, reload}) => {
     }
   }
 
+  const lockSave = (forceEngageOrg && id === 0) || name.length === 0
+
   return (
     <div>
       <div className="mb-3">
@@ -105,6 +112,7 @@ const Form = ({currentOrg, close, reload}) => {
         <input
           className="form-control"
           value={name}
+          placeholder={forceEngageOrg ? 'Search for an organzation...' : null}
           onKeyDown={(e) => checkForEnter(e)}
           onChange={(e) => setName(e.target.value)}
         />
@@ -120,15 +128,17 @@ const Form = ({currentOrg, close, reload}) => {
         </div>
       </div>
       <div className="mb-3">
-        <button
-          className="btn btn-primary mr-2"
-          onClick={() => {
-            save()
-            closeForm()
-          }}
-          disabled={name.length === 0}>
-          Save
-        </button>
+        {forceEngageOrg ? null : (
+          <button
+            className="btn btn-primary mr-2"
+            onClick={() => {
+              save()
+              closeForm()
+            }}
+            disabled={name.length === 0}>
+            Save
+          </button>
+        )}
         <button className="btn btn-danger" onClick={closeForm}>
           Cancel
         </button>
@@ -141,6 +151,7 @@ Form.propTypes = {
   currentOrg: PropTypes.object,
   close: PropTypes.func,
   reload: PropTypes.func,
+  forceEngageOrg: PropTypes.bool,
 }
 
 export default Form
