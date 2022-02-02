@@ -25,7 +25,6 @@ const setTripSession = (trip) => {
     delete cloneTrip.submitName
     delete cloneTrip.submitUsername
     delete cloneTrip.memberCount
-    delete cloneTrip.engageEventId
 
     sessionStorage.setItem('trip', JSON.stringify(cloneTrip))
   }
