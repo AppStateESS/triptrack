@@ -178,6 +178,12 @@ const Form = ({
     }
   }
 
+  const parseDescription = (desc) => {
+    const removeTag = desc.replace(/<[^>]+>/gi, '')
+    const firstSentence = removeTag.replace(/^([^.?!]+[\.\?!]).*/, '$1')
+    return firstSentence
+  }
+
   const associateEvent = (eventId) => {
     const event = findAssociatedEvent(events, eventId)
     getRSVPBannerIds(eventId, role).then((response) => {
@@ -201,12 +207,8 @@ const Form = ({
     tripCopy.timeDeparting = unixTime(event.startsOn)
     tripCopy.timeEventStarts = unixTime(event.startsOn)
     tripCopy.timeReturn = unixTime(event.endsOn)
-    if (tripCopy.host.length === 0) {
-      tripCopy.host = event.name
-    }
-    if (tripCopy.visitPurpose.length === 0) {
-      tripCopy.visitPurpose = event.name
-    }
+    tripCopy.host = event.name
+    tripCopy.visitPurpose = parseDescription(event.description)
     if (event.address.city !== null) {
       tripCopy.destinationCity = event.address.city
     }
