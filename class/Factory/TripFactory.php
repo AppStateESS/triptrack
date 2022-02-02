@@ -227,8 +227,6 @@ class TripFactory extends BaseFactory
         $tbl->addField('completed');
         $tbl->addField('engageEventId');
 
-
-
         if (!empty($options['includeOrganizationName'])) {
             $tbl4 = $db->addTable('trip_organization');
             $tbl4->addField('name', 'organizationName');
@@ -351,6 +349,7 @@ class TripFactory extends BaseFactory
         $trip->secContactEmail = $request->pullPutString('secContactEmail');
         $trip->secContactPhone = $request->pullPutString('secContactPhone');
         $trip->engageEventId = (int) $request->pullPutInteger('engageEventId', true);
+        $trip->travelMethod = (int) $request->pullPutInteger('travelMethod');
         if ($isAdmin) {
             $trip->submitEmail = $request->pullPutString('submitEmail');
             $trip->submitName = $request->pullPutString('submitName');
