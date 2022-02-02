@@ -1,6 +1,7 @@
 *~
 /config/*
 ~/config/defines.dist.php
+~/config/travel_methods.php
 **/javascript/dev/
 **/javascript/build/
 **/assets.json
