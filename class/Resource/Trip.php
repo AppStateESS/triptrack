@@ -7,6 +7,8 @@
 
 namespace triptrack\Resource;
 
+require_once PHPWS_SOURCE_DIR . 'mod/triptrack/config/travel_methods.php';
+
 class Trip extends AbstractResource
 {
 
@@ -36,6 +38,20 @@ class Trip extends AbstractResource
     protected $timeDeparting;
     protected $timeEventStarts;
     protected $timeReturn;
+
+    /**
+     * Method of transportation to reach destination.
+     * See travel_methods.php file for complete list.
+     *
+     * TT_PERSONAL
+     * TT_CAR_POOL
+     * TT_UNI_VAN
+     * TT_RENTAL
+     * TT_BUS
+     * TT_AIR
+     * @var int
+     */
+    protected $travelMethod;
     protected $visitPurpose;
 
     public function __construct()
@@ -73,6 +89,7 @@ class Trip extends AbstractResource
         $this->timeReturn = new \phpws2\Variable\DateTime(0, 'timeReturn');
         $this->timeReturn->stamp();
         $this->timeReturn->setFormat('%A, %b. %e, %Y');
+        $this->travelMethod = new \phpws2\Variable\IntegerVar(TT_PERSONAL, 'travelMethod');
         $this->visitPurpose = new \phpws2\Variable\TextOnly(null, 'visitPurpose', 255);
         parent::__construct();
     }
