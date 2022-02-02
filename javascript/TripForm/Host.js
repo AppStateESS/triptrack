@@ -131,6 +131,26 @@ const Host = ({
         </div>
       </div>
       <div className="row form-group">
+        <div className="col-sm-4">Method of travel</div>
+        <div className="col-sm-8">
+          <select
+            className="form-control"
+            name="travelMethod"
+            onChange={(e) => {
+              setFormElement('travelMethod', e.target.value)
+            }}
+            value={trip.travelMethod}>
+            <option value={0}>Personal</option>
+            <option value={1}>Car share</option>
+            <option value={2}>University van</option>
+            <option value={3}>Car/Van rental</option>
+            <option value={4}>Chartered bus</option>
+            <option value={5}>Flight</option>
+            <option value={6}>Train</option>
+          </select>
+        </div>
+      </div>
+      <div className="row form-group">
         <div className="col-sm-4">
           <label>
             {'Destination City' + (statesShown ? ', State' : '')}
