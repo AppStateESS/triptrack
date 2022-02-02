@@ -101,8 +101,6 @@ const Form = ({currentOrg, close, reload, forceEngageOrg}) => {
     }
   }
 
-  const lockSave = (forceEngageOrg && id === 0) || name.length === 0
-
   return (
     <div>
       <div className="mb-3">
