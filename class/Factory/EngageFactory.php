@@ -20,13 +20,13 @@ if (!defined('TRIPTRACK_ENGAGE_CONFIG') || empty(TRIPTRACK_ENGAGE_CONFIG)) {
 require_once TRIPTRACK_ENGAGE_CONFIG;
 
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Curl.php';
-require_once WAREHOUSE_INSTALL_DIR . 'lib/Organization.php';
+require_once ENGAGE_API_DIR . 'EngageV3.php';
 require_once WAREHOUSE_INSTALL_DIR . 'lib/Event.php';
 
 class EngageFactory
 {
 
-    public static function totalOrganizations()
+    public static function totalSavedOrganizations()
     {
         $db = Database::getDB();
         $tbl = $db->addTable('trip_engageorg');
@@ -34,9 +34,28 @@ class EngageFactory
         return $db->selectColumn();
     }
 
+    public static function totalOnlineOrganizations()
+    {
+        if (!isset($_SESSION['ENGAGE_ORG_COUNT'])) {
+            $engageAPI = new \EngageV3(ENGAGE_API_V3_KEY);
+            $engageAPI->organizations->parameters->take = 0;
+            $engageAPI->organizations->get();
+            $_SESSION['ENGAGE_ORG_COUNT'] = $engageAPI->organizations->stats()['totalItems'];
+        }
+        return $_SESSION['ENGAGE_ORG_COUNT'];
+    }
+
+    /**
+     * Imports all active Engage organizations into database.
+     * All rows in the table are deleted prior in case there are
+     * title updates.
+     * @return boolean|int
+     */
     public static function importOrganizations()
     {
-        $result = \Organization::getAllOrgs(true);
+        $engageApi = new \EngageV3(ENGAGE_API_V3_KEY);
+        $result = $engageApi->organizations->get();
+
         if (empty($result) || !is_array($result)) {
             return false;
         }
@@ -100,6 +119,7 @@ class EngageFactory
         usort($rows, function ($a, $b) {
             return strcmp($a['lastName'], $b['lastName']);
         });
+
         return $rows;
     }
 
