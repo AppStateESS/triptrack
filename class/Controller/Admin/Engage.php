@@ -30,7 +30,7 @@ class Engage extends SubController
 
     protected function countJson()
     {
-        return EngageFactory::totalOrganizations();
+        return ['countCurrent' => EngageFactory::totalSavedOrganizations(), 'countOnline' => EngageFactory::totalOnlineOrganizations()];
     }
 
     protected function importOrganizationsJson()
@@ -39,7 +39,7 @@ class Engage extends SubController
         if (!$result) {
             return ['success' => false];
         } else {
-            return ['success' => true, 'count' => $result];
+            return ['success' => true, 'countCurrent' => $result];
         }
     }
 
