@@ -33,14 +33,23 @@ const SettingList = ({currentSettings}) => {
   const countryList = createOptions(countries)
   const stateList = createOptions(states)
   const [duration, setDuration] = useState(1000)
-  const [engageCount, setEngageCount] = useState(0)
+  const [engageCount, setEngageCount] = useState({
+    countCurrent: 0,
+    countOnline: 0,
+  })
   const [engageUpdate, setEngageUpdate] = useState(false)
   const [updateMessage, setUpdateMessage] = useState('')
 
   const getEngageOrgCount = () => {
     orgCount()
       .then((response) => {
-        setEngageCount(response.data)
+        if (response.data.countCurrent !== undefined) {
+          setEngageCount(response.data)
+        } else {
+          setErrorMessage(
+            'An error occurred when trying to access Engage information.'
+          )
+        }
       })
       .catch(() => {
         setErrorMessage(
@@ -131,20 +140,23 @@ const SettingList = ({currentSettings}) => {
       .then((response) => {
         if (response.data.success) {
           setEngageUpdate(false)
-          setEngageCount(response.data.count)
+          const ec = {...engageCount}
+          ec.countCurrent = response.data.countCurrent
+          setEngageCount(ec)
           setUpdateMessage(
             <div className="alert alert-success">Import complete.</div>
           )
         } else {
           setUpdateMessage(
-            <div className="alert alert-danger">Import failed.</div>
+            <div className="alert alert-danger">Sorry, the import failed.</div>
           )
+          setEngageUpdate(false)
         }
       })
       .catch(() => {
         setEngageUpdate(false)
         setUpdateMessage(
-          <div className="alert alert-danger">Import failed.</div>
+          <div className="alert alert-danger">Sorry, the import failed.</div>
         )
       })
       .then(() => {
@@ -596,7 +608,9 @@ const SettingList = ({currentSettings}) => {
           <strong>Engage Organization import</strong>
           <small className="form-text text-muted">
             Imports all <strong>active</strong> Engage organizations locally.
-            There are currently {engageCount} organizations in the system.
+            There are currently {engageCount.countCurrent} organizations in the
+            system and {engageCount.countOnline} that can be imported from
+            Engage.
           </small>
         </div>
         <div className="col-sm-6 mb-2 text-center">
