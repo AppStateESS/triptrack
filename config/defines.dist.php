@@ -13,13 +13,13 @@
  * Do not change the below unless developing
  */
 define('TRIPTRACK_SYSTEM_SETTINGS',
-        [
-            'productionMode' => true,
-            'friendlyErrors' => true
-]);
+    [
+        'productionMode' => true,
+        'friendlyErrors' => true
+    ]);
 
 define('TRIPTRACK_ALLOWED_TAGS',
-        ['<p>', '<strong>', '<em>', '<blockquote>', '<ul>', '<ol>', '<li>', '<a>']);
+    ['<p>', '<strong>', '<em>', '<blockquote>', '<ul>', '<ol>', '<li>', '<a>']);
 
 define('TRIPTRACK_BANNER_API', '');
 
@@ -36,5 +36,11 @@ define('TRIPTRACK_BANNER_API', '');
 define('TRIPTRACK_ENGAGE_CONFIG', '');
 
 define('CAMPUS_EMAIL_DOMAIN', 'appstate.edu');
+
+/**
+ * This is the web address for the site. Links to organizations and events come
+ * from this address.
+ */
+define('ENGAGE_SITE_URL', '');
 
 define('TRIPTRACK_SWIFT_OLD_VERSION', true);

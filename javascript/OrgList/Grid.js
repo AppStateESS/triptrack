@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import '../api/pointer.css'
 
-const Grid = ({organizations, edit, deleteRow, deity = false}) => {
+const Grid = ({organizations, edit, deleteRow, engageUrl}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -66,6 +66,11 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
           </div>
         </td>
         <td>{value.name}</td>
+        <td>
+          <a href={`${engageUrl}organization/${value.websiteKey}`}>
+            {value.engageId}
+          </a>
+        </td>
         <td>{value.memberCount}</td>
       </tr>
     )
@@ -78,6 +83,7 @@ const Grid = ({organizations, edit, deleteRow, deity = false}) => {
           <tr>
             <th>&nbsp;</th>
             <th>Name</th>
+            <th>Engage ID</th>
             <th>Members</th>
           </tr>
           {rows}
@@ -91,7 +97,7 @@ Grid.propTypes = {
   organizations: PropTypes.array,
   edit: PropTypes.func,
   deleteRow: PropTypes.func,
-  deity: PropTypes.bool,
+  engageUrl: PropTypes.string,
 }
 
 export default Grid

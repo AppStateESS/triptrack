@@ -51,6 +51,12 @@ class OrganizationFactory extends BaseFactory
             $tbl2->addFieldConditional('memberId', $options['memberId']);
         }
 
+        if (!empty($options['websiteKey'])) {
+            $tbl3 = $db->addTable('trip_engageorg');
+            $tbl3->addFieldConditional('engageId', $tbl->getField('engageId'));
+            $tbl3->addField('websiteKey');
+        }
+
         if (!empty($options['search'])) {
             $tbl->addFieldConditional('name', '%' . $options['search'] . '%', 'like');
         }
@@ -60,10 +66,10 @@ class OrganizationFactory extends BaseFactory
     }
 
     private static function joinOrgWithMember(\phpws2\Database\DB $db,
-            \phpws2\Database\Table $orgTable, \phpws2\Database\Table $pivotTable)
+        \phpws2\Database\Table $orgTable, \phpws2\Database\Table $pivotTable)
     {
         $joinConditional = $db->createConditional($orgTable->getField('id'),
-                $pivotTable->getField('organizationId'));
+            $pivotTable->getField('organizationId'));
         $db->joinResources($orgTable, $pivotTable, $joinConditional, 'left');
         $db->setGroupBy([$orgTable->getField('id')]);
     }

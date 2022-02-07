@@ -10,11 +10,11 @@ import Message from '../Share/Message'
 import 'regenerator-runtime'
 import PropTypes from 'prop-types'
 
-/* global deity, organizationLabel, forceEngageOrg */
+/* global engageUrl, organizationLabel, forceEngageOrg */
 
 const emptyOrg = {id: 0, name: ''}
 
-const OrgList = ({deity, organizationLabel, forceEngageOrg}) => {
+const OrgList = ({engageUrl, organizationLabel, forceEngageOrg}) => {
   const [organizations, setOrganizations] = useState([])
   const [loading, setLoading] = useState(true)
   const [init, setInit] = useState(false)
@@ -145,7 +145,7 @@ const OrgList = ({deity, organizationLabel, forceEngageOrg}) => {
         <Grid
           organizations={organizations}
           edit={update}
-          deity={deity}
+          engageUrl={engageUrl}
           deleteRow={deleteRow}
         />
         {modal}
@@ -156,13 +156,13 @@ const OrgList = ({deity, organizationLabel, forceEngageOrg}) => {
 
 OrgList.propTypes = {
   organizationLabel: PropTypes.string,
-  deity: PropTypes.bool,
+  engageUrl: PropTypes.string,
   forceEngageOrg: PropTypes.bool,
 }
 
 ReactDOM.render(
   <OrgList
-    deity={deity}
+    engageUrl={engageUrl}
     forceEngageOrg={forceEngageOrg}
     organizationLabel={organizationLabel}
   />,
