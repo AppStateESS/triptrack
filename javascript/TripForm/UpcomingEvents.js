@@ -40,6 +40,9 @@ const UpcomingEvents = ({
               )
             })}
           </select>
+          <div>
+            <small>Choosing an event will update text fields below.</small>
+          </div>
           <button
             className="btn btn-success"
             onClick={associate}
