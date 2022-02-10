@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import {getOrganizationList} from '../api/Engage'
 import MapList from './MapList'
 import PropTypes from 'prop-types'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 /* global engageId, orgName, organizationLabel, orgId */
 const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
@@ -11,12 +12,20 @@ const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
   const [loading, setLoading] = useState(true)
   const [checked, setChecked] = useState([])
   const [checkAll, setCheckAll] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
-    getOrganizationList(engageId).then((response) => {
-      setMemberList(response.data)
-      setLoading(false)
-    })
+    getOrganizationList(engageId)
+      .then((response) => {
+        setMemberList(response.data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setLoading(false)
+        setErrorMessage(
+          "An error prevented retrieval of this organization's members"
+        )
+      })
   }, [])
 
   useEffect(() => {
@@ -44,8 +53,13 @@ const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
   return (
     <div>
       <h3 className="mb-3">Import Engage members from {orgName}</h3>
+      {errorMessage ? (
+        <div className="alert alert-danger">{errorMessage}</div>
+      ) : null}
       {loading ? (
-        <div>Getting member list...</div>
+        <div>
+          <FontAwesomeIcon icon="spinner" spin /> Getting member list...
+        </div>
       ) : memberList.length === 0 ? (
         <p>No members found for this {organizationLabel}</p>
       ) : (
