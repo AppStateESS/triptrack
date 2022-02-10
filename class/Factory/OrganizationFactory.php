@@ -86,6 +86,11 @@ class OrganizationFactory extends BaseFactory
         self::saveResource($org);
     }
 
+    /**
+     *
+     * @param int $engageId
+     * @return array
+     */
     public static function getByEngageId(int $engageId)
     {
         $db = Database::getDB();
