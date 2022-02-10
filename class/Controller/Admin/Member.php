@@ -22,6 +22,14 @@ class Member extends SubController
         $this->view = new \triptrack\View\MemberView();
     }
 
+    protected function addListByOrganizationIdPost(Request $request)
+    {
+        $members = $request->pullPostArray('members');
+        $organizationId = $request->pullPostInteger('organizationId');
+        MemberFactory::addToOrganizationByBannerIdList($organizationId, $members);
+        \Canopy\Server::forward('./triptrack/Admin/Member/?orgId=' . $organizationId);
+    }
+
     protected function addPatch(Request $request)
     {
         $orgId = $request->pullPatchInteger('orgId');
@@ -186,14 +194,6 @@ class Member extends SubController
         $member->restricted = false;
         MemberFactory::save($member);
         return ['success' => true];
-    }
-
-    protected function addListByOrganizationIdPost(Request $request)
-    {
-        $members = $request->pullPostArray('members');
-        $organizationId = $request->pullPostInteger('organizationId');
-        MemberFactory::addToOrganizationByBannerIdList($organizationId, $members);
-        \Canopy\Server::forward('./triptrack/Admin/Member/?orgId=' . $organizationId);
     }
 
 }
