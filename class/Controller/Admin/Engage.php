@@ -70,7 +70,7 @@ class Engage extends SubController
             throw new \Exception('Organization not found');
         }
 
-        return EngageFactory::getEventsByOrganizationId($organization->engageId);
+        return EngageFactory::getUpcomingEventsByOrganizationId($organization->engageId);
     }
 
     protected function rsvpListByEventJson(Request $request)
