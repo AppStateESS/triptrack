@@ -77,6 +77,7 @@ class MemberFactory extends BaseFactory
      * search:         Look for string in first and last name, username, and banner Id
      * emailOnly:      Only return the member's email addresses.
      * isAdmin:        If true, members deleted status, banner id, and username are returned.
+     * bannerOnly:     Only return member bannerIds
      *
      * @param array $options
      * @return type
@@ -88,6 +89,8 @@ class MemberFactory extends BaseFactory
 
         if (!empty($options['emailOnly'])) {
             $tbl->addField('email');
+        } elseif (!empty($options['bannerOnly'])) {
+            $tbl->addField('bannerId');
         } else {
             $tbl->addField('id');
             $tbl->addField('email');
@@ -124,14 +127,14 @@ class MemberFactory extends BaseFactory
             $tbl2 = $db->addTable('trip_membertotrip', null, false);
             $tbl2->addFieldConditional('tripId', $tripId);
             $joinCond = new Database\Conditional($db, $tbl->getField('id'),
-                    $tbl2->getField('memberId'), '=');
+                $tbl2->getField('memberId'), '=');
             $db->joinResources($tbl, $tbl2, $joinCond, 'left');
         } elseif (!empty($options['orgId'])) {
             $orgId = (int) $options['orgId'];
             $tbl2 = $db->addTable('trip_membertoorg', null, false);
             $tbl2->addFieldConditional('organizationId', $orgId);
             $joinCond = new Database\Conditional($db, $tbl->getField('id'),
-                    $tbl2->getField('memberId'), '=');
+                $tbl2->getField('memberId'), '=');
             $db->joinResources($tbl, $tbl2, $joinCond, 'left');
         } elseif (!empty($options['tripState'])) {
             $tripTbl = $db->addTable('trip_trip', null, false);
@@ -158,8 +161,15 @@ class MemberFactory extends BaseFactory
         }
         $db->setLimit(50);
         $tbl->addOrderBy($orderBy, $direction);
-
-        return $db->select();
+        if (!empty($options['bannerOnly'])) {
+            $bannerIds = [];
+            while ($col = $db->selectColumn()) {
+                $bannerIds[] = $col;
+            }
+            return $bannerIds;
+        } else {
+            return $db->select();
+        }
     }
 
     public static function dropFromTrip(int $memberId, int $tripId)
@@ -317,8 +327,8 @@ EOF;
             $testResult = is_numeric($testRow[0]);
         } else {
             $testResult = in_array('firstName', $header) && in_array('lastName', $header) && in_array('email',
-                            $header) && in_array('phone', $header) && in_array('bannerId', $header) && in_array('username',
-                            $header);
+                    $header) && in_array('phone', $header) && in_array('bannerId', $header) && in_array('username',
+                    $header);
         }
         fclose($handle);
         return $testResult;
@@ -553,11 +563,11 @@ EOF;
     private static function checkRowValues(array $insertRow)
     {
         return preg_match('/[\w\s]+/', $insertRow['firstName']) &&
-                preg_match('/[\w\s]+/', $insertRow['lastName']) &&
-                preg_match('/^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9.\-]+$/', $insertRow['email']) &&
-                preg_match('/\d{9}/', $insertRow['bannerId']) &&
-                strlen(preg_replace('/\D/', '', $insertRow['phone']) > 6) &&
-                preg_match('/\w+/', $insertRow['username']);
+            preg_match('/[\w\s]+/', $insertRow['lastName']) &&
+            preg_match('/^[a-zA-Z0-9+_.\-]+@[a-zA-Z0-9.\-]+$/', $insertRow['email']) &&
+            preg_match('/\d{9}/', $insertRow['bannerId']) &&
+            strlen(preg_replace('/\D/', '', $insertRow['phone']) > 6) &&
+            preg_match('/\w+/', $insertRow['username']);
     }
 
     public static function getTripParticipants(int $tripId)
