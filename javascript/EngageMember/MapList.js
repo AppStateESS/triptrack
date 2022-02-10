@@ -1,6 +1,7 @@
 'use strict'
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const MapList = ({
   memberList,
@@ -11,6 +12,7 @@ const MapList = ({
   organizationLabel,
   orgId,
 }) => {
+  const [saving, setSaving] = useState(false)
   const rows = memberList.map((value, key) => {
     return (
       <tr key={`member-${value.bannerId}`}>
@@ -35,16 +37,26 @@ const MapList = ({
     )
   })
 
+  let saveButton = (
+    <button type="submit" className="btn btn-primary">
+      Added checked members to {organizationLabel}
+    </button>
+  )
+  if (saving) {
+    saveButton = (
+      <button type="button" className="btn btn-primary" disabled={true}>
+        <FontAwesomeIcon icon="spinner" spin /> Saving members, please wait
+      </button>
+    )
+  }
+
   return (
     <form
+      onSubmit={() => setSaving(true)}
       method="post"
       action="./triptrack/Admin/Member/addListByOrganizationId">
       <input type="hidden" name="organizationId" value={orgId} />
-      <div className="text-center">
-        <button type="submit" className="btn btn-primary mb-2">
-          Added checked members to {organizationLabel}
-        </button>
-      </div>
+      <div className="text-center mb-3">{saveButton}</div>
       <table className="table table-striped">
         <tbody>
           <tr>
@@ -64,11 +76,7 @@ const MapList = ({
           {rows}
         </tbody>
       </table>
-      <div className="text-center">
-        <button type="submit" className="btn btn-primary">
-          Added checked members to {organizationLabel}
-        </button>
-      </div>
+      <div className="text-center">{saveButton}</div>
     </form>
   )
 }
@@ -81,6 +89,7 @@ MapList.propTypes = {
   setCheckAll: PropTypes.func,
   organizationLabel: PropTypes.string,
   orgId: PropTypes.number,
+  saving: PropTypes.bool,
 }
 
 export default MapList
