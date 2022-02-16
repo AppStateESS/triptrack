@@ -55,7 +55,7 @@ class EngageFactory
 
     public static function getEvent(int $eventId)
     {
-        $engageAPI = new EngageV3(ENGAGE_API_V3_KEY);
+        $engageAPI = new \EngageV3(ENGAGE_API_V3_KEY);
         $engageAPI->events->parameters->ids = [$eventId];
         return $engageAPI->events->get();
     }
@@ -108,6 +108,24 @@ class EngageFactory
             $bannerIds[] = $row->userId->username;
         }
         return $bannerIds;
+    }
+
+    public static function getAttendedListByEventId(int $eventId, $attendedOnly = true)
+    {
+        $engageAPI = new \EngageV3(ENGAGE_API_V3_KEY);
+        $attended = $engageAPI->eventAttendance;
+        $attended->parameters->eventIds = [$eventId];
+        if ($attendedOnly) {
+            $attended->parameters->status = ['Attended'];
+        }
+        $attending = $attended->getAll();
+        if (empty($attending)) {
+            return [];
+        }
+        foreach ($attending as $att) {
+            $attendList[] = ['bannerId' => $att->userId->username, 'email' => $att->userId->campusEmail];
+        }
+        return $attendList;
     }
 
     public static function getUpcomingEventsByOrganizationId(int $organizationEngageId)
