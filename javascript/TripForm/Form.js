@@ -5,13 +5,14 @@ import {tripSettings} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
 import Schedule from './Schedule'
+import Attended from './Attended'
 import MemberChoice from './MemberChoice'
 import Documents from './Documents'
 import {postTrip, patchApproval, deleteTrip} from '../api/TripAjax'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
 import {getList} from '../api/Fetch'
-import {getOrganizationEvents, getRSVPBannerIds} from '../api/Engage'
+import {getOrganizationEvents, getAttendedBannerIds} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
@@ -61,6 +62,9 @@ const Form = ({
   const [requiredFileMissing, setRequiredFileMissing] = useState(false)
   const [selectedMembers, setSelectedMembers] = useState([])
   const [trip, setTrip] = useState({...defaultTrip})
+  const [attendedModal, setAttendedModal] = useState(false)
+  const [newMembers, setNewMembers] = useState([])
+  const [attendedLoading, setAttendedLoading] = useState(false)
 
   const memberAnchor = useRef(null)
   const renderReady = useRef(false)
@@ -86,31 +90,37 @@ const Form = ({
     plugAssociatedEvent(trip.engageEventId)
   }, [trip.id])
 
+  const loadMembers = () => {
+    let part1
+    let part2
+
+    part1 = getList(`./triptrack/${role}/Member`, {
+      orgId: trip.organizationId,
+    })
+
+    if (trip.id > 0) {
+      part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
+    }
+    Promise.all([part1, part2]).then((response) => {
+      setMembers(response[0].data)
+      if (response[1]) {
+        setSelectedMembers(response[1].data)
+      }
+      setMembersLoaded(true)
+    })
+  }
+
   useEffect(() => {
     if (renderReady.current) {
       if (parseInt(trip.organizationId) === 0) {
         setMembers([])
         setEvents([])
+        trip.engageEventId = 0
+        setTrip({...trip})
         return
       }
 
-      let part1
-      let part2
-
-      part1 = getList(`./triptrack/${role}/Member`, {
-        orgId: trip.organizationId,
-      })
-
-      if (trip.id > 0) {
-        part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
-      }
-      Promise.all([part1, part2]).then((response) => {
-        setMembers(response[0].data)
-        if (response[1]) {
-          setSelectedMembers(response[1].data)
-        }
-        setMembersLoaded(true)
-      })
+      loadMembers()
 
       setLoadingEvents(true)
       getOrganizationEvents(trip.organizationId, role).then((response) => {
@@ -179,27 +189,36 @@ const Form = ({
   }
 
   const parseDescription = (desc) => {
-    const removeTag = desc.replace(/<[^>]+>/gi, '')
-    const firstSentence = removeTag.replace(/^([^.?!]+[\.\?!]).*/, '$1')
-    return firstSentence
+    const removeTag = desc.replace(/<[^>]+>|\r\n/gi, '')
+    const noNbsp = removeTag.replace(/&nbsp;/gi, ' ')
+    const firstSentence = noNbsp.split(/[!?.]/)[0]
+    return firstSentence.replace(/^\W+/, '')
   }
 
   const associateEvent = (eventId) => {
     const event = findAssociatedEvent(events, eventId)
-    getRSVPBannerIds(eventId, role).then((response) => {
-      if (response.data && response.data.length > 0) {
-        const rsvp = response.data
 
-        rsvp.forEach((bannerId) => {
-          const result = members.find((element) => element.bannerId == bannerId)
-          if (result) {
-            if (selectedMembers.indexOf(result.id > -1)) {
-              selectedMembers.push(result.id)
-            }
+    getAttendedBannerIds(eventId, role).then((response) => {
+      setAttendedLoading(true)
+      const attended = response.data
+      const nonOrgMembers = []
+      attended.forEach((attend) => {
+        const {bannerId} = attend
+        const result = members.find((element) => element.bannerId == bannerId)
+        if (result) {
+          if (selectedMembers.indexOf(result.id > -1)) {
+            selectedMembers.push(result.id)
           }
-        })
-        setSelectedMembers([...selectedMembers])
+        } else {
+          nonOrgMembers.push(attend)
+        }
+      })
+      if (nonOrgMembers.length > 0) {
+        setAttendedModal(true)
       }
+      setAttendedLoading(false)
+      setNewMembers(nonOrgMembers)
+      setSelectedMembers([...selectedMembers])
     })
 
     const tripCopy = {...trip}
@@ -455,9 +474,20 @@ const Form = ({
               />
             ) : (
               <div>
-                <em>No association</em>
+                {trip.organizationId === 0 ? (
+                  <span className="text-secondary">
+                    Choose an attending organization
+                  </span>
+                ) : (
+                  <em>No association</em>
+                )}
               </div>
             )}
+            {attendedLoading ? (
+              <div className="badge badge-info text-white">
+                Searching for attending...
+              </div>
+            ) : null}
           </fieldset>
         </div>
       </div>
@@ -487,18 +517,23 @@ const Form = ({
       <div className="row mb-5">
         <div className="col-sm-5">
           <a name="members" id="members" ref={memberAnchor}></a>
-          <MemberChoice
-            {...{
-              members,
-              organizationLabel,
-              selectedMembers,
-              setSelectedMembers,
-            }}
-          />
-          {errors.memberCount ? (
-            <span className="badge badge-danger">
-              Select one or more members to attend
-            </span>
+
+          {trip.organizationId > 0 ? (
+            <div>
+              <MemberChoice
+                {...{
+                  members,
+                  organizationLabel,
+                  selectedMembers,
+                  setSelectedMembers,
+                }}
+              />
+              {errors.memberCount ? (
+                <span className="badge badge-danger">
+                  Select one or more members to attend
+                </span>
+              ) : null}
+            </div>
           ) : null}
         </div>
         <div className="col-sm-7">
@@ -531,12 +566,25 @@ const Form = ({
               Cancel trip
             </button>
           ) : (
-            <a href={document.referrer} className="btn btn-danger">
+            <a href={`./triptrack/${role}/Trip`} className="btn btn-danger">
               Cancel changes
             </a>
           )}
         </div>
       </div>
+      <Overlay
+        show={attendedModal}
+        close={() => setAttendedModal(false)}
+        title="Non-member attendance">
+        <Attended
+          {...{
+            newMembers,
+            setAttendedModal,
+            loadMembers,
+            orgId: trip.organizationId,
+          }}
+        />
+      </Overlay>
       <Overlay
         show={confirmModal}
         close={() => setConfirmModal(false)}
