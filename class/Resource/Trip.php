@@ -44,7 +44,7 @@ class Trip extends AbstractResource
      * See travel_methods.php file for complete list.
      *
      * TT_PERSONAL
-     * TT_CAR_POOL
+     * TT_CAR_SHARE
      * TT_UNI_VAN
      * TT_RENTAL
      * TT_BUS
@@ -106,6 +106,35 @@ class Trip extends AbstractResource
                 'date' => strftime($dateFormat, $unix)];
         }
         return $values;
+    }
+
+    public function getStringVars($return_null = false, $hide = null)
+    {
+        $vars = parent::getStringVars($return_null, $hide);
+        $vars['travelMethodFormat'] = $this->getTravelMethodString();
+        return $vars;
+    }
+
+    public function getTravelMethodString()
+    {
+        switch ($this->travelMethod->get()) {
+            case TT_PERSONAL:
+                return 'Personal';
+            case TT_CAR_SHARE:
+                return 'Car sharing';
+            case TT_UNI_VAN:
+                return 'University vehicle';
+            case TT_RENTAL:
+                return 'Vehicle rental';
+            case TT_BUS:
+                return 'Chartered bus';
+            case TT_TRAIN:
+                return 'Train';
+            case TT_AIR:
+                return 'Flight';
+            default:
+                return 'Unknown';
+        }
     }
 
     public function stampConfirmed()
