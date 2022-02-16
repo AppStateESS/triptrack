@@ -79,4 +79,10 @@ class Engage extends SubController
         return EngageFactory::getRsvpListByEventId($eventId);
     }
 
+    protected function attendedListByEventJson(Request $request)
+    {
+        $eventId = $request->pullGetInteger('eventId');
+        return EngageFactory::getAttendedListByEventId($eventId);
+    }
+
 }
