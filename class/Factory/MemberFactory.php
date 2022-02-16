@@ -256,10 +256,13 @@ EOF;
         /**
          * See if there are any approved trips containing this member.
          * If there aren't any, then we can delete this member permanently.
+         * We don't check if $permanent is false.
          */
-        $trips = TripFactory::list(['memberId' => $memberId, 'approvedOnly' => 1]);
-        if (empty($trips)) {
-            $permanent = true;
+        if (!$permanent) {
+            $trips = TripFactory::list(['memberId' => $memberId, 'approvedOnly' => 1]);
+            if (empty($trips)) {
+                $permanent = true;
+            }
         }
         $db = Database::getDB();
         $tbl = $db->addTable('trip_member');
