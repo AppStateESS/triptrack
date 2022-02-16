@@ -40,6 +40,17 @@ const MemberChoice = ({
   if (members.length > 0) {
     memberSelection = (
       <div>
+        <h3>Attending members</h3>
+        <div>
+          <button
+            className={`btn btn-${
+              checkAll ? 'outline-' : ''
+            }primary btn-sm mb-3`}
+            onClick={selectAll}>
+            <i className="fas fa-check"></i>&nbsp;
+            {checkAll ? 'Select none' : 'Select all'}
+          </button>
+        </div>
         {members.map((value) => {
           const restricted = value.restricted === 1
           return (
@@ -65,18 +76,7 @@ const MemberChoice = ({
       </div>
     )
   }
-  return (
-    <div>
-      <h3>Attending members</h3>
-      <button
-        className={`btn btn-${checkAll ? 'outline-' : ''}primary btn-sm mb-3`}
-        onClick={selectAll}>
-        <i className="fas fa-check"></i>&nbsp;
-        {checkAll ? 'Select none' : 'Select all'}
-      </button>
-      {memberSelection}
-    </div>
-  )
+  return <div>{memberSelection}</div>
 }
 
 MemberChoice.propTypes = {
