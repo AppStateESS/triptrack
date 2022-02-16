@@ -28,7 +28,7 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort}) => {
   const deleteItem = (key) => {
     if (
       prompt(
-        'Are you certain you want to delete this trip?\nIf so, type DELETE below.'
+        'Are you certain you want to delete this trip?\nIf so, type DELETE in all caps below.'
       ) === 'DELETE'
     ) {
       deleteRow(key)
