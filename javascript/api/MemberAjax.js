@@ -16,6 +16,16 @@ const addMember = async (memberId, orgId, tripId) => {
   }
 }
 
+const addAttendeeList = async (members, organizationId) => {
+  const url = `triptrack/Admin/Member/addAttendeeList`
+  try {
+    const response = await axios.post(url, {members, organizationId}, {headers})
+    return response
+  } catch (error) {
+    return false
+  }
+}
+
 const dropFromTrip = async (memberId, tripId) => {
   const url = `triptrack/Admin/Member/${memberId}/dropFromTrip`
   try {
@@ -76,6 +86,7 @@ const unrestrictMember = async (id) => {
 
 export {
   addMember,
+  addAttendeeList,
   dropFromTrip,
   dropFromOrg,
   save,
