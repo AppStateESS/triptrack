@@ -30,6 +30,13 @@ class Member extends SubController
         \Canopy\Server::forward('./triptrack/Admin/Member/?orgId=' . $organizationId);
     }
 
+    protected function addAttendeeListPost(Request $request)
+    {
+        $members = $request->pullPostArray('members');
+        $organizationId = $request->pullPostInteger('organizationId');
+        MemberFactory::addToOrganizationByBannerIdList($organizationId, $members);
+    }
+
     protected function addPatch(Request $request)
     {
         $orgId = $request->pullPatchInteger('orgId');
