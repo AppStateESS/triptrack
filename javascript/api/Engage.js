@@ -34,6 +34,11 @@ const getRSVPBannerIds = (eventId, role = 'Admin') => {
   return getList(url, {eventId})
 }
 
+const getAttendedBannerIds = (eventId, role = 'Admin') => {
+  const url = `./triptrack/${role}/Engage/attendedListByEvent`
+  return getList(url, {eventId})
+}
+
 export {
   orgCount,
   updateOrganizations,
@@ -42,4 +47,5 @@ export {
   getOrganizationList,
   getOrganizationEvents,
   getRSVPBannerIds,
+  getAttendedBannerIds,
 }
