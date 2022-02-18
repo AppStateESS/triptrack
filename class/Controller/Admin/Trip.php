@@ -33,8 +33,8 @@ class Trip extends SubController
     protected function listJson(Request $request)
     {
         $options = ['memberCount' => true, 'orgId' => $request->pullGetInteger('orgId', true), 'search' => $request->pullGetString('search',
-                    true), 'unapprovedOnly' => (bool) $request->pullGetBoolean('unapprovedOnly',
-                    true)];
+                true), 'unapprovedOnly' => (bool) $request->pullGetBoolean('unapprovedOnly',
+                true)];
         $options['orderBy'] = $request->pullGetString('orderBy', true);
         $options['dir'] = $request->pullGetString('dir', true);
         if ($request->pullGetBoolean('upcomingOnly', true)) {
