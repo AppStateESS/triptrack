@@ -80,11 +80,15 @@ class TripView extends AbstractView
 
         // if trip is approved, we show deleted members
         $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true, 'includeDeleted' => $trip->approved]);
+
         $vars['memberList'] = MemberView::memberTable($members, true);
         $vars['documents'] = DocumentView::tripList($tripId, 'Admin');
-        if (count($members)) {
+
+        if (TripFactory::approvalAllowed($tripId)) {
             $vars['approvalButton'] = $this->scriptView('Approval', ['approvedStatus' => $trip->approved, 'tripId' => $tripId]);
+            $vars['approvalWarning'] = false;
         } else {
+            $vars['approvalWarning'] = true;
             $vars['approvalButton'] = null;
         }
         $template = new \phpws2\Template($vars);
