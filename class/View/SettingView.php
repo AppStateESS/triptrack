@@ -14,8 +14,10 @@ class SettingView extends AbstractView
 
     public function listHtml()
     {
+        $dir = PHPWS_HOME_DIR . 'files/triptrack/';
+        $fileDirectory = is_dir($dir) && is_writable($dir);
         return $this->dashboardScript('setting', 'SettingList',
-                        ['settings' => SettingFactory::getAll()]);
+                ['settings' => SettingFactory::getAll(), 'fileDirectory' => $fileDirectory]);
     }
 
 }
