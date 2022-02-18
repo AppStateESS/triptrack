@@ -104,6 +104,11 @@ class SettingFactory
         return Settings::get('triptrack', 'defaultState');
     }
 
+    public static function getUploadRequired()
+    {
+        return Settings::get('triptrack', 'uploadRequired');
+    }
+
     /**
      * Returns a SwiftMailer ready reply-to address
      * @param bool $onlyNoReply If true, return the no-reply version
