@@ -71,6 +71,13 @@ const Form = ({
   }, [])
 
   useEffect(() => {
+    if (associatedEvent.id) {
+      errorCheck('host', trip.host)
+      errorCheck('visitPurpose', trip.visitPurpose)
+    }
+  }, [associatedEvent])
+
+  useEffect(() => {
     plugAssociatedEvent(trip.engageEventId)
   }, [trip.id])
 
