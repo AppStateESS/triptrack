@@ -15,6 +15,7 @@ const Host = ({
   accommodationRequired,
   organizationList,
   organizationLabel,
+  setErrors,
 }) => {
   const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
   const stateList = createOptions(states)
@@ -94,6 +95,10 @@ const Host = ({
             className={errors.host ? invalid : valid}
             placeholder="Enter the facility name, event, team, group, etc."
             value={trip.host}
+            onBlur={() => {
+              errors.host = trip.host.length === 0
+              setErrors({...errors})
+            }}
             onChange={(e) => {
               setFormElement('host', e.target.value)
             }}
@@ -119,6 +124,10 @@ const Host = ({
             className={errors.visitPurpose ? invalid : valid}
             placeholder="Reason for traveling"
             value={trip.visitPurpose}
+            onBlur={() => {
+              errors.visitPurpose = trip.visitPurpose.length === 0
+              setErrors({...errors})
+            }}
             onChange={(e) => {
               setFormElement('visitPurpose', e.target.value)
             }}
@@ -163,6 +172,10 @@ const Host = ({
             name="destinationCity"
             className={errors.destinationCity ? invalid : valid}
             value={trip.destinationCity}
+            onBlur={() => {
+              errors.destinationCity = trip.destinationCity.length === 0
+              setErrors({...errors})
+            }}
             onChange={(e) => {
               setFormElement('destinationCity', e.target.value)
             }}
@@ -186,13 +199,23 @@ const Host = ({
           <input
             type="text"
             name="housingAddress"
-            placeholder="If staying in named hotel, include it with the street address"
             className={errors.housingAddress ? invalid : valid}
+            onBlur={() => {
+              if (accommodationRequired) {
+                errors.housingAddress = trip.housingAddress.length === 0
+                setErrors({...errors})
+              }
+            }}
             value={trip.housingAddress}
             onChange={(e) => {
               setFormElement('housingAddress', e.target.value)
             }}
           />
+          {errors.housingAddress ? (
+            <div className="invalid-feedback">
+              Please provide the name and address of your accommodations.
+            </div>
+          ) : null}
         </div>
       </div>
       {international()}
@@ -212,6 +235,7 @@ Host.propTypes = {
   role: PropTypes.string,
   organizationList: PropTypes.array,
   organizationLabel: PropTypes.string,
+  setErrors: PropTypes.func,
 }
 
 export default Host
