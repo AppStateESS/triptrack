@@ -1,4 +1,5 @@
 'use strict'
+
 import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {tripSettings} from './TripDefaults'
@@ -8,29 +9,20 @@ import Schedule from './Schedule'
 import Attended from './Attended'
 import MemberChoice from './MemberChoice'
 import Documents from './Documents'
-import {postTrip, patchApproval, deleteTrip} from '../api/TripAjax'
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons'
-import {getList} from '../api/Fetch'
-import {getOrganizationEvents, getAttendedBannerIds} from '../api/Engage'
+import {deleteTrip} from '../api/TripAjax'
+import {approvedIcon} from './Form/Node'
+import {
+  associateEvent,
+  loadMembers,
+  saveTrip,
+  findAssociatedEvent,
+} from './Form/XHR'
+import {getOrganizationEvents} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
 import UpcomingEvents from './UpcomingEvents'
-import {clearTripSession, setTripSession, plugTripSession} from './Session'
 import CurrentAssociation from './CurrentAssociation'
-
-const findAssociatedEvent = (eventList, engageEventId) => {
-  const found = eventList.find((value) => {
-    return value.id === parseInt(engageEventId)
-  })
-
-  return found
-}
-
-const unixTime = (stamp) => {
-  return parseInt((new Date(stamp).getTime() / 1000).toFixed(0))
-}
 
 const Form = ({
   tripDocuments,
@@ -51,15 +43,12 @@ const Form = ({
   confirmationInstructions,
 }) => {
   const [associatedEvent, setAssociatedEvent] = useState({name: ''})
-  const [allowSave, setAllowSave] = useState(true)
   const [confirmModal, setConfirmModal] = useState(false)
   const [documents, setDocuments] = useState(tripDocuments)
   const [errors, setErrors] = useState({...tripSettings.no})
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
   const [members, setMembers] = useState([])
-  const [membersLoaded, setMembersLoaded] = useState(false)
-  const [requiredFileMissing, setRequiredFileMissing] = useState(false)
   const [selectedMembers, setSelectedMembers] = useState([])
   const [trip, setTrip] = useState({...defaultTrip})
   const [attendedModal, setAttendedModal] = useState(false)
@@ -68,6 +57,8 @@ const Form = ({
 
   const memberAnchor = useRef(null)
   const renderReady = useRef(false)
+  const changesMade = useRef(false)
+  const organizationLoaded = useRef(false)
 
   useEffect(() => {
     if (location.hash == '#members') {
@@ -76,58 +67,33 @@ const Form = ({
         window.scrollTo(memberAnchor.current)
       }, 1000)
     }
-    if (!trip.completed) {
-      const tripSession = plugTripSession(trip)
-
-      if (tripSession && !tripSession.completed) {
-        setTrip(tripSession)
-      }
-    }
     renderReady.current = true
+    // window.onbeforeunload = (event) => {
+    //   if (changesMade.current) {
+    //     event.returnValue = 'Do you want leave without saving?'
+    //   }
+    // }
   }, [])
 
   useEffect(() => {
     plugAssociatedEvent(trip.engageEventId)
   }, [trip.id])
 
-  const loadMembers = () => {
-    let part1
-    let part2
-
-    part1 = getList(`./triptrack/${role}/Member`, {
-      orgId: trip.organizationId,
-    })
-
-    if (trip.id > 0) {
-      part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
-    }
-    Promise.all([part1, part2]).then((response) => {
-      setMembers(response[0].data)
-      if (response[1]) {
-        setSelectedMembers(response[1].data)
-      }
-      setMembersLoaded(true)
-    })
-  }
-
   useEffect(() => {
-    if (renderReady.current) {
-      if (parseInt(trip.organizationId) === 0) {
-        setMembers([])
-        setEvents([])
-        trip.engageEventId = 0
-        setTrip({...trip})
-        return
-      }
-
-      loadMembers()
-
-      setLoadingEvents(true)
-      getOrganizationEvents(trip.organizationId, role).then((response) => {
-        setLoadingEvents(false)
-        setEvents(response.data)
-      })
+    if (!organizationLoaded.current) {
+      loadOrganizationAssociations()
+      organizationLoaded.current = true
     }
+    // initial load completed, now update on organziation id change
+    setMembers([])
+    setSelectedMembers([])
+    setEvents([])
+    trip.engageEventId = 0
+    setTrip({...trip})
+    if (parseInt(trip.organizationId) === 0) {
+      return
+    }
+    loadOrganizationAssociations(false)
   }, [trip.organizationId])
 
   useEffect(() => {
@@ -136,32 +102,62 @@ const Form = ({
     }
   }, [events])
 
-  useEffect(() => {
-    if (renderReady.current) {
-      errorCheck('memberCount')
-    }
-  }, [selectedMembers])
+  const memberLoad = (getSelected) => {
+    loadMembers({trip, role, setMembers, setSelectedMembers, getSelected})
+  }
 
-  useEffect(() => {
-    if (renderReady.current) {
-      if (allowUpload && uploadRequired && documents.length === 0) {
-        setRequiredFileMissing(true)
-      } else {
-        setRequiredFileMissing(false)
-      }
-    }
-  }, [documents])
+  const onComplete = () => {
+    window.location.href = `./triptrack/${role}/Trip/`
+  }
 
-  window.addEventListener('beforeunload', () => {
-    setTripSession(trip)
-  })
+  const eventAssociation = (eventId) => {
+    associateEvent({
+      eventId,
+      events,
+      role,
+      setAttendedLoading,
+      members,
+      selectedMembers,
+      setAttendedModal,
+      setNewMembers,
+      setSelectedMembers,
+      trip,
+      plugAssociatedEvent,
+      setTrip,
+    })
+  }
 
-  const resetTrip = (url) => {
+  const tripSave = (confirmed = false) => {
+    saveTrip({
+      confirmed,
+      finalErrorCheck,
+      confirmationRequired,
+      trip,
+      setConfirmModal,
+      selectedMembers,
+      defaultTrip,
+      role,
+      setErrors,
+      addMembersToTrip,
+      onComplete,
+    })
+  }
+
+  const loadOrganizationAssociations = (associateMembers = true) => {
+    memberLoad(associateMembers)
+    setLoadingEvents(true)
+    getOrganizationEvents(trip.organizationId, role).then((response) => {
+      setLoadingEvents(false)
+      setEvents(response.data)
+    })
+  }
+
+  const resetTrip = () => {
     setTrip({...defaultTrip})
-    clearTripSession(() => (location.href = url))
   }
 
   const setFormElement = (key, value) => {
+    changesMade.current = true
     trip[key] = value
     setTrip({...trip})
     errorCheck(key, value)
@@ -188,103 +184,11 @@ const Form = ({
     }
   }
 
-  const parseDescription = (desc) => {
-    const removeTag = desc.replace(/<[^>]+>|\r\n/gi, '')
-    const noNbsp = removeTag.replace(/&nbsp;/gi, ' ')
-    const firstSentence = noNbsp.split(/[!?.]/)[0]
-    return firstSentence.replace(/^\W+/, '')
-  }
-
-  const associateEvent = (eventId) => {
-    const event = findAssociatedEvent(events, eventId)
-
-    getAttendedBannerIds(eventId, role).then((response) => {
-      setAttendedLoading(true)
-      const attended = response.data
-      const nonOrgMembers = []
-      attended.forEach((attend) => {
-        const {bannerId} = attend
-        const result = members.find((element) => element.bannerId == bannerId)
-        if (result) {
-          if (selectedMembers.indexOf(result.id > -1)) {
-            selectedMembers.push(result.id)
-          }
-        } else {
-          nonOrgMembers.push(attend)
-        }
-      })
-      if (nonOrgMembers.length > 0) {
-        setAttendedModal(true)
-      }
-      setAttendedLoading(false)
-      setNewMembers(nonOrgMembers)
-      setSelectedMembers([...selectedMembers])
-    })
-
-    const tripCopy = {...trip}
-
-    tripCopy.timeDeparting = unixTime(event.startsOn)
-    tripCopy.timeEventStarts = unixTime(event.startsOn)
-    tripCopy.timeReturn = unixTime(event.endsOn)
-    tripCopy.host = event.name
-    tripCopy.visitPurpose = parseDescription(event.description)
-    if (event.address.city !== null) {
-      tripCopy.destinationCity = event.address.city
-    }
-    if (event.address.state !== null) {
-      tripCopy.destinationState = event.address.state
-    }
-    if (tripCopy.housingAddress.length === 0) {
-      tripCopy.housingAddress += event.address.line1 ?? ''
-      tripCopy.housingAddress +=
-        event.address.line1 && event.address.line2 ? ' ' : ''
-      tripCopy.housingAddress += event.address.line2 ?? ''
-    }
-    tripCopy.engageEventId = event.id
-    plugAssociatedEvent(event.id)
-
-    setTrip(tripCopy)
-  }
-
   const completeConfirmation = (confirmResult) => {
     if (confirmResult) {
-      saveTrip(true)
+      tripSave(true)
     }
     setConfirmModal(false)
-  }
-
-  const toggleApproval = (toggle) => {
-    setFormElement('approved', toggle)
-    if (trip.id > 0) {
-      patchApproval(toggle, trip.id)
-    }
-  }
-
-  const approvedIcon = () => {
-    if (allowApproval === false) {
-      return <span></span>
-    }
-    if (trip.approved) {
-      return (
-        <div>
-          <button
-            onClick={() => toggleApproval(false)}
-            className="btn btn-success">
-            <FontAwesomeIcon icon={faToggleOn} /> Approved
-          </button>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <button
-            onClick={() => toggleApproval(true)}
-            className="btn btn-danger">
-            <FontAwesomeIcon icon={faToggleOff} /> Not approved
-          </button>
-        </div>
-      )
-    }
   }
 
   const errorCheck = (name, value) => {
@@ -300,10 +204,6 @@ const Form = ({
     switch (name) {
       case 'organizationId':
         errorFound = parseInt(trip.organizationId) === 0
-        break
-
-      case 'memberCount':
-        errorFound = selectedMembers.length === 0
         break
 
       case 'contactPhone':
@@ -344,51 +244,31 @@ const Form = ({
         break
     }
     errors[name] = errorFound
-    let checkSave = true
-    const errorKeys = Object.keys(errors)
-    errorKeys.forEach((errorName) => {
-      if (errors[errorName]) {
-        checkSave = false
-      }
-    })
-    setAllowSave(checkSave)
     setErrors({...errors})
     return errorFound
   }
 
   const finalErrorCheck = () => {
     let foundError = false
-    if (errorCheck('contactName', trip.contactName)) {
-      foundError = true
-    }
-    if (errorCheck('contactEmail', trip.contactEmail)) {
-      foundError = true
-    }
-    if (errorCheck('contactPhone', trip.contactPhone)) {
-      foundError = true
-    }
-    if (errorCheck('destinationCity', trip.destinationCity)) {
-      foundError = true
-    }
-    if (errorCheck('host', trip.host)) {
-      foundError = true
-    }
-    if (errorCheck('housingAddress', trip.housingAddress)) {
-      foundError = true
-    }
-    if (errorCheck('secContactEmail', trip.secContactEmail)) {
-      foundError = true
-    }
-    if (errorCheck('secContactName', trip.secContactName)) {
-      foundError = true
-    }
-    if (errorCheck('secContactPhone', trip.secContactPhone)) {
-      foundError = true
-    }
 
-    if (errorCheck('memberCount')) {
-      foundError = true
-    }
+    const checklist = [
+      'contactName',
+      'contactEmail',
+      'contactPhone',
+      'destinationCity',
+      'host',
+      'housingAddress',
+      'secContactEmail',
+      'secContactEmail',
+      'secContactName',
+      'secContactPhone',
+    ]
+
+    checklist.forEach((check) => {
+      if (errorCheck(check, trip[check])) {
+        foundError = true
+      }
+    })
 
     if (errorCheck('organizationId')) {
       foundError = true
@@ -396,52 +276,28 @@ const Form = ({
     return !foundError
   }
 
-  const saveTrip = (confirmed = false) => {
-    if (finalErrorCheck()) {
-      if (
-        confirmationRequired &&
-        trip.confirmedDate === 0 &&
-        confirmed === false
-      ) {
-        setConfirmModal(true)
-        return
-      }
-      Promise.all([
-        postTrip(trip, role),
-        addMembersToTrip(selectedMembers, defaultTrip.id, role),
-      ]).then((response) => {
-        if (response[0].data.success) {
-          const url = `triptrack/${role}/Trip/${response[0].data.id}`
-          resetTrip(url)
-        } else {
-          const errClone = response[0].data.errors
-          const errorResult = Object.keys(errClone)
-          errorResult.forEach((element) => {
-            errClone[element] = true
-          })
-          setErrors(errClone)
-        }
-      })
-    }
-  }
-
   let memberWarning
-  if (
-    members.length === 0 &&
-    membersLoaded &&
-    parseInt(trip.organizationId) > 1
-  ) {
+  if (members.length === 0 && parseInt(trip.organizationId) > 1) {
     memberWarning = (
       <div className="alert alert-danger">
-        There are no members in this {organizationLabel.toLowerCase()}.
+        There are no members in this {organizationLabel.toLowerCase()}. Approval
+        requires member selection.
       </div>
     )
   }
+
+  const saveButton = changesMade.current ? (
+    <div className="text-center">
+      <button className="btn btn-sm btn-success" onClick={tripSave}>
+        Save travel plan
+      </button>
+    </div>
+  ) : null
   return (
     <div>
       <h3>Enter trip information</h3>
       <p>Please enter all requested, required information below:</p>
-      {approvedIcon()}
+      {approvedIcon({trip, allowApproval, setFormElement})}
       {memberWarning}
 
       <a id="submitter-info"></a>
@@ -459,9 +315,7 @@ const Form = ({
             <legend className="border-bottom mb-3">Associated Event</legend>
             {trip.engageEventId === 0 && trip.organizationId > 0 ? (
               <UpcomingEvents
-                events={events}
-                loadingEvents={loadingEvents}
-                associateEvent={associateEvent}
+                {...{events, loadingEvents, eventAssociation}}
                 engageEventId={trip.engageEventId}
               />
             ) : trip.organizationId > 0 && associatedEvent.id > 0 ? (
@@ -499,11 +353,13 @@ const Form = ({
         allowInternational={allowInternational}
         accommodationRequired={accommodationRequired}
         hostLabel={hostLabel}
+        setErrors={setErrors}
         organizationLabel={organizationLabel}
         organizationList={organizations}
         role={role}
         errors={errors}
       />
+      {saveButton}
       <a id="contact-info"></a>
       <Contact
         trip={trip}
@@ -511,31 +367,11 @@ const Form = ({
         contactBannerRequired={contactBannerRequired}
         secondaryRequired={secondaryRequired}
         errors={errors}
+        setErrors={setErrors}
       />
       <a id="schedule-info"></a>
       <Schedule trip={trip} setFormElement={setFormElement} />
       <div className="row mb-5">
-        <div className="col-sm-5">
-          <a name="members" id="members" ref={memberAnchor}></a>
-
-          {trip.organizationId > 0 ? (
-            <div>
-              <MemberChoice
-                {...{
-                  members,
-                  organizationLabel,
-                  selectedMembers,
-                  setSelectedMembers,
-                }}
-              />
-              {errors.memberCount ? (
-                <span className="badge badge-danger">
-                  Select one or more members to attend
-                </span>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
         <div className="col-sm-7">
           <Documents
             {...{
@@ -550,15 +386,25 @@ const Form = ({
             }}
           />
         </div>
+        {trip.organizationId > 0 ? (
+          <div className="col-sm-5">
+            <a name="members" id="members" ref={memberAnchor}></a>
+            <div>
+              <MemberChoice
+                {...{
+                  members,
+                  organizationLabel,
+                  selectedMembers,
+                  setSelectedMembers,
+                }}
+              />
+            </div>
+          </div>
+        ) : null}
       </div>
       <div className="text-center">
-        <button
-          className="btn btn-success mb-2"
-          onClick={() => saveTrip()}
-          disabled={!allowSave || requiredFileMissing}>
-          {allowSave && !requiredFileMissing
-            ? 'Save travel plan'
-            : 'Complete missing information above'}
+        <button className="btn btn-success mb-2" onClick={() => tripSave()}>
+          Save travel plan
         </button>
         <div>
           {!trip.completed ? (
@@ -572,6 +418,7 @@ const Form = ({
           )}
         </div>
       </div>
+
       <Overlay
         show={attendedModal}
         close={() => setAttendedModal(false)}
@@ -580,7 +427,7 @@ const Form = ({
           {...{
             newMembers,
             setAttendedModal,
-            loadMembers,
+            memberLoad,
             orgId: trip.organizationId,
           }}
         />
