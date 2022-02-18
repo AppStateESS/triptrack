@@ -7,12 +7,12 @@ import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 const UpcomingEvents = ({
   events,
   loadingEvents,
-  associateEvent,
+  eventAssociation,
   engageEventId,
 }) => {
   const [engageId, setEngageId] = useState(engageEventId)
   const associate = () => {
-    associateEvent(engageId)
+    eventAssociation(engageId)
   }
   return (
     <div>
@@ -59,7 +59,7 @@ UpcomingEvents.propTypes = {
   events: PropTypes.array,
   loadingEvents: PropTypes.bool,
   copyEvent: PropTypes.func,
-  associateEvent: PropTypes.func,
+  eventAssociation: PropTypes.func,
   engageEventId: PropTypes.number,
 }
 
