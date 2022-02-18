@@ -2,7 +2,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
+const Contact = ({
+  trip,
+  setFormElement,
+  errors,
+  secondaryRequired,
+  setErrors,
+}) => {
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
   return (
@@ -25,6 +31,10 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                   <input
                     type="text"
                     name="contactName"
+                    onBlur={() => {
+                      errors.contactName = trip.contactName.length === 0
+                      setErrors({...errors})
+                    }}
                     className={errors.contactName ? invalid : valid}
                     value={trip.contactName}
                     onChange={(e) => {
@@ -48,6 +58,10 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                     name="contactEmail"
                     className={errors.contactEmail ? invalid : valid}
                     value={trip.contactEmail}
+                    onBlur={() => {
+                      errors.contactEmail = trip.contactEmail.length === 0
+                      setErrors({...errors})
+                    }}
                     onChange={(e) => {
                       setFormElement('contactEmail', e.target.value)
                     }}
@@ -69,6 +83,10 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                     name="contactPhone"
                     className={errors.contactPhone ? invalid : valid}
                     value={trip.contactPhone}
+                    onBlur={() => {
+                      errors.contactPhone = trip.contactPhone.length === 0
+                      setErrors({...errors})
+                    }}
                     placeholder="###-###-####"
                     onChange={(e) => {
                       const value = e.target.value
@@ -106,6 +124,12 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                     name="secContactName"
                     className={errors.secContactName ? invalid : valid}
                     value={trip.secContactName}
+                    onBlur={() => {
+                      if (secondaryRequired) {
+                        errors.secContactName = trip.secContactName.length === 0
+                        setErrors({...errors})
+                      }
+                    }}
                     onChange={(e) => {
                       setFormElement('secContactName', e.target.value)
                     }}
@@ -130,6 +154,13 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                     name="secContactEmail"
                     className={errors.secContactEmail ? invalid : valid}
                     value={trip.secContactEmail}
+                    onBlur={() => {
+                      if (secondaryRequired) {
+                        errors.secContactEmail =
+                          trip.secContactEmail.length === 0
+                        setErrors({...errors})
+                      }
+                    }}
                     onChange={(e) => {
                       setFormElement('secContactEmail', e.target.value)
                     }}
@@ -155,6 +186,13 @@ const Contact = ({trip, setFormElement, errors, secondaryRequired}) => {
                     className={errors.secContactPhone ? invalid : valid}
                     placeholder="###-###-####"
                     value={trip.secContactPhone}
+                    onBlur={() => {
+                      if (secondaryRequired) {
+                        errors.secContactPhone =
+                          trip.secContactPhone.length === 0
+                        setErrors({...errors})
+                      }
+                    }}
                     onChange={(e) => {
                       const value = e.target.value
                       if (value.match(/^[\d\-\.]+$/) || value == '') {
