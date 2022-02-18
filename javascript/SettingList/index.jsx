@@ -12,7 +12,7 @@ import {orgCount, updateOrganizations} from '../api/Engage'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 
-/* global settings */
+/* global settings, fileDirectory */
 
 const saveButtonDefault = {
   uploadInstructions: {disabled: true, saving: false},
@@ -433,24 +433,6 @@ const SettingList = ({currentSettings}) => {
       </div>
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
-          <strong>Allow uploads</strong>
-          <br />
-          <small className="form-text text-muted">
-            If enabled, trips will require documentation (i.e. uploaded PDFs)
-          </small>
-        </div>
-        <div className="col-sm-6">
-          <BigCheckbox
-            label={settings.allowUpload ? 'Yes' : 'No'}
-            checked={settings.allowUpload}
-            handle={() => {
-              updateCheck('allowUpload')
-            }}
-          />
-        </div>
-      </div>
-      <div className="row py-2 border-bottom mb-3">
-        <div className="col-sm-6 mb-2">
           <strong>Force Engage Organizations</strong>
           <br />
           <small className="form-text text-muted">
@@ -463,6 +445,30 @@ const SettingList = ({currentSettings}) => {
             checked={settings.forceEngageOrg}
             handle={() => {
               updateCheck('forceEngageOrg')
+            }}
+          />
+        </div>
+      </div>
+      <div className="row py-2 border-bottom mb-3">
+        <div className="col-sm-6 mb-2">
+          <strong>Allow uploads</strong>
+          <br />
+          <small className="form-text text-muted">
+            If enabled, trips will require documentation (i.e. uploaded PDFs)
+          </small>
+          {fileDirectory ? null : (
+            <div className="badge badge-danger">
+              Warning! This site is missing a writable files/triptrack
+              directory.
+            </div>
+          )}
+        </div>
+        <div className="col-sm-6">
+          <BigCheckbox
+            label={settings.allowUpload ? 'Yes' : 'No'}
+            checked={settings.allowUpload}
+            handle={() => {
+              updateCheck('allowUpload')
             }}
           />
         </div>
@@ -632,6 +638,6 @@ SettingList.propTypes = {
 }
 
 ReactDOM.render(
-  <SettingList currentSettings={settings} />,
+  <SettingList currentSettings={settings} fileDirectory={fileDirectory} />,
   document.getElementById('SettingList')
 )
