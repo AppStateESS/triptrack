@@ -217,6 +217,24 @@ class MemberFactory extends BaseFactory
         return $member;
     }
 
+    /**
+     * Returns true if the trip has attending members.
+     * @param int $tripId
+     * @return type
+     * @throws \Exception
+     */
+    public static function tripHasAttending(int $tripId)
+    {
+        if ($tripId === 0) {
+            throw new \Exception('Zero tripId');
+        }
+        $db = Database::getDB();
+        $tbl = $db->addTable('trip_membertotrip');
+        $tbl->addField('memberId');
+        $tbl->addFieldConditional('tripId', $tripId);
+        return (bool) $db->selectOneRow();
+    }
+
     public static function restrict(int $memberId)
     {
         $member = self::build($memberId);
