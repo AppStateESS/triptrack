@@ -16,6 +16,18 @@ use triptrack\Factory\DocumentFactory;
 class TripFactory extends BaseFactory
 {
 
+    public static function approvalAllowed(int $tripId)
+    {
+        $documentCount = count(\triptrack\Factory\DocumentFactory::list(['tripId' => $tripId]));
+        /**
+         * If upload is not required or the document count is over 0, then trip approval
+         * file requirement fulfilled.
+         */
+        $hasFiles = !SettingFactory::getUploadRequired() || $documentCount > 0;
+        $attending = MemberFactory::tripHasAttending($tripId);
+        return $hasFiles && $attending;
+    }
+
     public static function deleteByOrganizationId(int $organizationId)
     {
         $db = Database::getDB();
