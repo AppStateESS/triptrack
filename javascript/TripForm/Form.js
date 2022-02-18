@@ -68,11 +68,6 @@ const Form = ({
       }, 1000)
     }
     renderReady.current = true
-    // window.onbeforeunload = (event) => {
-    //   if (changesMade.current) {
-    //     event.returnValue = 'Do you want leave without saving?'
-    //   }
-    // }
   }, [])
 
   useEffect(() => {
