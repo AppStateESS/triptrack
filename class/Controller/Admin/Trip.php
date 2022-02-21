@@ -132,6 +132,13 @@ class Trip extends SubController
         }
     }
 
+    protected function copyPut(Request $request)
+    {
+        $tripId = $request->pullPutInteger('tripId');
+        $copyId = TripFactory::copy($tripId);
+        return ['copyId' => $copyId];
+    }
+
     protected function incompleteJson()
     {
         $trip = TripFactory::getCurrentSubmitterIncomplete();

@@ -5,7 +5,8 @@ import Grid from './Grid'
 import Menu from './Menu'
 import Message from '../Share/Message'
 import {getList} from '../api/Fetch'
-import {deleteTrip, getIncomplete} from '../api/TripAjax'
+import PropTypes from 'prop-types'
+import {deleteTrip, getIncomplete, copyTrip} from '../api/TripAjax'
 
 /* global hostLabel, unapproved */
 
@@ -108,6 +109,13 @@ const TripList = ({hostLabel, unapproved}) => {
     })
   }
 
+  const tripCopy = (tripId) => {
+    copyTrip(tripId, 'Admin').then((resource) => {
+      const copyId = resource.data.copyId
+      location.href = `./triptrack/Admin/Trip/${copyId}/edit`
+    })
+  }
+
   const resetSearch = () => {
     setSearch('')
     load(false)
@@ -186,10 +194,16 @@ const TripList = ({hostLabel, unapproved}) => {
           load={load}
           deleteRow={deleteRow}
           hostLabel={hostLabel}
+          tripCopy={tripCopy}
         />
       </div>
     )
   }
+}
+
+TripList.propTypes = {
+  hostLabel: PropTypes.string,
+  unapproved: PropTypes.array,
 }
 
 ReactDOM.render(

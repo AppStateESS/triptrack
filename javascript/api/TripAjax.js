@@ -20,6 +20,11 @@ const postTrip = async (tripObj, role) => {
   return postItem(tripObj, 'Trip', role)
 }
 
+const copyTrip = async (tripId, role) => {
+  const url = `triptrack/${role}/Trip/${tripId}/copy`
+  return await axios.put(url, {tripId}, {headers})
+}
+
 const patchApproval = async (tripId) => {
   return await axios({
     method: 'patch',
@@ -59,6 +64,7 @@ const getIncomplete = async () => {
 }
 
 export {
+  copyTrip,
   getTrip,
   postTrip,
   patchApproval,

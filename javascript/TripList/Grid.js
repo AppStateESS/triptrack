@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import dayjs from 'dayjs'
 import {faCheckCircle, faTimesCircle} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+
 import SortButton from '../api/SortButton'
 import '../api/pointer.css'
 
@@ -24,7 +25,7 @@ const approvedIcon = (approved, tripId) => {
   )
 }
 
-const Grid = ({trips, deleteRow, hostLabel, setSort, sort}) => {
+const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
   const deleteItem = (key) => {
     if (
       prompt(
@@ -55,6 +56,12 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort}) => {
                 href={`triptrack/Admin/Trip/${value.id}`}
                 title="View trip">
                 <i className="fas fa-search"></i>&nbsp;View trip
+              </a>
+              <a
+                className="dropdown-item"
+                onClick={() => tripCopy(value.id)}
+                title="Copy trip">
+                <i className="fas fa-copy"></i>&nbsp;Copy trip
               </a>
               <a
                 className="dropdown-item"
@@ -140,6 +147,8 @@ Grid.propTypes = {
   load: PropTypes.func,
   sort: PropTypes.object,
   setSort: PropTypes.func,
+  role: PropTypes.string,
+  reload: PropTypes.func,
 }
 
 export default Grid

@@ -28,6 +28,27 @@ class TripFactory extends BaseFactory
         return $hasFiles && $attending;
     }
 
+    public static function copy(int $tripId)
+    {
+        $weekAhead = time() + 86400 * 7;
+        $trip = self::build($tripId);
+        $trip->id = 0;
+        $trip->host = $trip->host . ' - (copy)';
+        $trip->approved = false;
+        $trip->completed = true;
+        $trip->memberCount = 0;
+        $trip->submitUserId = \Current_User::getId();
+        $trip->submitUsername = \Current_User::getUsername();
+        $trip->submitName = \Current_User::getDisplayName();
+        $trip->submitEmail = \Current_User::getEmail();
+        $trip->submitDate = time();
+        $trip->timeDeparting = $weekAhead;
+        $trip->timeEventStarts = $weekAhead;
+        $trip->timeReturn = $weekAhead;
+        $copy = self::save($trip);
+        return $copy->id;
+    }
+
     public static function deleteByOrganizationId(int $organizationId)
     {
         $db = Database::getDB();
