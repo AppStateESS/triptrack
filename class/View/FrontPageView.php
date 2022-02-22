@@ -27,10 +27,10 @@ class FrontPageView
         } else {
             $vars['tripButton'] = TripView::createButton(true);
         }
-        $vars['viewButton'] = TripView::viewButton(true);
+        $vars['viewButton'] = TripView::upcomingButton(true);
         $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-        $auth = \Current_User::getAuthorization();
-        $vars['logoutUrl'] = $auth->logout_link;
+
+        $vars['logoutUrl'] = TripFactory::logoutLink();
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Admin/FrontPage.html');
         return $template->get();
@@ -45,6 +45,7 @@ class FrontPageView
             $vars['tripButton'] = TripView::createButton(false);
         }
         $vars['viewButton'] = TripView::viewButton(false);
+        $vars['logoutUrl'] = TripFactory::logoutLink();
 
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'Member/FrontPage.html');
