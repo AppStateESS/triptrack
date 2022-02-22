@@ -21,9 +21,7 @@ after_success:
 deploy:
   provider: releases
   skip_cleanup: true
-  token:
-    secure: "WzB/2ErIPEhXwE/etQdHvEo/EmO6T9AzNTVLtD9XKftxSVGvfa7l7ydMBBghkl4LWtaKws05KpbftnRP0mCltgonOwmUyyvnr99+Tlw2vCfb2guVprc4m3NTkn3WCdXYLoSik3sojQ341XJB1bHCSZ/TngqcpIc+ZP1sObrN7WMzF/BGLkUSCbTaAzUanP8vyv1UrJ1r8NkLQG2VO1RR92FTROYFlaNpInXhk7yxm2n3b9+XODjR668HfvrubNjNRk5WZKHxMSrD+zSuUDXli5lKICpOr8bPXKUnwsr47xe5FcjcJqntF69IzZupgj/Azs7iYBXDo9UIqyzO/5o+nXvP6yIZPb2MdmMe0k0XujHjUnxF+p74AOXqlclIG0uTlPUP9AP3caPCPgZScXyB4DtN690zelgdmYVZq+QQc3qj0OG5S68TrzlsSTDjum2GDMOHGP9hyo9Kz2kLaWl+/lKgmk7fKS+qLA1cwF6gBZgju2ujMiiNgQjkDi8lBTB9+HPAwGMqcogNsSoA34roV5wti8XBn3V5G9X+cNKVJCGyRaaL73DyUTugU5HMMuxf3Yi0W5NG0tgN9l9n5r5SZf6C7EJ+HzUyF5ytHTy+KVBUiMEaKJtOHA01EEL0ojiF5KxeZd13NzF+Shpj2lFPdlkVONTemMOLr6kzSFkMrJo="
-  file: triptrack.tar.gz
+   file: triptrack.tar.gz
   overwrite: true
   on:
     repo: AppStateESS/triptrack
