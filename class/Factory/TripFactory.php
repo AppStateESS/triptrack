@@ -223,7 +223,7 @@ class TripFactory extends BaseFactory
      * - formatDates (bool): changes unix timestamps to formatted dates
      *
      * SORTING
-     * - order (string): column to order by
+     * - orderBy (string): column to order by
      * - dir (string): direction to order by. order must be set
      *
      * @param array $options
