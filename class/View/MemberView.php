@@ -30,9 +30,9 @@ class MemberView extends AbstractView
             return '<div class="alert alert-danger">No members signed up for trip</div>';
         }
         if ($isAdmin) {
-            $filename = 'Admin/MemberListTable.tpl';
+            $filename = 'Admin/MemberListTable.html';
         } else {
-            $filename = 'Member/MemberListTable.tpl';
+            $filename = 'Member/MemberListTable.html';
         }
         $template = new Template(['listing' => $memberList]);
         $template->setModuleTemplate('triptrack', $filename);
