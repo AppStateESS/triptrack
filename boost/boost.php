@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Copyright (c) 2020 Matthew McNaney <mcnaneym@appstate.edu>.
+ * Copyright (c) 2022 Matthew McNaney <mcnaneym@appstate.edu>.
  *
  */
 $proper_name = 'Trip Track';
