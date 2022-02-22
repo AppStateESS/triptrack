@@ -15,6 +15,7 @@ namespace triptrack\View;
 use Canopy\Request;
 use phpws2\Template;
 use triptrack\Factory\OrganizationFactory;
+use triptrack\Factory\SettingFactory;
 
 abstract class AbstractView
 {
@@ -103,13 +104,18 @@ EOF;
         $vars['memberActive'] = null;
         $vars['settingActive'] = null;
         $vars['reportActive'] = null;
+        $vars['upcomingActive'] = null;
         $vars['dashboard'] = null;
         $orgExists = OrganizationFactory::exists();
         $vars['alert'] = false;
-        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-        $vars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
+        $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
+        $vars['hostLabel'] = SettingFactory::getHostLabel();
+        $vars['logout'] = OrganizationFactory::logoutLink();
 
         switch ($active) {
+            case 'upcoming':
+                $vars['upcomingActive'] = ' active';
+                break;
             case 'trip':
                 $vars['tripActive'] = ' active';
                 $vars['alert'] = !$orgExists;
@@ -135,13 +141,14 @@ EOF;
     {
         $vars = $this->menuVars($active);
         $vars['dashboard'] = $content;
+
         return $this->dashboardTemplate($vars);
     }
 
     protected function dashboardScript(string $active, string $script = null, array $scriptVars = [])
     {
-        $scriptVars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-        $scriptVars['hostLabel'] = \triptrack\Factory\SettingFactory::getHostLabel();
+        $scriptVars['organizationLabel'] = SettingFactory::getOrganizationLabel();
+        $scriptVars['hostLabel'] = SettingFactory::getHostLabel();
         $vars = $this->menuVars($active);
         $vars['dashboard'] = $this->scriptView($script, $scriptVars);
         return $this->dashboardTemplate($vars);
