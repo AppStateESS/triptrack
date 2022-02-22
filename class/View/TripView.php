@@ -49,6 +49,11 @@ class TripView extends AbstractView
         return '<a href="./triptrack/' . ($isAdmin ? 'Admin' : 'Member') . '/Trip" class="btn btn-info">See upcoming trips</a>';
     }
 
+    public static function upcomingButton(bool $isAdmin = false)
+    {
+        return '<a href="./triptrack/Admin/Trip/upcoming" class="btn btn-info">See upcoming trips</a>';
+    }
+
     public function adminForm(int $tripId = 0)
     {
         $vars = $this->getSettings();
@@ -56,12 +61,27 @@ class TripView extends AbstractView
         return $this->dashboardScript('trip', 'AdminTripForm', $vars);
     }
 
+    /**
+     * Returns shared member and admin view variables.
+     * @param type $trip
+     */
+    private function getViewVars($trip)
+    {
+        $organization = OrganizationFactory::build($trip->organizationId);
+
+        $vars = $trip->getStringVars();
+        $vars['organizationName'] = $organization->name;
+        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['organizationId'] = $organization->id;
+        $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
+        $vars['logout'] = OrganizationFactory::logoutLink();
+        return $vars;
+    }
+
     public function adminView(int $tripId)
     {
         $trip = TripFactory::build($tripId);
-        $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
-
-        $vars = $trip->getStringVars();
+        $vars = $this->getViewVars($trip);
         if ($trip->engageEventId > 0) {
             $event = EngageFactory::getEvent($trip->engageEventId);
             if ($event) {
@@ -73,11 +93,6 @@ class TripView extends AbstractView
                 $vars['event'] = null;
             }
         }
-        $vars['organizationName'] = $organization->name;
-        $vars['organizationId'] = $organization->id;
-        $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
-        $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
-
         // if trip is approved, we show deleted members
         $members = MemberFactory::list(['tripId' => $tripId, 'isAdmin' => true, 'includeDeleted' => $trip->approved]);
 
@@ -143,16 +158,12 @@ class TripView extends AbstractView
 
     public function memberView(Trip $trip)
     {
-        $organization = \triptrack\Factory\OrganizationFactory::build($trip->organizationId);
-        $vars = $trip->getStringVars();
+        $vars = $this->getViewVars($trip);
 
-        $vars['organizationName'] = $organization->name;
-        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
-        $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $members = MemberFactory::list(['tripId' => $trip->id]);
         $vars['memberList'] = MemberView::memberTable($members);
         $vars['documents'] = DocumentView::tripList($trip->id, 'Member');
-
+        $vars['approvalWarning'] = TripFactory::approvalAllowed($trip->id) ? false : true;
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/View.html');
         return $template->get();
@@ -175,6 +186,22 @@ class TripView extends AbstractView
         $template = new \phpws2\Template($vars);
         $template->setModuleTemplate('triptrack', 'User/List.html');
         return $template->get();
+    }
+
+    public function upcoming()
+    {
+        $options['startDate'] = time();
+        $options['endDate'] = time() + (86400 * 14);
+        $options['approvedOnly'] = true;
+        $options['formatDates'] = true;
+        $options['memberCount'] = true;
+        $options['includeOrganizationName'] = true;
+        $options['orderBy'] = 'timeDeparting';
+        $vars['list'] = TripFactory::list($options);
+        $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'User/Upcoming.html');
+        return $this->dashboardHTML('upcoming', $template->get());
     }
 
 }
