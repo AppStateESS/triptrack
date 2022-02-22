@@ -44,17 +44,37 @@ abstract class BaseFactory extends \phpws2\ResourceFactory
         return $resource;
     }
 
+    public static function loginLink()
+    {
+        $auth = \Current_User::getAuthorization();
+        if (!empty($auth->login_link)) {
+            return $auth->login_link;
+        } else {
+            return 'index.php?module=users&action=user&command=login_page';
+        }
+    }
+
+    public static function logoutLink()
+    {
+        $auth = \Current_User::getAuthorization();
+        if (!empty($auth->logout_link)) {
+            return $auth->logout_link;
+        } else {
+            return 'index.php?module=users&action=user&command=logout';
+        }
+    }
+
     public static function save(\phpws2\Resource $resource)
     {
         return self::saveResource($resource);
     }
 
     protected static function addSearch(string $searchPhrase, array $columns,
-            \phpws2\Database\DB $db, \phpws2\Database\Table $tbl)
+        \phpws2\Database\DB $db, \phpws2\Database\Table $tbl)
     {
         foreach ($columns as $c) {
             $cond = $db->createConditional($tbl->getField($c),
-                    '%' . $searchPhrase . '%', 'like');
+                '%' . $searchPhrase . '%', 'like');
             if (isset($prevCond)) {
                 $prevCond = $db->createConditional($cond, $prevCond, 'or');
             } else {
