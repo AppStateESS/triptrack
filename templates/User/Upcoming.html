@@ -1,0 +1,32 @@
+<h3>Upcoming trips</h3>
+<?php if (empty($list)):?>
+<p>No approved trips in progress or scheduled.</p>
+<?php else:?>
+<table class="table">
+  <tbody>
+    <tr>
+      <th></th>
+      <th><?=$organizationLabel?></th>
+      <th>Host</th>
+      <th>Purpose</th>
+      <th>Contact</th>
+      <th>Att.</th>
+      <th>Departing</th>
+      <th>Returning</th>
+    </tr>
+    <?php foreach ($list as $row):
+    extract($row);
+    ?>
+    <tr>
+      <td><a href="./triptrack/Admin/Trip/<?=$id?>">View</a></td>
+      <td><?=$organizationName?></td>
+      <td><?=$host?></td>
+      <td><a href="mailto:<?=$contactEmail?>"><?=$contactName?></a></td>
+      <td><?=$memberCount?></td>
+      <td><?=$timeDeparting?></td>
+      <td><?=$timeReturn?></td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
+<?php endif;?>
