@@ -166,12 +166,16 @@ const SettingList = ({currentSettings}) => {
       })
   }
 
-  const updateText = (settingName, value) => {
+  const updateText = (settingName, value, allowEmpty = true) => {
     rendered.current = true
     const current = Object.assign({}, settings)
     current[settingName] = value
     setSettings(current)
-    enableButton(settingName)
+    if (!allowEmpty && value.length === 0) {
+      disableButton(settingName)
+    } else {
+      enableButton(settingName)
+    }
   }
 
   const updateSelect = (settingName, value) => {
@@ -510,9 +514,12 @@ const SettingList = ({currentSettings}) => {
         <div className="col-sm-6">
           <div className="input-group">
             <input
+              placeholder="This must be filled in order for emails to be sent."
               className="form-control"
               value={settings.siteContactEmail}
-              onChange={(e) => updateText('siteContactEmail', e.target.value)}
+              onChange={(e) =>
+                updateText('siteContactEmail', e.target.value, false)
+              }
             />
             <div className="input-group-append">
               <SaveButton
