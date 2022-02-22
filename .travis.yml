@@ -1,15 +1,13 @@
 dist: xenial
 os: linux
 language: php
-php: "7.3"
+php: '7.3'
 script:
-  - ".travis-build/phplint ."
-
+- ".travis-build/phplint ."
 jobs:
   include:
   - language: node_js
     node_js: 16
-
 before_install:
 - npm i -g npm@v8.1.2
 install:
@@ -21,11 +19,11 @@ after_success:
 deploy:
   provider: releases
   skip_cleanup: true
-  api-key:
-    secure: "PWri2657ZGloputrortYdlKkwhC5zxnYc8jsSX8LQeCnKp55P2uAuYuYCb1qJBeYwIxMxfLUT69rggoAVvSJ0tlOFb+WAMBU4N/mEqdA4aEMBhRTHI4vBaGbLWoeXS2g0CxofZ/TVPZ204SABAdQTOLvgfljnjcSAD7Y82rSLEq+MZTeWQryVkzISaQ4d2VPHahrOqZd9b5TRNJ0S4JyYQLGTDQtO/HCqhX02AwEs4JP6azCK/Y0WjGCKmVypwFEXRhtLGouiMDuULGjm+4ZkA/qw6rouIhH5eKsef/AJ0xnR6bwB6MeIGH/a+iXihvHsPUJvAVEQSZSG2HQ+m5FQmIunQbwNFoIvEcKaue6L0pH3vZZR/AuJcUl2ckeVXHVxpV3kIEnG9qpCj+673AdDxxnzQfHtLL5Ww3JFaIx3PdKfoIEnA3su2yJBQrZsnMxepDmhCo9My+LB7Y4hJQ3hNAWO5ZI5r1JMDTieDn6OeC/ELTCobv9BeofGTDXh+pZxsUI1Dy5lqp6zj7UFWXwGuasTidIFVQA48K36R1PgT8Jr/VjbOlqgo9txoyjqSwg8EzyDdO2c1DwICUvKwZaPHgJc7I1RQpgKrVkAZyBjwxVk5MChN3ENNcq2JzX6XTI3b8Mn3ZlG1muvLAP3eESkPDMnOfV+m0wu2gD0veMF+U="
   file: triptrack.tar.gz
   overwrite: true
   on:
     repo: AppStateESS/triptrack
     branch: master
     tags: true
+  api_key:
+    secure: Ui/Egyv3rrEU1PLCTkRy3zwufY1Cxy3nnXMYsxQx9gIAD9xqyDQWN/DjqTUM99svQhEhFwHmLBv5lAHHrMMXXhws+fTih2Jasjs0+qsqMw2VHA9obQA7TGGSfKOkpm3JYycAqDmsB+u6GXRcgkvnxoBTSxzEkwQVM6Wao+44QBkuqJyxxop7lqWk60LkXH8GX9tSjT6YdLyxtqqo771BicfQaBHp2zNbsd9ZV6VfRb6Y1X5VQo8YUzz1aPUpe8InF5f+iwWcdoOG+tr1PIFTMdORF0HQ/hAIwtCzx9wzphWyg7rI9s+/OtXakwuuvuIWLD+G6wxXcWqW+KEI6o2FS31H+RDAWBNI5ofezGA0dV7j97jR16Mhco4cNJzPnp+ciFhTZcwiNFTJoB9HvIVvV6akHSuuDYIQUfCdnltxO9Sed2xzSGDVRh4vGX7F8EE1UGGl2bRMxyN53GxD6soSCElOrMrfYyAUkrh6NmAYIhgnpRrcnYaV8OINjpOE8ZOCuSvTGvhT/R2SpiXPnkbGOg857PBvaDb7vWug+ogtQXrrIWXZ6qLici+M0zlQ2R//ximbzEkXdJwWsEj2xj7YPGgYOOXc/d7H7b0O5APOWSHwccaLPeEMRNp0+2jpuZYZ8/zkZTfvXUFIquyqydAs2lWdjqmYYJMqGpwijSkGMZ4=
