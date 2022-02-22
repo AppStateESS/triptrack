@@ -35,6 +35,9 @@ class EmailFactory
         }
 
         $from = SettingFactory::getContact();
+        if (empty($from)) {
+            throw new \Exception('Site contact email is not set.');
+        }
         $message->setSubject($subject);
         $message->setFrom($from['siteContactEmail']);
         if ($htmlFormat) {
