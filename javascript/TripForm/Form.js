@@ -168,8 +168,7 @@ const Form = ({
   const cancelTrip = () => {
     if (confirm('Are you sure you want to permanently delete this trip?')) {
       deleteTrip(trip.id, role).then(() => {
-        const url = `./triptrack/${role}/Trip`
-        resetTrip(url)
+        location.href = `./triptrack/${role}/Trip`
       })
     }
   }
