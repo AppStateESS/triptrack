@@ -115,7 +115,7 @@ const OrgList = ({engageUrl, organizationLabel, forceEngageOrg}) => {
   )
 
   if (loading) {
-    return <div>Loading organizations...</div>
+    return <div>Loading {organizationLabel}s...</div>
   } else if (organizations.length === 0) {
     return (
       <div>
@@ -125,7 +125,7 @@ const OrgList = ({engageUrl, organizationLabel, forceEngageOrg}) => {
             setShowModal(true)
           }}
         />
-        <p>No organizations found.</p>
+        <p>No {organizationLabel.toLowerCase()}s found.</p>
         {modal}
       </div>
     )
