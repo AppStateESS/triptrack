@@ -75,6 +75,11 @@ class Trip extends SubController
         return $this->view->adminForm($this->id);
     }
 
+    protected function upcomingHtml()
+    {
+        return $this->view->upcoming();
+    }
+
     protected function viewJson()
     {
         if ((int) $this->id === 0) {
