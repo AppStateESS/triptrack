@@ -1,6 +1,10 @@
 <h2>Trip Track</h2>
-
+<div class="float-right"><a href="./controlpanel"><i class="fas fa-cog"></i></a> | <a href="<?=$logout?>"><i
+      class="fas fa-sign-out-alt"></i></a></div>
 <ul class="nav nav-tabs mb-2">
+  <li class="nav-item">
+    <a class="nav-link<?=$upcomingActive?>" href="./triptrack/Admin/Trip/upcoming">Upcoming</a>
+  </li>
   <li class="nav-item">
     <a class="nav-link<?=$orgActive?>" href="./triptrack/Admin/Organization"><?=$organizationLabel?>s</a>
   </li>
@@ -17,9 +21,6 @@
   </li>
   <li class="nav-item">
     <a class="nav-link<?=$settingActive?>" href="./triptrack/Admin/Setting">Settings</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="./controlpanel">Panel</a>
   </li>
 </ul>
 <?php if ($alert):?>
