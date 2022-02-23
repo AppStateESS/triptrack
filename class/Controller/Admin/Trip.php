@@ -119,9 +119,13 @@ class Trip extends SubController
 
     protected function approvalPatch(Request $request)
     {
-        TripFactory::patch($this->id, 'approved', true);
-        TripFactory::emailApproval($this->id);
-        return ['success' => true];
+        if (TripFactory::approvalAllowed($this->id)) {
+            TripFactory::patch($this->id, 'approved', true);
+            TripFactory::emailApproval($this->id);
+            return ['success' => true];
+        } else {
+            throw new \Exception('Cannot approve trip id: ' . $this->id);
+        }
     }
 
     protected function addMembersPost(Request $request)
