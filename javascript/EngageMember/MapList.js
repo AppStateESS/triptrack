@@ -11,6 +11,8 @@ const MapList = ({
   setCheckAll,
   organizationLabel,
   orgId,
+  badMembers,
+  memberCount,
 }) => {
   const [saving, setSaving] = useState(false)
   const rows = memberList.map((value, key) => {
@@ -57,6 +59,9 @@ const MapList = ({
       action="./triptrack/Admin/Member/addListByOrganizationId">
       <input type="hidden" name="organizationId" value={orgId} />
       <div className="text-center mb-3">{saveButton}</div>
+      <div>
+        Total members found: {memberCount} | Bad records ignored: {badMembers}
+      </div>
       <table className="table table-striped">
         <tbody>
           <tr>
@@ -90,6 +95,8 @@ MapList.propTypes = {
   organizationLabel: PropTypes.string,
   orgId: PropTypes.number,
   saving: PropTypes.bool,
+  badMembers: PropTypes.number,
+  memberCount: PropTypes.number,
 }
 
 export default MapList

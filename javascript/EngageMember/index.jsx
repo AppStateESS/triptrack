@@ -12,12 +12,16 @@ const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
   const [loading, setLoading] = useState(true)
   const [checked, setChecked] = useState([])
   const [checkAll, setCheckAll] = useState(false)
+  const [badMembers, setBadMembers] = useState(0)
+  const [memberCount, setMemberCount] = useState(0)
   const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     getOrganizationList(engageId)
       .then((response) => {
-        setMemberList(response.data)
+        setBadMembers(response.data.badMembers)
+        setMemberCount(response.data.memberCount)
+        setMemberList(response.data.members)
         setLoading(false)
       })
       .catch(() => {
@@ -67,6 +71,8 @@ const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
           {...{
             orgId,
             memberList,
+            badMembers,
+            memberCount,
             checked,
             updateChecked,
             checkAll,
