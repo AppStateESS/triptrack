@@ -60,6 +60,12 @@ class EngageFactory
         return $engageAPI->events->get();
     }
 
+    /**
+     * Returns a list of an organization's members. Repeated members (holding more
+     * than one position) and corrupt members are left out.
+     * @param int $organizationEngageId
+     * @return array
+     */
     public static function getMembersByOrganizationId(int $organizationEngageId)
     {
         $organization = OrganizationFactory::getByEngageId($organizationEngageId);
@@ -69,6 +75,8 @@ class EngageFactory
         $engageApi->memberships->parameters->organizationId = $organizationEngageId;
         $memberships = $engageApi->memberships->getAll();
         $rows = [];
+        $memberCount = 0;
+        $badMembers = 0;
         if (empty($bannerIds)) {
             $bannerIds = [];
         }
@@ -78,6 +86,7 @@ class EngageFactory
                  * Engage has corrupt records with missing Banner IDs. We ignore those.
                  */
                 if (!is_numeric($member->username)) {
+                    $badMembers++;
                     continue;
                 }
                 /**
@@ -92,12 +101,13 @@ class EngageFactory
                     'username' => str_ireplace('@' . CAMPUS_EMAIL_DOMAIN, '', $member->userCampusEmail),
                     'lastName' => $member->userLastName, 'email' => $member->userCampusEmail, 'engageId' => $member->userId];
                 $bannerIds[] = $member->username;
+                $memberCount++;
             }
         }
         usort($rows, function ($a, $b) {
             return strcmp($a['lastName'], $b['lastName']);
         });
-        return $rows;
+        return array('memberCount' => $memberCount, 'badMembers' => $badMembers, 'members' => $rows);
     }
 
     public static function getRsvpListByEventId(int $eventId)
