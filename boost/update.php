@@ -21,6 +21,10 @@ function triptrack_update(&$content, $currentVersion)
             tt_update_1_2_0($content);
             $content[] = 'Added setting for Engage organizations only.';
             $content[] = 'Organization form changed to only allow organizations in Engage is setting is set.';
+        case version_compare($currentVersion, '1.2.1', '<'):
+            $content[] = 'Added error check on allowing approval on incomplete trip.';
+            $content[] = 'Corrupt members from organization pull are now ignored.';
+            $content[] = 'Member listing now shows total members and bad member count.';
     }
     return true;
 }
