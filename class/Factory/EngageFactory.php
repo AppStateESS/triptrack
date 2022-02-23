@@ -75,6 +75,12 @@ class EngageFactory
         if (!empty($memberships)) {
             foreach ($memberships as $member) {
                 /**
+                 * Engage has corrupt records with missing Banner IDs. We ignore those.
+                 */
+                if (!is_numeric($member->username)) {
+                    continue;
+                }
+                /**
                  * Members can be in an organization multiple times with
                  * different position types.
                  */
