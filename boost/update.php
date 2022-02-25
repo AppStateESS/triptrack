@@ -25,6 +25,10 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = 'Added error check on allowing approval on incomplete trip.';
             $content[] = 'Corrupt members from organization pull are now ignored.';
             $content[] = 'Member listing now shows total members and bad member count.';
+        case version_compare($currentVersion, '1.2.2', '<'):
+            $content[] = 'Fixed bug with saving attended screen.';
+            $content[] = 'Fixed bug #45 with new trips inheriting attended.';
+            $content[] = 'Resolved #43 - Error check on attended saving.';
     }
     return true;
 }
