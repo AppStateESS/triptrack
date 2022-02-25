@@ -154,10 +154,6 @@ const Form = ({
     })
   }
 
-  const resetTrip = () => {
-    setTrip({...defaultTrip})
-  }
-
   const setFormElement = (key, value) => {
     changesMade.current = true
     trip[key] = value
