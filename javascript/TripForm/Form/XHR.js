@@ -23,6 +23,7 @@ const associateEvent = ({
     setAttendedLoading(true)
     const attended = response.data
     const nonOrgMembers = []
+    selectedMembers = []
     attended.forEach((attend) => {
       const {bannerId} = attend
       const result = members.find((element) => element.bannerId == bannerId)
