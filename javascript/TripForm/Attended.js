@@ -2,8 +2,9 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {addAttendeeList} from '../api/MemberAjax'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
-const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
+const Attended = ({newMembers, setAttendedModal, memberLoad, orgId}) => {
   if (newMembers.length === 0) {
     return <div>No members</div>
   }
@@ -11,6 +12,7 @@ const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
   const [saving, setSaving] = useState(false)
   const [attendees, setAttendees] = useState([])
   const [toggleAll, setToggleAll] = useState(false)
+  const [error, setError] = useState(false)
 
   const toggleAllAttendee = () => {
     const resetAttendees = []
@@ -35,10 +37,15 @@ const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
 
   const addAttendees = () => {
     setSaving(true)
-    addAttendeeList(attendees, orgId).then(() => {
-      loadMembers()
-      setAttendedModal(false)
-    })
+    addAttendeeList(attendees, orgId)
+      .then(() => {
+        memberLoad(true)
+        setAttendedModal(false)
+      })
+      .catch(() => {
+        setSaving(false)
+        setError(true)
+      })
   }
   return (
     <div>
@@ -68,10 +75,16 @@ const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
         })}
       </ul>
       {saving ? (
-        <div>Saving attendees...</div>
+        <div>
+          <FontAwesomeIcon icon="spinner" spin />
+          &nbsp; Saving attendees...
+        </div>
       ) : (
         <div>
-          <button className="btn btn-success mr-3" onClick={addAttendees}>
+          <button
+            className="btn btn-success mr-3"
+            disabled={error}
+            onClick={addAttendees}>
             Add these attendees to the organization
           </button>
           <button
@@ -81,6 +94,11 @@ const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
             }}>
             Ignore attendees
           </button>
+          {error && (
+            <div className="alert alert-danger mt-3">
+              Sorry, an error occurred during the update.
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -90,7 +108,7 @@ const Attended = ({newMembers, setAttendedModal, loadMembers, orgId}) => {
 Attended.propTypes = {
   newMembers: PropTypes.array,
   setAttendedModal: PropTypes.func,
-  loadMembers: PropTypes.func,
+  memberLoad: PropTypes.func,
   orgId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 }
 
