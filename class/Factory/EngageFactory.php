@@ -176,6 +176,26 @@ class EngageFactory
         return $db->select();
     }
 
+    /**
+     * Sorts events by date in descending order.
+     * @param array $events
+     */
+    public static function dropdownSortEvents(array $events)
+    {
+        foreach ($events as $event) {
+            $timeIndex = strtotime($event->startsOn);
+            $sorted[$timeIndex][] = $event;
+        }
+
+        krsort($sorted);
+        foreach ($sorted as $sort) {
+            foreach ($sort as $s) {
+                $final[] = $s;
+            }
+        }
+        return $final;
+    }
+
     public static function totalOnlineOrganizations()
     {
         if (!isset($_SESSION['ENGAGE_ORG_COUNT'])) {
