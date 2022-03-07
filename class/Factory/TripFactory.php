@@ -391,7 +391,7 @@ class TripFactory extends BaseFactory
         $trip->timeDeparting = $request->pullPutString('timeDeparting');
         $trip->timeEventStarts = $request->pullPutString('timeEventStarts');
         $trip->timeReturn = $request->pullPutString('timeReturn');
-        $trip->visitPurpose = $request->pullPutString('visitPurpose');
+        $trip->visitPurpose = substr($request->pullPutString('visitPurpose'), 0, 255);
         return $trip;
     }
 
