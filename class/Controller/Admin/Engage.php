@@ -43,6 +43,11 @@ class Engage extends SubController
         }
     }
 
+    protected function eventJson(Request $request)
+    {
+        return EngageFactory::getEvent($request->pullGetInteger('eventId'));
+    }
+
     protected function searchOrganizationsJson(Request $request)
     {
         $name = $request->pullGetString('name');
@@ -70,7 +75,12 @@ class Engage extends SubController
             throw new \Exception('Organization not found');
         }
 
-        return EngageFactory::getUpcomingEventsByOrganizationId($organization->engageId);
+        $events = EngageFactory::getUpcomingEventsByOrganizationId($organization->engageId);
+
+        if (empty($events)) {
+            return null;
+        }
+        return EngageFactory::dropdownSortEvents($events);
     }
 
     protected function rsvpListByEventJson(Request $request)
