@@ -13,11 +13,11 @@ import {deleteTrip} from '../api/TripAjax'
 import {approvedIcon} from './Form/Node'
 import {
   associateEvent,
-  loadMembers,
   saveTrip,
-  findAssociatedEvent,
+  loadMembers,
+  loadSelectedMembers,
 } from './Form/XHR'
-import {getOrganizationEvents} from '../api/Engage'
+import {getOrganizationEvents, getEvent} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
@@ -55,21 +55,33 @@ const Form = ({
   const [newMembers, setNewMembers] = useState([])
   const [attendedLoading, setAttendedLoading] = useState(false)
 
+  /**
+   * Tracks initial trip load
+   */
+  const tripComplete = useRef(false)
+
   const memberAnchor = useRef(null)
-  const renderReady = useRef(false)
   const changesMade = useRef(false)
-  const organizationLoaded = useRef(false)
 
+  /**
+   * Starts the program once a proper trip object is passed
+   * down in the prop.
+   */
   useEffect(() => {
-    if (location.hash == '#members') {
-      setTimeout(() => {
-        memberAnchor.current.scrollIntoView()
-        window.scrollTo(memberAnchor.current)
-      }, 1000)
+    if (trip.id > 0) {
+      plugAssociatedEvent(trip.engageEventId)
+      scrollToMembers()
+      memberLoad().then(() => {
+        tripComplete.current = true
+      })
     }
-    renderReady.current = true
-  }, [])
+  }, [trip.id])
 
+  /**
+   * Performs an error check on the host and visitPurpose
+   * fields after an associated event is set. This clears
+   * a no content error.
+   */
   useEffect(() => {
     if (associatedEvent.id) {
       errorCheck('host', trip.host)
@@ -78,34 +90,51 @@ const Form = ({
   }, [associatedEvent])
 
   useEffect(() => {
-    plugAssociatedEvent(trip.engageEventId)
-  }, [trip.id])
-
-  useEffect(() => {
-    if (!organizationLoaded.current) {
-      loadOrganizationAssociations()
-      organizationLoaded.current = true
+    if (tripComplete.current) {
+      memberLoad()
+      loadEvents(trip.organizationId, role)
     }
-    // initial load completed, now update on organziation id change
-    setMembers([])
-    setSelectedMembers([])
-    setEvents([])
-    trip.engageEventId = 0
-    setTrip({...trip})
-    if (parseInt(trip.organizationId) === 0) {
-      return
-    }
-    loadOrganizationAssociations(false)
   }, [trip.organizationId])
 
   useEffect(() => {
-    if (renderReady.current) {
+    if (tripComplete.current) {
       plugAssociatedEvent(trip.engageEventId)
     }
   }, [events])
 
-  const memberLoad = (getSelected) => {
-    loadMembers({trip, role, setMembers, setSelectedMembers, getSelected})
+  /**
+   * Loads events associated to the organizationId
+   * @param {number} organizationId
+   */
+  const loadEvents = (organizationId, role) => {
+    setLoadingEvents(true)
+    getOrganizationEvents(organizationId, role).then((response) => {
+      setEvents(response.data)
+      setLoadingEvents(false)
+    })
+  }
+
+  /**
+   * Checks the location hash for #members
+   * If set, page scrolls to that form section.
+   */
+  const scrollToMembers = () => {
+    if (location.hash == '#members') {
+      setTimeout(() => {
+        memberAnchor.current.scrollIntoView()
+        window.scrollTo(memberAnchor.current)
+      }, 1000)
+    }
+  }
+
+  /**
+   * Loads members using the trip.organizationId then loads selected
+   * attending members using the trip.id
+   */
+  const memberLoad = () => {
+    return loadMembers(trip.organizationId, role, setMembers).then(() => {
+      loadSelectedMembers(trip.id, role, setSelectedMembers)
+    })
   }
 
   const onComplete = () => {
@@ -145,15 +174,6 @@ const Form = ({
     })
   }
 
-  const loadOrganizationAssociations = (associateMembers = true) => {
-    memberLoad(associateMembers)
-    setLoadingEvents(true)
-    getOrganizationEvents(trip.organizationId, role).then((response) => {
-      setLoadingEvents(false)
-      setEvents(response.data)
-    })
-  }
-
   const setFormElement = (key, value) => {
     changesMade.current = true
     trip[key] = value
@@ -169,16 +189,26 @@ const Form = ({
     }
   }
 
+  /**
+   * Receives an eventId and queries the server for the event
+   * information. If found, it is copied to associatedEvent. If
+   * not found, associatedEvent is cleared with name only stub object.
+   * @param {number} eventId
+   * @returns void
+   */
   const plugAssociatedEvent = (eventId) => {
     if (eventId === 0) {
       return
     }
-    const matchingEvent = findAssociatedEvent(events, eventId)
-    if (matchingEvent !== undefined) {
-      setAssociatedEvent(matchingEvent)
-    } else {
-      setAssociatedEvent({name: ''})
-    }
+
+    getEvent(eventId).then((response) => {
+      const matchingEvent = response.data[0]
+      if (matchingEvent !== undefined) {
+        setAssociatedEvent(matchingEvent)
+      } else {
+        setAssociatedEvent({name: ''})
+      }
+    })
   }
 
   const completeConfirmation = (confirmResult) => {

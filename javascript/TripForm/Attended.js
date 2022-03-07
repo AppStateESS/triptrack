@@ -39,7 +39,7 @@ const Attended = ({newMembers, setAttendedModal, memberLoad, orgId}) => {
     setSaving(true)
     addAttendeeList(attendees, orgId)
       .then(() => {
-        memberLoad(true)
+        memberLoad()
         setAttendedModal(false)
       })
       .catch(() => {

@@ -76,30 +76,28 @@ const findAssociatedEvent = (eventList, engageEventId) => {
   return found
 }
 
-const loadMembers = ({
-  trip,
-  role,
-  setMembers,
-  setSelectedMembers,
-  getSelected,
-}) => {
-  let part1
-  let part2
-
-  part1 = getList(`./triptrack/${role}/Member`, {
-    orgId: trip.organizationId,
+const getOrganizationMembers = (organizationId, role) => {
+  return getList(`./triptrack/${role}/Member`, {
+    orgId: organizationId,
   })
+}
 
-  if (getSelected && trip.id > 0) {
-    part2 = getList(`./triptrack/${role}/Trip/${trip.id}/memberList`)
-  }
-  Promise.all([part1, part2]).then((response) => {
-    setMembers(response[0].data)
-    if (getSelected) {
-      if (response[1]) {
-        setSelectedMembers(response[1].data)
-      }
-    }
+const getSelectedMembers = (tripId, role) => {
+  return getList(`./triptrack/${role}/Trip/${tripId}/memberList`)
+}
+
+/**
+ * Loads the members of an organization
+ */
+const loadMembers = (organizationId, role, setMembers) => {
+  return getOrganizationMembers(organizationId, role).then((response) => {
+    setMembers(response.data)
+  })
+}
+
+const loadSelectedMembers = (tripId, role, setSelectedMembers) => {
+  return getSelectedMembers(tripId, role).then((response) => {
+    setSelectedMembers(response.data)
   })
 }
 
@@ -165,6 +163,7 @@ const unixTime = (stamp) => {
 
 export {
   loadMembers,
+  loadSelectedMembers,
   saveTrip,
   toggleApproval,
   associateEvent,
