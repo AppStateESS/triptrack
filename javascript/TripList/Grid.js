@@ -64,6 +64,12 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
                 <i className="fas fa-copy"></i>&nbsp;Copy trip
               </a>
               <a
+                title="Edit trip"
+                className="dropdown-item"
+                href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
+                <i className="fas fa-edit"></i>&nbsp;Edit
+              </a>
+              <a
                 className="dropdown-item"
                 href={`triptrack/Admin/Report/trip/?tripId=${value.id}`}
                 title="Member report">
@@ -74,12 +80,6 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
                 href={`triptrack/Admin/Trip/emailMembers?orgId=${value.organizationId}&tripId=${value.id}`}
                 title="Email members">
                 <i className="fas fa-envelope"></i>&nbsp;Email
-              </a>
-              <a
-                title="Edit trip"
-                className="dropdown-item"
-                href={'triptrack/Admin/Trip/' + value.id + '/edit'}>
-                <i className="fas fa-edit"></i>&nbsp;Edit
               </a>
               <a
                 title="Delete trip"
