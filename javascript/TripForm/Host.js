@@ -70,7 +70,6 @@ const Host = ({
       return null
     }
   }
-
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">{hostString} information</legend>
@@ -121,6 +120,8 @@ const Host = ({
           <input
             type="text"
             name="visitPurpose"
+            maxsize="255"
+            size="255"
             className={errors.visitPurpose ? invalid : valid}
             placeholder="Reason for traveling"
             value={trip.visitPurpose}
