@@ -96,7 +96,7 @@ class Engage extends SubController
             return false;
         }
 
-        return EngageFactory::getAttendedListByEventId($eventId, true);
+        return EngageFactory::getAttendedListByEventId($eventId);
     }
 
 }
