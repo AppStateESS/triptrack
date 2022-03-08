@@ -30,6 +30,11 @@ class Trip extends SubController
         return $this->view->listHtml($unapproved);
     }
 
+    protected function assignHtml(Request $request)
+    {
+        return $this->view->assign($this->id, 'Admin');
+    }
+
     protected function listJson(Request $request)
     {
         $options = ['memberCount' => true, 'orgId' => $request->pullGetInteger('orgId', true), 'search' => $request->pullGetString('search',
@@ -128,11 +133,20 @@ class Trip extends SubController
         }
     }
 
+    /**
+     * Adds attending members to a Trip
+     * @param Request $request
+     * @return type
+     */
     protected function addMembersPost(Request $request)
     {
         $tripId = $request->pullPostInteger('tripId');
         $members = $request->pullPostArray('members');
+        /**
+         * Remove the currently linked members from the trip.
+         */
         MemberFactory::unlinkTrip($tripId);
+
         if (!empty($members) && $tripId > 0) {
             MemberFactory::addListToTrip($members, $tripId);
             return ['success' => true];
