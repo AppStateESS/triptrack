@@ -11,6 +11,7 @@ use phpws2\Database;
 use Canopy\Request;
 use triptrack\Resource\Member;
 use triptrack\BannerAPI;
+use triptrack\Factory\EngageFactory;
 
 class MemberFactory extends BaseFactory
 {
@@ -50,6 +51,25 @@ class MemberFactory extends BaseFactory
                 return false;
             }
         }
+    }
+
+    /**
+     * Returns a list of volunteers marked as having attended an event. Admins will mark
+     * students as attended prior to the event to allow this data to be included.
+     * @param int $eventId
+     * @return type
+     * @throws \Exception
+     */
+    public static function getEventAttending(int $eventId)
+    {
+        if (empty($eventId)) {
+            throw new \Exception('Event ID is empty');
+        }
+        $attending = \triptrack\Factory\EngageFactory::getAttendedListByEventId($eventId, true);
+        if (empty($attending)) {
+            return false;
+        }
+        return $attending;
     }
 
     public static function unlinkTrip(int $tripId)
@@ -311,6 +331,20 @@ EOF;
         }
     }
 
+    public static function addToTripByBannerId(string $bannerId, int $tripId)
+    {
+        $member = self::pullByBannerId($bannerId);
+        if (empty($member)) {
+            $bannerStudent = BannerAPI::getStudent($bannerId);
+            $member = self::buildMemberFromBannerData($bannerStudent);
+            self::save($member);
+            $memberId = $member->id;
+        } else {
+            $memberId = $member['id'];
+        }
+        self::addToTrip($memberId, $tripId);
+    }
+
     public static function addToTrip($memberId, $tripId)
     {
         $db = Database::getDB();
@@ -436,13 +470,13 @@ EOF;
 
     /**
      *
-     * @param array $memberList Numeric array of member ids
+     * @param array $memberList Numeric array of banner ids
      * @param int $tripId
      */
     public static function addListToTrip(array $memberList, int $tripId)
     {
-        foreach ($memberList as $memberId) {
-            self::addToTrip($memberId, $tripId);
+        foreach ($memberList as $bannerId) {
+            self::addToTripByBannerId($bannerId, $tripId);
         }
     }
 
