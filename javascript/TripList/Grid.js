@@ -59,6 +59,12 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
               </a>
               <a
                 className="dropdown-item"
+                href={`./triptrack/Admin/Trip/${value.id}/assign`}
+                title="Assign members">
+                <i className="fas fa-user-check"></i>&nbsp;Assign members
+              </a>
+              <a
+                className="dropdown-item"
                 onClick={() => tripCopy(value.id)}
                 title="Copy trip">
                 <i className="fas fa-copy"></i>&nbsp;Copy trip
@@ -102,7 +108,17 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
         <td>
           {value.destinationCity}, {value.destinationState}
         </td>
-        <td className="text-right">{value.memberCount}</td>
+        <td className="text-right">
+          <a
+            href={`./triptrack/Admin/Trip/${value.id}/assign`}
+            className={
+              value.membercount === 0
+                ? 'btn btn-outline-danger'
+                : 'btn btn-outline-primary'
+            }>
+            {value.memberCount}
+          </a>
+        </td>
       </tr>
     )
   })
