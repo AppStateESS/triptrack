@@ -92,7 +92,11 @@ class Engage extends SubController
     protected function attendedListByEventJson(Request $request)
     {
         $eventId = $request->pullGetInteger('eventId');
-        return EngageFactory::getAttendedListByEventId($eventId);
+        if (empty($eventId)) {
+            return false;
+        }
+
+        return EngageFactory::getAttendedListByEventId($eventId, true);
     }
 
 }
