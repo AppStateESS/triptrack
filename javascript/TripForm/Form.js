@@ -6,17 +6,10 @@ import {tripSettings} from './TripDefaults'
 import Host from './Host'
 import Contact from './Contact'
 import Schedule from './Schedule'
-import Attended from './Attended'
-import MemberChoice from './MemberChoice'
 import Documents from './Documents'
 import {deleteTrip} from '../api/TripAjax'
 import {approvedIcon} from './Form/Node'
-import {
-  associateEvent,
-  saveTrip,
-  loadMembers,
-  loadSelectedMembers,
-} from './Form/XHR'
+import {associateEvent, saveTrip} from './Form/XHR'
 import {getOrganizationEvents, getEvent} from '../api/Engage'
 import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
@@ -48,34 +41,14 @@ const Form = ({
   const [errors, setErrors] = useState({...tripSettings.no})
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
-  const [members, setMembers] = useState([])
-  const [selectedMembers, setSelectedMembers] = useState([])
   const [trip, setTrip] = useState({...defaultTrip})
-  const [attendedModal, setAttendedModal] = useState(false)
-  const [newMembers, setNewMembers] = useState([])
-  const [attendedLoading, setAttendedLoading] = useState(false)
 
   /**
    * Tracks initial trip load
    */
   const tripComplete = useRef(false)
 
-  const memberAnchor = useRef(null)
   const changesMade = useRef(false)
-
-  /**
-   * Starts the program once a proper trip object is passed
-   * down in the prop.
-   */
-  useEffect(() => {
-    if (trip.id > 0) {
-      plugAssociatedEvent(trip.engageEventId)
-      scrollToMembers()
-      memberLoad().then(() => {
-        tripComplete.current = true
-      })
-    }
-  }, [trip.id])
 
   /**
    * Performs an error check on the host and visitPurpose
@@ -91,7 +64,6 @@ const Form = ({
 
   useEffect(() => {
     if (tripComplete.current) {
-      memberLoad()
       loadEvents(trip.organizationId, role)
     }
   }, [trip.organizationId])
@@ -114,29 +86,6 @@ const Form = ({
     })
   }
 
-  /**
-   * Checks the location hash for #members
-   * If set, page scrolls to that form section.
-   */
-  const scrollToMembers = () => {
-    if (location.hash == '#members') {
-      setTimeout(() => {
-        memberAnchor.current.scrollIntoView()
-        window.scrollTo(memberAnchor.current)
-      }, 1000)
-    }
-  }
-
-  /**
-   * Loads members using the trip.organizationId then loads selected
-   * attending members using the trip.id
-   */
-  const memberLoad = () => {
-    return loadMembers(trip.organizationId, role, setMembers).then(() => {
-      loadSelectedMembers(trip.id, role, setSelectedMembers)
-    })
-  }
-
   const onComplete = () => {
     window.location.href = `./triptrack/${role}/Trip/`
   }
@@ -146,12 +95,6 @@ const Form = ({
       eventId,
       events,
       role,
-      setAttendedLoading,
-      members,
-      selectedMembers,
-      setAttendedModal,
-      setNewMembers,
-      setSelectedMembers,
       trip,
       plugAssociatedEvent,
       setTrip,
@@ -165,7 +108,6 @@ const Form = ({
       confirmationRequired,
       trip,
       setConfirmModal,
-      selectedMembers,
       defaultTrip,
       role,
       setErrors,
@@ -303,16 +245,6 @@ const Form = ({
     return !foundError
   }
 
-  let memberWarning
-  if (members.length === 0 && parseInt(trip.organizationId) > 1) {
-    memberWarning = (
-      <div className="alert alert-danger">
-        There are no members in this {organizationLabel.toLowerCase()}. Approval
-        requires member selection.
-      </div>
-    )
-  }
-
   const saveButton = changesMade.current ? (
     <div className="text-center">
       <button className="btn btn-sm btn-success" onClick={tripSave}>
@@ -325,7 +257,6 @@ const Form = ({
       <h3>Enter trip information</h3>
       <p>Please enter all requested, required information below:</p>
       {approvedIcon({trip, allowApproval, setFormElement})}
-      {memberWarning}
 
       <a id="submitter-info"></a>
       <div className="row">
@@ -364,11 +295,6 @@ const Form = ({
                 )}
               </div>
             )}
-            {attendedLoading ? (
-              <div className="badge badge-info text-white">
-                Searching for attending...
-              </div>
-            ) : null}
           </fieldset>
         </div>
       </div>
@@ -413,21 +339,6 @@ const Form = ({
             }}
           />
         </div>
-        {trip.organizationId > 0 ? (
-          <div className="col-sm-5">
-            <a name="members" id="members" ref={memberAnchor}></a>
-            <div>
-              <MemberChoice
-                {...{
-                  members,
-                  organizationLabel,
-                  selectedMembers,
-                  setSelectedMembers,
-                }}
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
       <div className="text-center">
         <button className="btn btn-success mb-2" onClick={() => tripSave()}>
@@ -446,19 +357,6 @@ const Form = ({
         </div>
       </div>
 
-      <Overlay
-        show={attendedModal}
-        close={() => setAttendedModal(false)}
-        title="Non-member attendance">
-        <Attended
-          {...{
-            newMembers,
-            setAttendedModal,
-            memberLoad,
-            orgId: trip.organizationId,
-          }}
-        />
-      </Overlay>
       <Overlay
         show={confirmModal}
         close={() => setConfirmModal(false)}
