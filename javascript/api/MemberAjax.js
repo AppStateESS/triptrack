@@ -1,6 +1,6 @@
 import axios from 'axios'
 import 'regenerator-runtime'
-import {patchItem, postItem, sendDelete} from './Fetch'
+import {patchItem, postItem, sendDelete, getList} from './Fetch'
 
 const headers = {
   'X-Requested-With': 'XMLHttpRequest',
@@ -16,8 +16,16 @@ const addMember = async (memberId, orgId, tripId) => {
   }
 }
 
+const getMemberListByOrganization = (organizationId, role = 'Admin') => {
+  return getList(`./triptrack/${role}/Member/`, {organizationId})
+}
+
+const getEventAttending = (eventId, role = 'Admin') => {
+  return getList(`./triptrack/${role}/Member/eventAttending`, {eventId})
+}
+
 const addAttendeeList = async (members, organizationId) => {
-  const url = `triptrack/Admin/Member/addAttendeeList`
+  const url = `/triptrack/Admin/Member/addAttendeeList`
   try {
     const response = await axios.post(url, {members, organizationId}, {headers})
     return response
@@ -75,6 +83,7 @@ const restrictMember = async (id) => {
     'restrict'
   )
 }
+
 const unrestrictMember = async (id) => {
   return await patchItem(
     'Member',
@@ -82,6 +91,15 @@ const unrestrictMember = async (id) => {
     {varName: 'restricted', value: false},
     'unrestrict'
   )
+}
+
+const getParticipants = async (tripId, role = 'Admin') => {
+  return await getList(`./triptrack/${role}/Member/`, {tripId})
+}
+
+const sendMembersAttending = async (tripId, members, role = 'Admin') => {
+  const url = `./triptrack/${role}/Trip/addMembers`
+  return await axios.post(url, {tripId, members}, {headers})
 }
 
 export {
@@ -95,4 +113,8 @@ export {
   deleteMember,
   restrictMember,
   unrestrictMember,
+  getMemberListByOrganization,
+  getEventAttending,
+  getParticipants,
+  sendMembersAttending,
 }
