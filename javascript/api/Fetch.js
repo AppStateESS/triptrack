@@ -5,6 +5,12 @@ const headers = {
   'X-Requested-With': 'XMLHttpRequest',
 }
 
+/**
+ *
+ * @param {string} url
+ * @param {object} options
+ * @returns Promise
+ */
 const getList = async (url, options) => {
   const response = await axios.get(url, {
     params: options,
