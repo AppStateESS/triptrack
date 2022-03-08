@@ -73,6 +73,15 @@ class Member extends SubController
         return ['success' => true];
     }
 
+    protected function eventAttendingJson(Request $request)
+    {
+        $eventId = $request->pullGetInteger('eventId');
+        if (empty($eventId)) {
+            return false;
+        }
+        return MemberFactory::getEventAttending($eventId);
+    }
+
     protected function getByBannerIdJson(Request $request)
     {
         $bannerId = $request->pullGetInteger('studentBannerId');
