@@ -14,4 +14,5 @@ exports.entry = {
   Reports: exports.APP_DIR + '/Reports/index.jsx',
   Approval: exports.APP_DIR + '/Approval/index.jsx',
   EngageMember: exports.APP_DIR + '/EngageMember/index.jsx',
+  MemberSelection: exports.APP_DIR + '/MemberSelection/index.jsx',
 }
