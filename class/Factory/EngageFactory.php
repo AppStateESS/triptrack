@@ -139,8 +139,21 @@ class EngageFactory
             return [];
         }
         foreach ($attending as $att) {
-            $attendList[] = ['bannerId' => $att->userId->username, 'email' => $att->userId->campusEmail];
+            $newMember = false;
+            $bannerId = $att->userId->username;
+            $member = MemberFactory::loadByBannerId($bannerId);
+            if ($member === false) {
+                $bannerPull = BannerAPI::getStudent($bannerId);
+                $member = MemberFactory::buildMemberFromBannerData($bannerPull);
+                $newMember = true;
+            }
+            $stringVars = $member->getStringVars();
+            $stringVars['newMember'] = $newMember;
+            $attendList[] = $stringVars;
         }
+        usort($attendList, function ($a, $b) {
+            return $a['lastName'] <=> $b['lastName'];
+        });
         return $attendList;
     }
 
