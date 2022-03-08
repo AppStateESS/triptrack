@@ -61,6 +61,15 @@ class TripView extends AbstractView
         return $this->dashboardScript('trip', 'AdminTripForm', $vars);
     }
 
+    public function assign(int $tripId, string $role = 'Admin')
+    {
+        return $this->dashboardscript('trip', 'MemberSelection', [
+                'tripId' => $tripId,
+                'organizationLabel' => SettingFactory::getOrganizationLabel(),
+                'role' => $role
+        ]);
+    }
+
     /**
      * Returns shared member and admin view variables.
      * @param type $trip
@@ -71,7 +80,7 @@ class TripView extends AbstractView
 
         $vars = $trip->getStringVars();
         $vars['organizationName'] = $organization->name;
-        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['organizationLabel'] = SettingFactory::getOrganizationLabel();
         $vars['organizationId'] = $organization->id;
         $vars['contactPhoneFormat'] = preg_replace('/(\d{3})(\d{3})(\d{4})/', '\\1-\\2-\\3', $trip->contactPhone);
         $vars['logout'] = OrganizationFactory::logoutLink();
