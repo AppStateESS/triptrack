@@ -63,7 +63,7 @@ class TripView extends AbstractView
 
     public function assign(int $tripId, string $role = 'Admin')
     {
-        return $this->dashboardscript('trip', 'MemberSelection', [
+        return $this->dashboardScript('trip', 'MemberSelection', [
                 'tripId' => $tripId,
                 'organizationLabel' => SettingFactory::getOrganizationLabel(),
                 'role' => $role
