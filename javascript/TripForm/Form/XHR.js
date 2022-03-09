@@ -1,6 +1,5 @@
 'use strict'
 import {postTrip, patchApproval} from '../../api/TripAjax'
-import {getList} from '../../api/Fetch'
 import {getAttendedBannerIds} from '../../api/Engage'
 
 const associateEvent = ({
@@ -76,31 +75,6 @@ const findAssociatedEvent = (eventList, engageEventId) => {
   return found
 }
 
-const getOrganizationMembers = (organizationId, role) => {
-  return getList(`./triptrack/${role}/Member`, {
-    orgId: organizationId,
-  })
-}
-
-const getSelectedMembers = (tripId, role) => {
-  return getList(`./triptrack/${role}/Trip/${tripId}/memberList`)
-}
-
-/**
- * Loads the members of an organization
- */
-const loadMembers = (organizationId, role, setMembers) => {
-  return getOrganizationMembers(organizationId, role).then((response) => {
-    setMembers(response.data)
-  })
-}
-
-const loadSelectedMembers = (tripId, role, setSelectedMembers) => {
-  return getSelectedMembers(tripId, role).then((response) => {
-    setSelectedMembers(response.data)
-  })
-}
-
 const parseDescription = (desc) => {
   const removeTag = desc.replace(/<[^>]+>|\r\n/gi, '')
   const noNbsp = removeTag.replace(/&nbsp;/gi, ' ')
@@ -114,11 +88,8 @@ const saveTrip = ({
   confirmationRequired,
   trip,
   setConfirmModal,
-  selectedMembers,
-  defaultTrip,
   role,
   setErrors,
-  addMembersToTrip,
   onComplete,
 }) => {
   if (finalErrorCheck()) {
@@ -130,10 +101,7 @@ const saveTrip = ({
       setConfirmModal(true)
       return
     }
-    Promise.all([
-      postTrip(trip, role),
-      addMembersToTrip(selectedMembers, defaultTrip.id, role),
-    ]).then((response) => {
+    Promise.all([postTrip(trip, role)]).then((response) => {
       if (response[0].data.success) {
         onComplete()
       } else {
@@ -161,11 +129,4 @@ const unixTime = (stamp) => {
   return parseInt((new Date(stamp).getTime() / 1000).toFixed(0))
 }
 
-export {
-  loadMembers,
-  loadSelectedMembers,
-  saveTrip,
-  toggleApproval,
-  associateEvent,
-  findAssociatedEvent,
-}
+export {saveTrip, toggleApproval, associateEvent, findAssociatedEvent}
