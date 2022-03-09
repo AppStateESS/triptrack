@@ -12,6 +12,7 @@ import {
 import AttendingList from './AttendingList'
 import OrganizationList from './OrganizationList'
 import Participants from './Participants'
+import Search from './Search'
 import {getItem} from '../api/Fetch'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
@@ -152,6 +153,7 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
             <Participants {...{currentMembers, removeMember}} />
           </div>
         </div>
+        <Search role={role} addMember={addMember} bannerIds={bannerIds} />
         <div className="row">
           <div className="col-sm-6">
             <h4>{organization.name} members</h4>
@@ -182,6 +184,10 @@ MemberSelection.propTypes = {
 }
 
 ReactDOM.render(
-  <MemberSelection tripId={tripId} organizationLabel={organizationLabel} />,
+  <MemberSelection
+    tripId={tripId}
+    organizationLabel={organizationLabel}
+    role={role}
+  />,
   document.getElementById('MemberSelection')
 )
