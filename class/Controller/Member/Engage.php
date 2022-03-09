@@ -16,8 +16,9 @@ use triptrack\Controller\SubController;
 use Canopy\Request;
 use triptrack\Factory\EngageFactory;
 use triptrack\Factory\OrganizationFactory;
+use triptrack\Controller\AbstractController\AbstractEngage;
 
-class Engage extends SubController
+class Engage extends AbstractEngage
 {
 
     protected $view;
@@ -26,29 +27,6 @@ class Engage extends SubController
     {
         parent::__construct($role);
         $this->view = new \triptrack\View\EngageView();
-    }
-
-    protected function searchOrganizationsJson(Request $request)
-    {
-        $name = $request->pullGetString('name');
-        return EngageFactory::listOrganizations(['name' => $name, 'limit' => 50, 'noDuplicates' => true]);
-    }
-
-    protected function memberListByOrganizationJson(Request $request)
-    {
-        $engageOrgId = $request->pullGetInteger('engageOrgId');
-        return EngageFactory::getMembersByOrganizationId($engageOrgId);
-    }
-
-    protected function eventListByOrganizationJson(Request $request)
-    {
-        $orgId = $request->pullGetInteger('orgId');
-        $organization = OrganizationFactory::build($orgId);
-        if (empty($organization)) {
-            throw new \Exception('Organization not found');
-        }
-
-        return EngageFactory::getUpcomingEventsByOrganizationId($organization->engageId);
     }
 
     protected function rsvpListByEventJson(Request $request)
