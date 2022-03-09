@@ -11,7 +11,6 @@ import {deleteTrip} from '../api/TripAjax'
 import {approvedIcon} from './Form/Node'
 import {associateEvent, saveTrip} from './Form/XHR'
 import {getOrganizationEvents, getEvent} from '../api/Engage'
-import {addMembersToTrip} from '../api/TripAjax'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
 import UpcomingEvents from './UpcomingEvents'
@@ -111,7 +110,6 @@ const Form = ({
       defaultTrip,
       role,
       setErrors,
-      addMembersToTrip,
       onComplete,
     })
   }
