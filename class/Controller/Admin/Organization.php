@@ -7,26 +7,13 @@
 
 namespace triptrack\Controller\Admin;
 
-use triptrack\Controller\SubController;
+use triptrack\Controller\AbstractController\AbstractOrganization;
 use triptrack\Factory\OrganizationFactory;
 use triptrack\View\EmailView;
 use Canopy\Request;
 
-class Organization extends SubController
+class Organization extends AbstractOrganization
 {
-
-    protected $view;
-
-    public function __construct(\triptrack\Role\Base $role)
-    {
-        parent::__construct($role);
-        $this->view = new \triptrack\View\OrganizationView();
-    }
-
-    public function load()
-    {
-        return OrganizationFactory::load(OrganizationFactory::build(), $this->id);
-    }
 
     protected function listHtml()
     {

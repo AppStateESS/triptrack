@@ -7,11 +7,12 @@
 
 namespace triptrack\Controller\Member;
 
+use triptrack\Controller\AbstractController\AbstractOrganization;
 use triptrack\Controller\SubController;
 use triptrack\Factory\OrganizationFactory;
 use Canopy\Request;
 
-class Organization extends SubController
+class Organization extends AbstractOrganization
 {
 
     protected function listJson(Request $request)
@@ -21,6 +22,12 @@ class Organization extends SubController
             throw \Exception('User is not a member');
         }
         return OrganizationFactory::list(['memberCount' => true, 'memberId' => $memberId]);
+    }
+
+    protected function viewJson(Request $request)
+    {
+        $organization = self::load();
+        return $organization->getStringVars();
     }
 
 }
