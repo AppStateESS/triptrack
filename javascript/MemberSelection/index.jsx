@@ -23,34 +23,38 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
   const [trip, setTrip] = useState()
   const [organization, setOrganization] = useState()
   const [organizationMembers, setOrganizationMembers] = useState()
-  const [eventAttending, setEventAttending] = useState()
+  const [eventAttending, setEventAttending] = useState([])
   const [bannerIds, setBannerIds] = useState([])
   const [currentMembers, setCurrentMembers] = useState([])
   const [saving, setSaving] = useState(0)
   const [changed, setChanged] = useState(false)
 
   useEffect(() => {
-    getTrip(tripId, 'Admin').then((response) => {
+    getTrip(tripId, role).then((response) => {
       const trip = response.data
       setTrip(trip)
 
-      const p1 = getItem('Organization', trip.organizationId, 'Admin').then(
+      const p1 = getItem('Organization', trip.organizationId, role).then(
         (response) => {
           setOrganization(response.data)
         }
       )
 
-      const p2 = getMemberListByOrganization(trip.organizationId).then(
+      const p2 = getMemberListByOrganization(trip.organizationId, role).then(
         (response) => {
           setOrganizationMembers(response.data)
         }
       )
 
-      const p3 = getEventAttending(trip.engageEventId).then((response) => {
-        setEventAttending(response.data)
-      })
+      const p3 = getEventAttending(trip.engageEventId, role).then(
+        (response) => {
+          if (response.data !== false) {
+            setEventAttending(response.data)
+          }
+        }
+      )
 
-      const p4 = getParticipants(trip.id).then((response) => {
+      const p4 = getParticipants(trip.id, role).then((response) => {
         setCurrentMembers(response.data)
         updateBannerIds(response.data)
       })
@@ -126,6 +130,18 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
       buttonLabel = <span>Save participants</span>
   }
 
+  let listLink
+  if (role === 'Member') {
+    listLink = (
+      <div>
+        <a href={`./triptrack/${role}/Trip`}>
+          <FontAwesomeIcon icon="arrow-circle-left" />
+          &nbsp;Back to trip list
+        </a>
+      </div>
+    )
+  }
+
   const saveButton = (
     <button
       className="btn btn-success btn-block my-3"
@@ -145,6 +161,7 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
     return (
       <div>
         <h2>{trip.host} - member selection</h2>
+        {listLink}
         <hr />
         {saveButton}
         <h3>Participants</h3>
@@ -153,7 +170,9 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
             <Participants {...{currentMembers, removeMember}} />
           </div>
         </div>
-        <Search role={role} addMember={addMember} bannerIds={bannerIds} />
+        {role === 'Admin' ? (
+          <Search role={role} addMember={addMember} bannerIds={bannerIds} />
+        ) : null}
         <div className="row">
           <div className="col-sm-6">
             <h4>{organization.name} members</h4>
