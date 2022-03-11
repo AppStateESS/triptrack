@@ -63,11 +63,18 @@ class TripView extends AbstractView
 
     public function assign(int $tripId, string $role = 'Admin')
     {
-        return $this->dashboardScript('trip', 'MemberSelection', [
-                'tripId' => $tripId,
-                'organizationLabel' => SettingFactory::getOrganizationLabel(),
-                'role' => $role
-        ]);
+        if ($role === 'Admin') {
+            return $this->dashboardScript('trip', 'MemberSelection', [
+                    'tripId' => $tripId,
+                    'organizationLabel' => SettingFactory::getOrganizationLabel(),
+                    'role' => 'Admin'
+            ]);
+        } else {
+            return $this->scriptView('MemberSelection', [
+                    'tripId' => $tripId,
+                    'organizationLabel' => SettingFactory::getOrganizationLabel(),
+                    'role' => 'Member']);
+        }
     }
 
     /**
@@ -187,9 +194,9 @@ class TripView extends AbstractView
         } else {
             $vars['trip'] = false;
         }
-
+        $vars['logout'] = TripFactory::logoutLink();
         $vars['rows'] = TripFactory::list(['submitUsername' => \Current_User::getUsername(),
-                'order' => 'submitDate']);
+                'order' => 'submitDate', 'memberCount' => true]);
         $vars['hostLabel'] = SettingFactory::getHostLabel();
 
         $template = new \phpws2\Template($vars);
