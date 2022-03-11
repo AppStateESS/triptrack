@@ -99,7 +99,7 @@ class Trip extends AbstractResource
         $timeFormat = '%l:%M %p';
         $dateFormat = '%b %e, %Y';
         $values = parent::getVariablesAsValue($return_null, $hide, $null_as_empty_string);
-        $formats = ['timeDeparting', 'timeEventStarts', 'timeReturn'];
+        $formats = ['timeDeparting', 'timeEventStarts', 'timeReturn', 'confirmedDate', 'submitDate'];
         foreach ($formats as $varName) {
             $unix = $values[$varName];
             $values['formatted'][$varName] = ['time' => strftime($timeFormat, $unix),
