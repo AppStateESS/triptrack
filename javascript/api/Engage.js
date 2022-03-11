@@ -39,8 +39,8 @@ const getAttendedBannerIds = (eventId, role = 'Admin') => {
   return getList(url, {eventId})
 }
 
-const getEvent = (eventId) => {
-  const url = './triptrack/Admin/Engage/event'
+const getEvent = (eventId, role) => {
+  const url = `./triptrack/${role}/Engage/event`
   return getList(url, {eventId})
 }
 
