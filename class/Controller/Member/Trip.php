@@ -26,6 +26,20 @@ class Trip extends SubController
         $this->view = new \triptrack\View\TripView();
     }
 
+    protected function confirmPatch(Request $request)
+    {
+        $trip = TripFactory::build($this->id);
+        if (MemberFactory::currentOwnsTrip($trip)) {
+            $trip->stampConfirmed();
+            TripFactory::save($trip);
+        }
+    }
+
+    protected function assignHtml(Request $request)
+    {
+        return $this->view->assign($this->id, 'Member');
+    }
+
     protected function createHtml()
     {
         $trip = TripFactory::getCurrentSubmitterIncomplete();
@@ -74,6 +88,7 @@ class Trip extends SubController
         if (!MemberFactory::currentOwnsTrip($trip)) {
             throw new MemberDoesNotOwnTrip;
         }
+        return true;
     }
 
     protected function put(Request $request)
@@ -90,9 +105,6 @@ class Trip extends SubController
 
         if ($errorFree === true) {
             $updatedTrip->completed = true;
-            if ($updatedTrip->confirmedDate == 0) {
-                $updatedTrip->stampConfirmed();
-            }
             TripFactory::save($updatedTrip);
             return ['success' => true, 'id' => $this->id];
         } else {
