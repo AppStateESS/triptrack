@@ -1,36 +1,47 @@
 <div class="float-right">
     <?php if ($trip):?>
-    <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="btn btn-outline-primary">Complete travel plan</a>
+    <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="btn btn-sm btn-outline-primary mr-1">Complete travel plan</a>
     <?php else:?>
-    <a href="./triptrack/Member/Trip/create" class="btn btn-primary">Create travel plan</a>
+    <a href="./triptrack/Member/Trip/create" class="btn btn-sm btn-primary mr-1">Create travel plan</a>
     <?php endif;?>
+    <a href="<?=$logout?>" class="btn btn-outline-danger btn-sm"><i
+      class="fas fa-sign-out-alt"></i></a>
 </div>
 <h2>Your trip submissions</h2>
 <?php if (!empty($rows)):?>
 <table class="table table-striped">
     <tbody>
         <tr>
-            <th style="width: 15%">&nbsp;</th>
+            <th>&nbsp;</th>
             <th>Approved</th>
             <th><?=$hostLabel?></th>
+            <th>Attending</th>
             <th>Destination</th>
-            <th>Departing</th>
-            <th>Returning</th>
+            <th>Departing / Returning</th>
         </tr>
         <?php foreach ($rows as $trip):?>
         <tr>
-            <td><a href="./triptrack/Member/Trip/<?=$trip['id']?>" class="mr-1 btn btn-sm btn-success">View</a>
-                <?php if (!$trip['approved']):?>
-                <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="mr-1 btn btn-sm btn-primary">Update</a>
-                <?php endif;?>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a href="./triptrack/Member/Trip/<?=$trip['id']?>" class="dropdown-item">View</a>
+                        <a href="./triptrack/Member/Trip/<?=$trip['id']?>/assign" class="dropdown-item">Members</a>
+                        <?php if (!$trip['approved']):?>
+                        <a href="./triptrack/Member/Trip/<?=$trip['id']?>/edit" class="dropdown-item">Update</a>
+                        <?php endif;?>
+                    </div>
+                </div>
             </td>
-            <td style="width:10%">
+            <td style="width:8%">
                 <?=$trip['approved'] ? '<div class="text-center text-success">Yes</div>' : '<div class="text-center text-danger">No</div>'?>
             </td>
             <td><?=$trip['host']?></td>
+            <td><?=$trip['memberCount'] ? $trip['memberCount'] : '<span class="text-danger">0</span>'?></td>
             <td><?=$trip['destinationCity'], ', ', $trip['destinationState']?></td>
-            <td><?=strftime('%b %e, %y', $trip['timeDeparting'])?></td>
-            <td><?=strftime('%b %e, %y', $trip['timeReturn'])?></td>
+            <td><?=strftime('%b %e, %y', $trip['timeDeparting'])?> / <?=strftime('%b %e, %y', $trip['timeReturn'])?></td>
         </tr>
         <?php endforeach;?>
     </tbody>
