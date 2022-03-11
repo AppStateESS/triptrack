@@ -115,9 +115,7 @@ class Trip extends SubController
     {
         $trip = TripFactory::put($this->id, $request, true);
         $trip->completed = true;
-        if ($trip->confirmedDate == 0) {
-            $trip->stampConfirmed();
-        }
+
         TripFactory::save($trip);
         return ['success' => true, 'id' => $trip->id];
     }
@@ -131,6 +129,13 @@ class Trip extends SubController
         } else {
             throw new \Exception('Cannot approve trip id: ' . $this->id);
         }
+    }
+
+    protected function confirmPatch(Request $request)
+    {
+        $trip = TripFactory::build($this->id);
+        $trip->stampConfirmed();
+        TripFactory::save($trip);
     }
 
     /**
