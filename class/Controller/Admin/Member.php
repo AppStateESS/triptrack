@@ -8,10 +8,11 @@
 namespace triptrack\Controller\Admin;
 
 use triptrack\Controller\SubController;
+use triptrack\Controller\AbstractController\AbstractMember;
 use Canopy\Request;
 use triptrack\Factory\MemberFactory;
 
-class Member extends SubController
+class Member extends AbstractMember
 {
 
     protected $view;
@@ -71,15 +72,6 @@ class Member extends SubController
     {
         MemberFactory::dropFromOrganization($this->id, $request->pullPatchInteger('orgId'));
         return ['success' => true];
-    }
-
-    protected function eventAttendingJson(Request $request)
-    {
-        $eventId = $request->pullGetInteger('eventId');
-        if (empty($eventId)) {
-            return false;
-        }
-        return MemberFactory::getEventAttending($eventId);
     }
 
     protected function getByBannerIdJson(Request $request)
