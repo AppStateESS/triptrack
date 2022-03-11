@@ -8,13 +8,15 @@ import Contact from './Contact'
 import Schedule from './Schedule'
 import Documents from './Documents'
 import {deleteTrip} from '../api/TripAjax'
+
 import {approvedIcon} from './Form/Node'
-import {associateEvent, saveTrip} from './Form/XHR'
+import {associateEvent, saveTrip, confirmTrip} from './Form/XHR'
 import {getOrganizationEvents, getEvent} from '../api/Engage'
 import Overlay from '@essappstate/canopy-react-overlay'
 import Confirmation from './Confirmation'
 import UpcomingEvents from './UpcomingEvents'
 import CurrentAssociation from './CurrentAssociation'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 const Form = ({
   tripDocuments,
@@ -46,7 +48,7 @@ const Form = ({
    * Tracks initial trip load
    */
   const tripComplete = useRef(false)
-
+  const top = useRef()
   const changesMade = useRef(false)
 
   /**
@@ -62,7 +64,16 @@ const Form = ({
   }, [associatedEvent])
 
   useEffect(() => {
-    if (tripComplete.current) {
+    if (trip.timeDeparting > trip.timeEventStarts) {
+      setFormElement('timeDeparting', trip.timeEventStarts)
+    }
+    if (trip.timeEventStarts > trip.timeReturn) {
+      setFormElement('timeReturn', trip.timeEventStarts)
+    }
+  }, [trip.timeDeparting, trip.timeEventStarts, trip.timeReturn])
+
+  useEffect(() => {
+    if (trip.organizationId > 0) {
       loadEvents(trip.organizationId, role)
     }
   }, [trip.organizationId])
@@ -80,13 +91,21 @@ const Form = ({
   const loadEvents = (organizationId, role) => {
     setLoadingEvents(true)
     getOrganizationEvents(organizationId, role).then((response) => {
-      setEvents(response.data)
+      if (response.data) {
+        setEvents(response.data)
+      } else {
+        setEvents([])
+      }
       setLoadingEvents(false)
     })
   }
 
   const onComplete = () => {
-    window.location.href = `./triptrack/${role}/Trip/`
+    if (confirmationRequired && trip.confirmedDate === 0) {
+      setConfirmModal(true)
+    } else {
+      window.location.href = `./triptrack/${role}/Trip/`
+    }
   }
 
   const eventAssociation = (eventId) => {
@@ -100,18 +119,19 @@ const Form = ({
     })
   }
 
-  const tripSave = (confirmed = false) => {
-    saveTrip({
-      confirmed,
-      finalErrorCheck,
-      confirmationRequired,
-      trip,
-      setConfirmModal,
-      defaultTrip,
-      role,
-      setErrors,
-      onComplete,
-    })
+  const tripSave = () => {
+    if (finalErrorCheck()) {
+      saveTrip({
+        trip,
+        setConfirmModal,
+        defaultTrip,
+        role,
+        setErrors,
+        onComplete,
+      })
+    } else {
+      window.scrollTo(0, top.current.offsetTop)
+    }
   }
 
   const setFormElement = (key, value) => {
@@ -141,7 +161,7 @@ const Form = ({
       return
     }
 
-    getEvent(eventId).then((response) => {
+    getEvent(eventId, role).then((response) => {
       const matchingEvent = response.data[0]
       if (matchingEvent !== undefined) {
         setAssociatedEvent(matchingEvent)
@@ -153,7 +173,9 @@ const Form = ({
 
   const completeConfirmation = (confirmResult) => {
     if (confirmResult) {
-      tripSave(true)
+      confirmTrip(trip.id, role).then(() => {
+        window.location.href = `./triptrack/${role}/Trip/`
+      })
     }
     setConfirmModal(false)
   }
@@ -243,16 +265,59 @@ const Form = ({
     return !foundError
   }
 
-  const saveButton = changesMade.current ? (
-    <div className="text-center">
-      <button className="btn btn-sm btn-success" onClick={tripSave}>
+  const saveButton = (
+    <div className="text-center mb-2">
+      <button
+        className="btn btn-success"
+        onClick={tripSave}
+        disabled={!changesMade.current}>
         Save travel plan
       </button>
     </div>
-  ) : null
+  )
+
+  let confirmedLabel
+  if (confirmationRequired) {
+    if (trip.confirmedDate > 0) {
+      confirmedLabel = (
+        <div className="badge badge-success float-right">
+          Confirmed on: {trip.formatted.confirmedDate.date}
+        </div>
+      )
+    } else {
+      confirmedLabel = (
+        <div className="badge badge-danger float-right">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              setConfirmModal(true)
+            }}
+            className="text-white">
+            Not confirmed
+          </a>
+        </div>
+      )
+    }
+  }
+
+  let listLink
+  if (role === 'Member') {
+    listLink = (
+      <div>
+        <a href={`./triptrack/${role}/Trip`}>
+          <FontAwesomeIcon icon="arrow-circle-left" />
+          &nbsp;Back to trip list
+        </a>
+      </div>
+    )
+  }
+
   return (
-    <div>
+    <div ref={top}>
+      {confirmedLabel}
       <h3>Enter trip information</h3>
+      {listLink}
       <p>Please enter all requested, required information below:</p>
       {approvedIcon({trip, allowApproval, setFormElement})}
 
@@ -322,26 +387,26 @@ const Form = ({
       />
       <a id="schedule-info"></a>
       <Schedule trip={trip} setFormElement={setFormElement} />
-      <div className="row mb-5">
-        <div className="col-sm-7">
-          <Documents
-            {...{
-              completed: trip.completed,
-              setDocuments,
-              documents,
-              allowUpload,
-              tripId: trip.id,
-              role,
-              uploadRequired,
-              uploadInstructions,
-            }}
-          />
+      {allowUpload && (
+        <div className="row mb-5">
+          <div className="col-sm-7">
+            <Documents
+              {...{
+                completed: trip.completed,
+                setDocuments,
+                documents,
+                allowUpload,
+                tripId: trip.id,
+                role,
+                uploadRequired,
+                uploadInstructions,
+              }}
+            />
+          </div>
         </div>
-      </div>
+      )}
       <div className="text-center">
-        <button className="btn btn-success mb-2" onClick={() => tripSave()}>
-          Save travel plan
-        </button>
+        {saveButton}
         <div>
           {!trip.completed ? (
             <button className="btn btn-danger" onClick={cancelTrip}>
