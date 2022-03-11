@@ -5,7 +5,7 @@
  *
  */
 $proper_name = 'Trip Track';
-$version = '1.2.2';
+$version = '1.3.0';
 $register = false;
 $unregister = false;
 $import_sql = false;
