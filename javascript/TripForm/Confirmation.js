@@ -13,7 +13,8 @@ const Confirmation = ({
     <div>
       <p>
         Please read the travel conditions below. Click on the check box to
-        confirm your adherence to the requirements.
+        confirm your adherence to the requirements. Your trip will not be
+        approved until confirmed.
       </p>
       <div className="border p-3 mb-3">{confirmationInstructions}</div>
       <div className="mb-3">
@@ -30,7 +31,7 @@ const Confirmation = ({
           onClick={() => {
             completeConfirmation(confirmCheck)
           }}>
-          Save trip
+          Save confirmation
         </button>
         <button
           className="btn btn-danger btn-block"
