@@ -61,6 +61,12 @@ class TripFactory extends BaseFactory
         $db->delete();
     }
 
+    /**
+     *
+     * @param int $id
+     * @param type $throwException
+     * @return Trip
+     */
     public static function build(int $id = 0, $throwException = true)
     {
         $trip = new Trip;
