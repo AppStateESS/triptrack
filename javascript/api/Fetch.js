@@ -37,6 +37,15 @@ const getItem = async (itemName, id, role = 'Admin') => {
   })
 }
 
+/**
+ *
+ * @param {string} itemName
+ * @param {number} id
+ * @param {object} data
+ * @param {string} control
+ * @param {string} role
+ * @returns
+ */
 const patchItem = async (
   itemName,
   id,
