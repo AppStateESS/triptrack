@@ -13,10 +13,11 @@
 namespace triptrack\Controller\Member;
 
 use triptrack\Controller\SubController;
+use triptrack\Controller\AbstractController\AbstractMember;
 use triptrack\Factory\MemberFactory;
 use Canopy\Request;
 
-class Member extends SubController
+class Member extends AbstractMember
 {
 
     protected function listJson(Request $request)
