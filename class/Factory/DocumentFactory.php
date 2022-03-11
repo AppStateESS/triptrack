@@ -93,7 +93,7 @@ class DocumentFactory extends BaseFactory
             header('Content-Type: application/octet-stream');
         }
         header("Content-Transfer-Encoding: Binary");
-        header("Content-disposition: inline; filename=\"" . basename($fullPath) . "\"");
+        header("Content-disposition: inline; filename=\"" . $document->filePath . "\"");
         readfile($fullPath);
         exit;
     }
