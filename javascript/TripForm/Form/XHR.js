@@ -1,47 +1,15 @@
 'use strict'
 import {postTrip, patchApproval} from '../../api/TripAjax'
-import {getAttendedBannerIds} from '../../api/Engage'
+import {patchItem} from '../../api/Fetch'
 
 const associateEvent = ({
   eventId,
   events,
-  role,
-  setAttendedLoading,
-  members,
-  selectedMembers,
-  setAttendedModal,
-  setNewMembers,
-  setSelectedMembers,
   trip,
   plugAssociatedEvent,
   setTrip,
 }) => {
   const event = findAssociatedEvent(events, eventId)
-
-  getAttendedBannerIds(eventId, role).then((response) => {
-    setAttendedLoading(true)
-    const attended = response.data
-    const nonOrgMembers = []
-    selectedMembers = []
-    attended.forEach((attend) => {
-      const {bannerId} = attend
-      const result = members.find((element) => element.bannerId == bannerId)
-      if (result) {
-        if (selectedMembers.indexOf(result.id > -1)) {
-          selectedMembers.push(result.id)
-        }
-      } else {
-        nonOrgMembers.push(attend)
-      }
-    })
-    if (nonOrgMembers.length > 0) {
-      setAttendedModal(true)
-    }
-    setAttendedLoading(false)
-    setNewMembers(nonOrgMembers)
-    setSelectedMembers([...selectedMembers])
-  })
-
   const tripCopy = {...trip}
 
   tripCopy.timeDeparting = unixTime(event.startsOn)
@@ -82,40 +50,23 @@ const parseDescription = (desc) => {
   return firstSentence.replace(/^\W+/, '')
 }
 
-const saveTrip = ({
-  confirmed,
-  finalErrorCheck,
-  confirmationRequired,
-  trip,
-  setConfirmModal,
-  role,
-  setErrors,
-  onComplete,
-}) => {
-  if (finalErrorCheck()) {
-    if (
-      confirmationRequired &&
-      trip.confirmedDate === 0 &&
-      confirmed === false
-    ) {
-      setConfirmModal(true)
-      return
+const saveTrip = ({trip, role, setErrors, onComplete}) => {
+  return Promise.all([postTrip(trip, role)]).then((response) => {
+    if (response[0].data.success) {
+      onComplete()
+    } else {
+      const errClone = response[0].data.errors
+      const errorResult = Object.keys(errClone)
+      errorResult.forEach((element) => {
+        errClone[element] = true
+      })
+      setErrors(errClone)
     }
-    Promise.all([postTrip(trip, role)]).then((response) => {
-      if (response[0].data.success) {
-        onComplete()
-      } else {
-        const errClone = response[0].data.errors
-        const errorResult = Object.keys(errClone)
-        errorResult.forEach((element) => {
-          errClone[element] = true
-        })
-        setErrors(errClone)
-      }
-    })
-  } else {
-    console.log('fail error')
-  }
+  })
+}
+
+const confirmTrip = (tripId, role) => {
+  return patchItem('Trip', tripId, {}, 'confirm', role)
 }
 
 const toggleApproval = ({toggle, setFormElement, tripId}) => {
@@ -129,4 +80,10 @@ const unixTime = (stamp) => {
   return parseInt((new Date(stamp).getTime() / 1000).toFixed(0))
 }
 
-export {saveTrip, toggleApproval, associateEvent, findAssociatedEvent}
+export {
+  saveTrip,
+  toggleApproval,
+  associateEvent,
+  findAssociatedEvent,
+  confirmTrip,
+}
