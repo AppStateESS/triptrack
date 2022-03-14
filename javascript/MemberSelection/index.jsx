@@ -1,6 +1,6 @@
 'use strict'
 import PropTypes from 'prop-types'
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, Fragment} from 'react'
 import ReactDOM from 'react-dom'
 import {getTrip} from '../api/TripAjax'
 import {
@@ -91,6 +91,27 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
     setCurrentMembers([...currentMembers])
   }
 
+  const addAllOrganization = () => {
+    organizationMembers.forEach((member) => {
+      if (bannerIds.indexOf(member.bannerId) == -1) {
+        addMember(member)
+      }
+    })
+  }
+
+  const addAllEvent = () => {
+    eventAttending.forEach((member) => {
+      if (bannerIds.indexOf(member.bannerId) == -1) {
+        addMember(member)
+      }
+    })
+  }
+
+  const removeAllParticipants = () => {
+    setCurrentMembers([])
+    setBannerIds([])
+  }
+
   const removeMember = (key) => {
     const member = currentMembers[key]
     const bannerIdx = bannerIds.indexOf(member.bannerId)
@@ -159,12 +180,20 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
     )
   } else {
     return (
-      <div>
+      <Fragment>
         <h2>{trip.host} - member selection</h2>
         {listLink}
         <hr />
         {saveButton}
-        <h3>Participants</h3>
+
+        <h3>
+          Participants{' '}
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={removeAllParticipants}>
+            <FontAwesomeIcon icon="user-times" />
+          </button>
+        </h3>
         <div className="card mb-4">
           <div className="card-body">
             <Participants {...{currentMembers, removeMember}} />
@@ -175,7 +204,14 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
         ) : null}
         <div className="row">
           <div className="col-sm-6">
-            <h4>{organization.name} members</h4>
+            <h4>
+              {organization.name} members{' '}
+              <button
+                className="btn btn-outline-success btn-sm"
+                onClick={addAllOrganization}>
+                <FontAwesomeIcon icon="user-plus" />
+              </button>
+            </h4>
             <OrganizationList
               {...{
                 organizationMembers,
@@ -186,12 +222,19 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
             />
           </div>
           <div className="col-sm-6">
-            <h4>Event attending</h4>
+            <h4>
+              Event attending{' '}
+              <button
+                className="btn btn-outline-success btn-sm"
+                onClick={addAllEvent}>
+                <FontAwesomeIcon icon="user-plus" />
+              </button>
+            </h4>
             <AttendingList {...{eventAttending, bannerIds, addMember}} />
           </div>
         </div>
         {saveButton}
-      </div>
+      </Fragment>
     )
   }
 }
