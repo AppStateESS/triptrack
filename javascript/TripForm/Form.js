@@ -1,6 +1,6 @@
 'use strict'
 
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {tripSettings} from './TripDefaults'
 import Host from './Host'
@@ -36,7 +36,9 @@ const Form = ({
   confirmationRequired,
   confirmationInstructions,
 }) => {
-  const [associatedEvent, setAssociatedEvent] = useState({name: ''})
+  const [associatedEvent, setAssociatedEvent] = useState()
+  const [currentOrganization, setCurrentOrganization] = useState({})
+  const [loadingEvent, setLoadingEvent] = useState(true)
   const [confirmModal, setConfirmModal] = useState(false)
   const [documents, setDocuments] = useState(tripDocuments)
   const [errors, setErrors] = useState({...tripSettings.no})
@@ -51,18 +53,25 @@ const Form = ({
   const top = useRef()
   const changesMade = useRef(false)
 
+  useEffect(() => {
+    plugAssociatedEvent(trip.engageEventId)
+  }, [])
+
   /**
    * Performs an error check on the host and visitPurpose
    * fields after an associated event is set. This clears
    * a no content error.
    */
   useEffect(() => {
-    if (associatedEvent.id) {
+    if (associatedEvent) {
       errorCheck('host', trip.host)
       errorCheck('visitPurpose', trip.visitPurpose)
     }
   }, [associatedEvent])
 
+  /**
+   * Makes sure depart, day of, and return dates are synced.
+   */
   useEffect(() => {
     if (trip.timeDeparting > trip.timeEventStarts) {
       setFormElement('timeDeparting', trip.timeEventStarts)
@@ -72,17 +81,32 @@ const Form = ({
     }
   }, [trip.timeDeparting, trip.timeEventStarts, trip.timeReturn])
 
+  /**
+   * Loads list of events occurring for the currently selected organization.
+   */
   useEffect(() => {
     if (trip.organizationId > 0) {
+      setCurrentOrganization(
+        organizations.find((element) => element.id == trip.organizationId)
+      )
       loadEvents(trip.organizationId, role)
     }
   }, [trip.organizationId])
 
   useEffect(() => {
-    if (tripComplete.current) {
-      plugAssociatedEvent(trip.engageEventId)
+    if (!associatedEvent) {
+      setLoadingEvent(false)
+      return
     }
-  }, [events])
+    if (
+      associatedEvent.organizationIds.indexOf(currentOrganization.engageId) ==
+      -1
+    ) {
+      setAssociatedEvent(null)
+      trip.engageEventId = 0
+      setTrip(trip)
+    }
+  }, [currentOrganization])
 
   /**
    * Loads events associated to the organizationId
@@ -92,6 +116,7 @@ const Form = ({
     setLoadingEvents(true)
     getOrganizationEvents(organizationId, role).then((response) => {
       if (response.data) {
+        tripComplete.current = true
         setEvents(response.data)
       } else {
         setEvents([])
@@ -160,7 +185,7 @@ const Form = ({
     if (eventId === 0) {
       return
     }
-
+    setLoadingEvent(true)
     getEvent(eventId, role).then((response) => {
       const matchingEvent = response.data[0]
       if (matchingEvent !== undefined) {
@@ -168,6 +193,7 @@ const Form = ({
       } else {
         setAssociatedEvent({name: ''})
       }
+      setLoadingEvent(false)
     })
   }
 
@@ -313,6 +339,45 @@ const Form = ({
     )
   }
 
+  let event
+  if (loadingEvent) {
+    event = (
+      <Fragment>
+        <FontAwesomeIcon icon="spinner" spin /> Loading event data...
+      </Fragment>
+    )
+  } else if (trip.engageEventId === 0 && trip.organizationId > 0) {
+    event = (
+      <UpcomingEvents
+        {...{events, loadingEvents, eventAssociation}}
+        engageEventId={trip.engageEventId}
+      />
+    )
+  } else if (trip.organizationId > 0 && associatedEvent) {
+    event = (
+      <CurrentAssociation
+        associatedEvent={associatedEvent}
+        clear={() => {
+          changesMade.current = true
+          trip.engageEventId = 0
+          setTrip({...trip})
+        }}
+      />
+    )
+  } else {
+    event = (
+      <div>
+        {trip.organizationId === 0 ? (
+          <span className="text-secondary">
+            Choose an attending organization
+          </span>
+        ) : (
+          <em>No association</em>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div ref={top}>
       {confirmedLabel}
@@ -334,30 +399,7 @@ const Form = ({
         <div className="col-sm-6">
           <fieldset>
             <legend className="border-bottom mb-3">Associated Event</legend>
-            {trip.engageEventId === 0 && trip.organizationId > 0 ? (
-              <UpcomingEvents
-                {...{events, loadingEvents, eventAssociation}}
-                engageEventId={trip.engageEventId}
-              />
-            ) : trip.organizationId > 0 && associatedEvent.id > 0 ? (
-              <CurrentAssociation
-                associatedEvent={associatedEvent}
-                clear={() => {
-                  trip.engageEventId = 0
-                  setTrip({...trip})
-                }}
-              />
-            ) : (
-              <div>
-                {trip.organizationId === 0 ? (
-                  <span className="text-secondary">
-                    Choose an attending organization
-                  </span>
-                ) : (
-                  <em>No association</em>
-                )}
-              </div>
-            )}
+            {event}
           </fieldset>
         </div>
       </div>
