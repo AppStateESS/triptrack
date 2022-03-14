@@ -29,6 +29,21 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = 'Fixed bug with saving attended screen.';
             $content[] = 'Fixed bug #45 with new trips inheriting attended.';
             $content[] = 'Resolved #43 - Error check on attended saving.';
+        case version_compare($currentVersion, '1.3.0', '<'):
+            $content[] = 'Adds new member assignment.';
+            $content[] = 'Layout fixes.';
+            $content[] = 'Bug fixes with event and organization changes.';
+            $content[] = 'Adds signout link for members.';
+            $content[] = 'List admin options in drop down.';
+            $content[] = 'Member trip list shows participating.';
+            $content[] = 'Trip saved before confirmation';
+            $content[] = 'Trip form scrolls to top after save error.';
+            $content[] = 'Trip dates now perform error checks.';
+            $content[] = 'Trip save only available if form changes were made.';
+            $content[] = 'Added confirm badge on trip view.';
+            $content[] = 'Member view now has link back to list.';
+            $content[] = 'Can now search Banner to add participants.';
+            $content[] = 'Event list now sorted in drop down.';
     }
     return true;
 }
