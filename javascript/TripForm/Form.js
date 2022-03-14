@@ -49,13 +49,20 @@ const Form = ({
   /**
    * Tracks initial trip load
    */
-  const tripComplete = useRef(false)
   const top = useRef()
   const changesMade = useRef(false)
+  const init = useRef(false)
 
   useEffect(() => {
     plugAssociatedEvent(trip.engageEventId)
   }, [])
+
+  useEffect(() => {
+    if (init.current) {
+      changesMade.current = true
+    }
+    init.current = true
+  }, [trip.engageEventId, trip.organizationId])
 
   /**
    * Performs an error check on the host and visitPurpose
@@ -116,7 +123,6 @@ const Form = ({
     setLoadingEvents(true)
     getOrganizationEvents(organizationId, role).then((response) => {
       if (response.data) {
-        tripComplete.current = true
         setEvents(response.data)
       } else {
         setEvents([])
@@ -160,7 +166,7 @@ const Form = ({
   }
 
   const setFormElement = (key, value) => {
-    changesMade.current = true
+    //changesMade.current = true
     trip[key] = value
     setTrip({...trip})
     errorCheck(key, value)
