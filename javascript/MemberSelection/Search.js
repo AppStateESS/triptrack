@@ -59,45 +59,43 @@ const Search = ({role, addMember, bannerIds}) => {
   }
 
   return (
-    <div className="mb-3">
-      <div className="card">
-        <div className="card-body">
-          <div className="input-group">
-            <input
-              type="text"
-              className="form-control"
-              ref={bannerInput}
-              name="studentBannerId"
-              placeholder="Search by username or Banner ID"
-              value={studentBannerId}
-              onChange={(e) => setStudentBannerId(e.target.value)}
+    <div className="card mb-3">
+      <div className="card-body">
+        <div className="input-group">
+          <input
+            type="text"
+            className="form-control"
+            ref={bannerInput}
+            name="studentBannerId"
+            placeholder="Search by username or Banner ID"
+            value={studentBannerId}
+            onChange={(e) => setStudentBannerId(e.target.value)}
+            disabled={lockInput}
+          />
+          <div className="input-group-append">
+            <button
+              className="btn btn-success"
               disabled={lockInput}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-success"
-                disabled={lockInput}
-                onClick={() => {
-                  sendSearch()
-                }}>
-                Search
-              </button>
-              <button
-                className="btn btn-outline-danger"
-                disabled={lockInput}
-                onClick={() => {
-                  setSearchMember(null)
-                  setStudentBannerId('')
-                  focusInput()
-                }}>
-                Clear
-              </button>
-            </div>
+              onClick={() => {
+                sendSearch()
+              }}>
+              Search
+            </button>
+            <button
+              className="btn btn-outline-danger"
+              disabled={lockInput}
+              onClick={() => {
+                setSearchMember(null)
+                setStudentBannerId('')
+                focusInput()
+              }}>
+              Clear
+            </button>
           </div>
-          {bannerAssign}
         </div>
-        <div>{searchResults}</div>
+        {bannerAssign}
       </div>
+      <div>{searchResults}</div>
     </div>
   )
 }
