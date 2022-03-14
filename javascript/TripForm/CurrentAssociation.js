@@ -1,10 +1,10 @@
 'use strict'
-import React from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 
 const CurrentAssociation = ({associatedEvent, clear}) => {
   return (
-    <div>
+    <Fragment>
       <button className="btn btn-danger btn-sm" onClick={clear}>
         <span onClick={clear} className="badge badge-danger">
           <i className="fas fa-times"></i>
@@ -13,7 +13,7 @@ const CurrentAssociation = ({associatedEvent, clear}) => {
       &nbsp;
       {associatedEvent.name} -{' '}
       {new Date(associatedEvent.startsOn).toDateString()}
-    </div>
+    </Fragment>
   )
 }
 
