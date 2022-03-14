@@ -18,7 +18,7 @@ const Approval = ({approved, tripId}) => {
   return (
     <div>
       {approvedState ? (
-        <div className="btn btn-success float-left mr-2">Approved</div>
+        <div className="btn btn-success float-left m-1">Approved</div>
       ) : (
         <button
           className="btn btn-outline-danger float-left m-1"
