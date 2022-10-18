@@ -9,10 +9,7 @@ const Form = ({currentOrg, close, reload, forceEngageOrg}) => {
   const [searching, setSearching] = useState(false)
   const [name, setName] = useState(currentOrg.name)
   const [matchingOrgs, setMatchingOrgs] = useState([])
-  const closeForm = () => {
-    reload()
-    close()
-  }
+
   const searchTimeout = useRef()
 
   useEffect(() => {
@@ -52,7 +49,8 @@ const Form = ({currentOrg, close, reload, forceEngageOrg}) => {
         'X-Requested-With': 'XMLHttpRequest',
       },
     }).then(() => {
-      closeForm()
+      close()
+      reload()
     })
   }
 
@@ -131,13 +129,13 @@ const Form = ({currentOrg, close, reload, forceEngageOrg}) => {
             className="btn btn-primary mr-2"
             onClick={() => {
               save()
-              closeForm()
+              close()
             }}
             disabled={name.length === 0}>
             Save
           </button>
         )}
-        <button className="btn btn-danger" onClick={closeForm}>
+        <button className="btn btn-danger" onClick={close}>
           Cancel
         </button>
       </div>
