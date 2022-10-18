@@ -34,20 +34,24 @@ const Grid = ({organizations, edit, deleteRow, engageUrl}) => {
                 title="Email members">
                 <i className="fas fa-envelope"></i>&nbsp;Email
               </a>
-              <a
-                title="Edit organization"
-                className="dropdown-item"
-                onClick={() => {
-                  edit(value.id)
-                }}>
-                <i className="fas fa-edit"></i>&nbsp;Edit
-              </a>
-              <a
-                href={`triptrack/Admin/Engage/memberImport?orgId=${value.id}`}
-                title="Import Engage members"
-                className="dropdown-item">
-                <i className="fas fa-users"></i>&nbsp;Engage members
-              </a>
+              {value.engageId === 0 && (
+                <a
+                  title="Edit organization"
+                  className="dropdown-item"
+                  onClick={() => {
+                    edit(value.id)
+                  }}>
+                  <i className="fas fa-edit"></i>&nbsp;Edit
+                </a>
+              )}
+              {value.engageId > 0 && (
+                <a
+                  href={`triptrack/Admin/Engage/memberImport?orgId=${value.id}`}
+                  title="Import Engage members"
+                  className="dropdown-item">
+                  <i className="fas fa-users"></i>&nbsp;Engage members
+                </a>
+              )}
               <a
                 className="dropdown-item"
                 href={`triptrack/Admin/Report/organization/?orgId=${value.id}`}
