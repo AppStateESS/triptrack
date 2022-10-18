@@ -44,6 +44,9 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = 'Member view now has link back to list.';
             $content[] = 'Can now search Banner to add participants.';
             $content[] = 'Event list now sorted in drop down.';
+        case version_compare($currentVersion, '1.3.1', '<'):
+            $content[] = 'Fixes organization edit button';
+            $content[] = 'Fixes listing of non-Engage organizations.';
     }
     return true;
 }
