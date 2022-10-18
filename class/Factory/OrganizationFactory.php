@@ -53,8 +53,8 @@ class OrganizationFactory extends BaseFactory
 
         if (!empty($options['websiteKey'])) {
             $tbl3 = $db->addTable('trip_engageorg');
-            $tbl3->addFieldConditional('engageId', $tbl->getField('engageId'));
             $tbl3->addField('websiteKey');
+            $db->joinResources($tbl, $tbl3, new Database\Conditional($db, $tbl->getField('engageId'), $tbl3->getField('engageId'), '='), 'left');
         }
 
         if (!empty($options['search'])) {
@@ -62,6 +62,7 @@ class OrganizationFactory extends BaseFactory
         }
 
         $tbl->addOrderBy('name');
+
         return $db->select();
     }
 
