@@ -86,7 +86,7 @@ const OrgList = ({engageUrl, organizationLabel, forceEngageOrg}) => {
       setMessage('Error: could not load organization')
       setMessageType('danger')
     } else {
-      setCurrentOrg(response)
+      setCurrentOrg(response.data)
       setShowModal(true)
     }
   }
