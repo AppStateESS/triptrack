@@ -11,7 +11,6 @@ module.exports = (env, argv) => {
     output: {
       path: setup.path.join(setup.APP_DIR, 'dev'),
     },
-    watchOptions: {ignored: /node_modules/},
     optimization: {
       splitChunks: {
         minChunks: 2,
@@ -62,7 +61,7 @@ module.exports = (env, argv) => {
       })
     )
 
-    settings.devtool = 'inline-source-map'
+    settings.devtool = 'source-map'
     settings.output = {
       path: setup.path.join(setup.APP_DIR, 'dev'),
       filename: '[name].js',
