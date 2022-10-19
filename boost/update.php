@@ -47,8 +47,39 @@ function triptrack_update(&$content, $currentVersion)
         case version_compare($currentVersion, '1.3.1', '<'):
             $content[] = 'Fixes organization edit button';
             $content[] = 'Fixes listing of non-Engage organizations.';
+        case version_compare($currentVersion, '1.3.2', '<'):
+
+            tt_update_1_3_2($content);
+            $content[] = '<pre>';
+            $content[] = 'All states changed to abbreviations.';
+            $content[] = '</pre>';
     }
     return true;
+}
+
+function tt_update_1_3_2(&$content)
+{
+    include PHPWS_SOURCE_DIR . 'mod/triptrack/boost/stateList.php';
+    $db = phpws2\Database::getDB();
+    $tbl = $db->addTable('trip_trip');
+    $tbl->addField('id');
+    $tbl->addField('destinationState');
+    $result = $db->select();
+    if (empty($result)) {
+        $content[] = 'No trips require state updates';
+        return;
+    }
+    foreach ($result as $state) {
+        $db->clearTables();
+        $db->clearConditional();
+        $tbl = $db->addTable('trip_trip');
+
+        if (isset($fullToAbbr[$state['destinationState']])) {
+            $tbl->addValue('destinationState', $fullToAbbr[$state['destinationState']]);
+            $tbl->addFieldConditional('id', $state['id']);
+            $db->update();
+        }
+    }
 }
 
 function tt_update_1_2_0(&$content)
