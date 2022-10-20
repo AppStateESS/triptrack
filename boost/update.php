@@ -51,7 +51,11 @@ function triptrack_update(&$content, $currentVersion)
 
             tt_update_1_3_2($content);
             $content[] = '<pre>';
-            $content[] = 'All states changed to abbreviations.';
+            $content[] = '+ All states changed to abbreviations.';
+            $content[] = '+ Adds US territories to selection.';
+            $content[] = '+ Hides event form if organization is not in Engage.';
+            $content[] = '+ Uses searchable event drop down';
+
             $content[] = '</pre>';
     }
     return true;
