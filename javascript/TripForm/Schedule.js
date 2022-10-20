@@ -72,7 +72,7 @@ const Schedule = ({trip, setFormElement}) => {
               setFormElement('timeDeparting', trip.timeEventStarts)
               setFormElement('timeReturn', trip.timeEventStarts)
             }}>
-            One day event
+            Sync departure/returning to event date
           </button>
         </div>
       </div>
