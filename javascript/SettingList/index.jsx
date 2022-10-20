@@ -31,7 +31,7 @@ const SettingList = ({currentSettings}) => {
   const [errorMessage, setErrorMessage] = useState(null)
   const rendered = useRef(false)
   const countryList = createOptions(countries)
-  const stateList = createOptions(states)
+  const stateList = createOptions(states, 'abbreviation', 'name')
   const [duration, setDuration] = useState(1000)
   const [engageCount, setEngageCount] = useState({
     countCurrent: 0,
@@ -260,7 +260,7 @@ const SettingList = ({currentSettings}) => {
                 label={settings.uploadRequired ? 'Yes' : 'No'}
                 checked={settings.uploadRequired}
                 handle={() => {
-                  updateCheck('uploadRequired', !settings.uploadRequired)
+                  updateCheck('uploadRequired')
                 }}
               />
             </div>
