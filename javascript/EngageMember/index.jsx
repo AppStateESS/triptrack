@@ -54,33 +54,40 @@ const EngageMember = ({engageId, orgName, organizationLabel, orgId}) => {
     setChecked([...checked])
   }
 
+  let memberListContent
+  if (loading) {
+    memberListContent = (
+      <div>
+        <FontAwesomeIcon icon="spinner" spin /> Getting member list...
+      </div>
+    )
+  } else if (memberList.length === 0) {
+    memberListContent = <p>No members found for this {organizationLabel}</p>
+  } else {
+    memberListContent = (
+      <MapList
+        {...{
+          orgId,
+          memberList,
+          badMembers,
+          memberCount,
+          checked,
+          updateChecked,
+          checkAll,
+          setCheckAll,
+          organizationLabel,
+        }}
+      />
+    )
+  }
+
   return (
     <div>
       <h3 className="mb-3">Import Engage members from {orgName}</h3>
       {errorMessage ? (
         <div className="alert alert-danger">{errorMessage}</div>
       ) : null}
-      {loading ? (
-        <div>
-          <FontAwesomeIcon icon="spinner" spin /> Getting member list...
-        </div>
-      ) : memberList.length === 0 ? (
-        <p>No members found for this {organizationLabel}</p>
-      ) : (
-        <MapList
-          {...{
-            orgId,
-            memberList,
-            badMembers,
-            memberCount,
-            checked,
-            updateChecked,
-            checkAll,
-            setCheckAll,
-            organizationLabel,
-          }}
-        />
-      )}
+      {memberListContent}
     </div>
   )
 }
