@@ -12,16 +12,15 @@ const headers = {
  * @returns Promise
  */
 const getList = async (url, options) => {
-  const response = await axios.get(url, {
+  return axios.get(url, {
     params: options,
     headers,
   })
-  return response
 }
 
 const sendDelete = async (url) => {
   try {
-    const response = await axios.delete(url, {
+    const response = axios.delete(url, {
       headers,
     })
     return response
@@ -32,7 +31,7 @@ const sendDelete = async (url) => {
 
 const getItem = async (itemName, id, role = 'Admin') => {
   const url = `triptrack/${role}/${itemName}/${id}`
-  return await axios.get(url, {
+  return axios.get(url, {
     headers,
   })
 }
@@ -58,7 +57,7 @@ const patchItem = async (
     url = url + '/' + control
   }
 
-  return await axios({
+  return axios({
     method: 'patch',
     url,
     data,
@@ -70,7 +69,7 @@ const patchItem = async (
 const postItem = async (item, itemName, role = 'Admin') => {
   const url = `triptrack/${role}/${itemName}/${item.id > 0 ? item.id : ''}`
 
-  return await axios({
+  return axios({
     method: item.id > 0 ? 'put' : 'post',
     url,
     data: item,
