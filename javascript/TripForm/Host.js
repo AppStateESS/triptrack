@@ -1,7 +1,7 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
-import {states} from '../Share/States'
+import {states, territories} from '../Share/States'
 import {countries} from '../Share/Countries'
 import {createOptions} from '../Share/CreateOptions'
 import Organizations from './Organizations'
@@ -18,7 +18,7 @@ const Host = ({
   setErrors,
 }) => {
   const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
-  const stateList = createOptions(states)
+  const stateList = createOptions(states, 'abbreviation', 'name')
   const countryList = createOptions(countries)
 
   const invalid = 'form-control is-invalid'
@@ -38,6 +38,8 @@ const Host = ({
       </select>
     )
   }
+
+  const cityWarning = territories.includes(trip.destinationState)
 
   const international = () => {
     if (allowInternational) {
@@ -163,7 +165,8 @@ const Host = ({
       <div className="row form-group">
         <div className="col-sm-4">
           <label>
-            {'Destination City' + (statesShown ? ', State' : '')}
+            {'Destination City' +
+              (statesShown ? ', State/Territory/District' : '')}
             <span className="text-danger">*</span>
           </label>
         </div>
@@ -181,6 +184,11 @@ const Host = ({
               setFormElement('destinationCity', e.target.value)
             }}
           />
+          {cityWarning && (
+            <span className="small text-info">
+              If city does not apply, enter the island name or &quot;N/A&quot;.
+            </span>
+          )}
           {errors.destinationCity ? (
             <div className="invalid-feedback">Please provide a valid city.</div>
           ) : null}
