@@ -11,7 +11,7 @@ const CurrentAssociation = ({associatedEvent, clear}) => {
         </span>
       </button>
       &nbsp;
-      {associatedEvent.name} -{' '}
+      {associatedEvent.name.substr(0, 40)} -{' '}
       {new Date(associatedEvent.startsOn).toDateString()}
     </Fragment>
   )
