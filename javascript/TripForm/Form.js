@@ -111,7 +111,7 @@ const Form = ({
     ) {
       setAssociatedEvent(null)
       trip.engageEventId = 0
-      setTrip(trip)
+      setTrip({...trip})
     }
   }, [currentOrganization])
 
@@ -346,7 +346,13 @@ const Form = ({
   }
 
   let event
-  if (loadingEvent) {
+  if (currentOrganization?.engageId === 0) {
+    event = (
+      <span className="text-secondary">
+        <em>Not an Engage organization</em>
+      </span>
+    )
+  } else if (loadingEvent) {
     event = (
       <Fragment>
         <FontAwesomeIcon icon="spinner" spin /> Loading event data...
