@@ -385,7 +385,7 @@ const SettingList = ({currentSettings}) => {
           <br />
           <small className="form-text text-muted">
             If approval is required, a trip is not complete until approved by an
-            admininstrator.
+            administrator.
           </small>
         </div>
         <div className="col-sm-6">
