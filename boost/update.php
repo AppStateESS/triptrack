@@ -48,7 +48,6 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = 'Fixes organization edit button';
             $content[] = 'Fixes listing of non-Engage organizations.';
         case version_compare($currentVersion, '1.3.2', '<'):
-
             tt_update_1_3_2($content);
             $content[] = '<pre>';
             $content[] = '+ All states changed to abbreviations.';
@@ -56,6 +55,10 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = '+ Hides event form if organization is not in Engage.';
             $content[] = '+ Uses searchable event drop down';
 
+            $content[] = '</pre>';
+        case version_compare($currentVersion, '1.3.3', '<'):
+            $content[] = '<pre>';
+            $content[] = '+ Fixed member selection bug.';
             $content[] = '</pre>';
     }
     return true;
