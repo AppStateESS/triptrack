@@ -142,7 +142,7 @@ const Grid = ({trips, deleteRow, hostLabel, setSort, sort, tripCopy}) => {
                 handle={setSort}
               />
             </th>
-            <th style={{width: '20%'}}>City, State</th>
+            <th style={{width: '20%'}}>City, State/Territory</th>
             <th className="text-right" style={{width: '5%'}}>
               Members
             </th>
@@ -165,6 +165,7 @@ Grid.propTypes = {
   setSort: PropTypes.func,
   role: PropTypes.string,
   reload: PropTypes.func,
+  tripCopy: PropTypes.func,
 }
 
 export default Grid
