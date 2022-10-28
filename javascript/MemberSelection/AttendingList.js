@@ -12,7 +12,7 @@ const AttendingList = ({eventAttending, bannerIds, addMember}) => {
       return (
         <button
           className="btn btn-primary m-1"
-          key={`member-${value.id}`}
+          key={`event-member-${value.email}`}
           onClick={() => addMember(value)}>
           {value.firstName} {value.lastName}
         </button>
