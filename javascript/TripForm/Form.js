@@ -45,12 +45,12 @@ const Form = ({
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
   const [trip, setTrip] = useState({...defaultTrip})
+  const [changesMade, setChangesMade] = useState()
 
   /**
    * Tracks initial trip load
    */
   const top = useRef()
-  const changesMade = useRef(false)
   const init = useRef(false)
 
   useEffect(() => {
@@ -59,10 +59,10 @@ const Form = ({
 
   useEffect(() => {
     if (init.current) {
-      changesMade.current = true
+      setChangesMade(true)
     }
     init.current = true
-  }, [trip.engageEventId, trip.organizationId])
+  }, [trip])
 
   /**
    * Performs an error check on the host and visitPurpose
@@ -150,23 +150,62 @@ const Form = ({
     })
   }
 
+  const scrollToError = () => {
+    for (const property in errors) {
+      if (errors[property]) {
+        switch (property) {
+          case 'submitName':
+          case 'submitEmail':
+            window.scrollTo(
+              0,
+              document.getElementById('submitter-info').offsetTop
+            )
+            return
+
+          case 'host':
+          case 'destinationCity':
+            window.scrollTo(0, document.getElementById('host-info').offsetTop)
+            return
+
+          case 'contactName':
+          case 'contactEmail':
+          case 'contactPhone':
+          case 'secContactName':
+          case 'secContactEmail':
+          case 'secContactPhone':
+            window.scrollTo(
+              0,
+              document.getElementById('contact-info').offsetTop
+            )
+            return
+
+          case 'timeDeparting':
+          case 'timeEventStart':
+          case 'timeReturn':
+            window.scrollTo(
+              0,
+              document.getElementById('schedule-info').offsetTop
+            )
+            return
+        }
+      }
+    }
+  }
+
   const tripSave = () => {
     if (finalErrorCheck()) {
       saveTrip({
         trip,
-        setConfirmModal,
-        defaultTrip,
         role,
         setErrors,
         onComplete,
       })
     } else {
-      window.scrollTo(0, top.current.offsetTop)
+      scrollToError()
     }
   }
 
   const setFormElement = (key, value) => {
-    //changesMade.current = true
     trip[key] = value
     setTrip({...trip})
     errorCheck(key, value)
@@ -302,7 +341,7 @@ const Form = ({
       <button
         className="btn btn-success"
         onClick={tripSave}
-        disabled={!changesMade.current}>
+        disabled={!changesMade}>
         Save travel plan
       </button>
     </div>
