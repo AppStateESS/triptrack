@@ -13,6 +13,7 @@
 namespace triptrack\Factory;
 
 use phpws2\Database;
+use triptrack\BannerAPI;
 
 if (!defined('TRIPTRACK_ENGAGE_CONFIG') || empty(TRIPTRACK_ENGAGE_CONFIG)) {
     throw new \Exception('Engage configuration not set.');
