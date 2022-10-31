@@ -131,6 +131,10 @@ class SettingFactory
         }
     }
 
+    /**
+     * Returns only the site contact email address.
+     * @return string
+     */
     public static function getEmailAddressOnly()
     {
         $contact = self::getContact();
