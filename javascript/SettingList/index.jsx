@@ -480,7 +480,7 @@ const SettingList = ({currentSettings}) => {
       {uploadRequiredRow()}
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
-          <strong>Site contact name</strong>
+          <strong>Administrative contact name</strong>
           <br />
           <small className="form-text text-muted">
             The person or department responsible for user questions.
@@ -505,7 +505,7 @@ const SettingList = ({currentSettings}) => {
       </div>
       <div className="row py-2 border-bottom mb-3">
         <div className="col-sm-6 mb-2">
-          <strong>Site contact email</strong>
+          <strong>Administrative contact email</strong>
           <br />
           <small className="form-text text-muted">
             Reply-to email address for coorespondence or questions.
