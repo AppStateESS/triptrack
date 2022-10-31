@@ -8,7 +8,7 @@ import Loading from '../api/Loading'
 import NoMemberOrg from './NoMemberOrg'
 import PropTypes from 'prop-types'
 
-/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions, confirmationRequired, confirmationInstructions  */
+/* global allowInternational, contactBannerRequired, tripId, defaultState, defaultCountry, hostLabel, organizationLabel, accommodationRequired, secondaryRequired, allowUpload, uploadRequired, uploadInstructions, confirmationRequired, confirmationInstructions, internationalInstructions  */
 
 const MemberTripForm = (props) => {
   const [organizations, setOrganizations] = useState([])
@@ -102,6 +102,7 @@ ReactDOM.render(
     uploadInstructions={uploadInstructions}
     confirmationInstructions={confirmationInstructions}
     confirmationRequired={confirmationRequired}
+    internationalInstructions={internationalInstructions}
   />,
   document.getElementById('MemberTripForm')
 )
