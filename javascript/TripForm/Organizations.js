@@ -25,7 +25,7 @@ const Organizations = ({
   return (
     <div className="row form-group">
       <div className="col-sm-4">
-        <label>Attending {organizationString.toLowerCase()}</label>
+        <label>{organizationString}</label>
       </div>
       <div className="col-sm-8">
         <select

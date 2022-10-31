@@ -420,7 +420,8 @@ const Form = ({
       <div>
         {trip.organizationId === 0 ? (
           <span className="text-secondary">
-            Choose an attending organization
+            Choose the {hostLabel.toLowerCase()} &quot;
+            {organizationLabel}&quot; below to see events.
           </span>
         ) : (
           <em>No association</em>
@@ -449,7 +450,9 @@ const Form = ({
         </div>
         <div className="col-sm-6">
           <fieldset>
-            <legend className="border-bottom mb-3">Associated Event</legend>
+            <legend className="border-bottom mb-3">
+              Associated Engage Event
+            </legend>
             {event}
           </fieldset>
         </div>

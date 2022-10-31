@@ -198,7 +198,7 @@ const Host = ({
       <div className="row form-group">
         <div className="col-sm-4">
           <label>
-            Address of hotel or accommodations
+            Address of overnight accommodations
             {accommodationRequired ? (
               <span className="text-danger">*</span>
             ) : null}
