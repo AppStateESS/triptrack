@@ -33,6 +33,7 @@ const Form = ({
   allowUpload,
   uploadRequired,
   uploadInstructions,
+  internationalInstructions,
   confirmationRequired,
   confirmationInstructions,
 }) => {
@@ -468,6 +469,7 @@ const Form = ({
         setErrors={setErrors}
         organizationLabel={organizationLabel}
         organizationList={organizations}
+        internationalInstructions={internationalInstructions}
         role={role}
         errors={errors}
       />
@@ -546,6 +548,7 @@ Form.propTypes = {
   allowUpload: PropTypes.bool,
   uploadRequired: PropTypes.bool,
   uploadInstructions: PropTypes.string,
+  internationalInstructions: PropTypes.string,
   tripDocuments: PropTypes.array,
   confirmationInstructions: PropTypes.string,
   confirmationRequired: PropTypes.bool,

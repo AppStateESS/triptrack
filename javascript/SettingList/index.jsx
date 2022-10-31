@@ -17,6 +17,7 @@ import {faSpinner} from '@fortawesome/free-solid-svg-icons'
 const saveButtonDefault = {
   uploadInstructions: {disabled: true, saving: false},
   confirmationInstructions: {disabled: true, saving: false},
+  internationalInstructions: {disabled: true, saving: false},
   siteContactName: {disabled: true, saving: false},
   siteContactEmail: {disabled: true, saving: false},
   hostLabel: {disabled: true, saving: false},
@@ -314,7 +315,9 @@ const SettingList = ({currentSettings}) => {
         <div className="col-sm-6 mb-2">
           <strong>Allow international</strong>
           <small className="form-text text-muted">
-            If enabled, other countries may be chosen as destinations.
+            If enabled, other countries may be chosen as destinations. Any
+            information concerning international travel should be entered in to
+            the text box.
           </small>
         </div>
         <div className="col-sm-6">
@@ -325,6 +328,22 @@ const SettingList = ({currentSettings}) => {
               updateCheck('allowInternational')
             }}
           />
+          <div>
+            <textarea
+              disabled={!settings.allowInternational}
+              className="form-control"
+              placeholder="International notes"
+              value={settings.internationalInstructions}
+              onChange={(e) =>
+                updateText('internationalInstructions', e.target.value)
+              }
+            />
+            <SaveButton
+              disabled={saveButton.internationalInstructions.disabled}
+              saving={saveButton.internationalInstructions.saving}
+              click={() => save('internationalInstructions')}
+            />
+          </div>
         </div>
       </div>
       <div className="row py-2 border-bottom mb-3">

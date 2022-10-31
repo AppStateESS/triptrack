@@ -15,6 +15,7 @@ const Host = ({
   accommodationRequired,
   organizationList,
   organizationLabel,
+  internationalInstructions,
   setErrors,
 }) => {
   const hostString = hostLabel.length > 0 ? hostLabel : 'Host'
@@ -41,6 +42,19 @@ const Host = ({
 
   const cityWarning = territories.includes(trip.destinationState)
 
+  let internationalInstructionContent
+
+  if (
+    internationalInstructions.length > 0 &&
+    trip.destinationCountry !== 'United States'
+  ) {
+    internationalInstructionContent = (
+      <div className="col-sm-4">
+        <div className="small">{internationalInstructions}</div>
+      </div>
+    )
+  }
+
   const international = () => {
     if (allowInternational) {
       return (
@@ -58,6 +72,7 @@ const Host = ({
               {countryList}
             </select>
           </div>
+          {internationalInstructionContent}
         </div>
       )
     } else {
@@ -72,6 +87,7 @@ const Host = ({
       return null
     }
   }
+
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">{hostString} information</legend>
@@ -195,6 +211,7 @@ const Host = ({
         </div>
         <div className="col-sm-3">{showStates()}</div>
       </div>
+      {international()}
       <div className="row form-group">
         <div className="col-sm-4">
           <label>
@@ -227,7 +244,6 @@ const Host = ({
           ) : null}
         </div>
       </div>
-      {international()}
     </fieldset>
   )
 }
@@ -236,6 +252,7 @@ Host.propTypes = {
   trip: PropTypes.object,
   setFormElement: PropTypes.func,
   allowInternational: PropTypes.bool,
+  internationalInstructions: PropTypes.string,
   errorCheck: PropTypes.func,
   errors: PropTypes.object,
   hostLabel: PropTypes.string,

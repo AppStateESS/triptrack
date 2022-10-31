@@ -44,6 +44,8 @@ class SettingFactory
                 'uploadRequired');
         $settings['uploadInstructions'] = Settings::get('triptrack',
                 'uploadInstructions');
+        $settings['internationalInstructions'] = Settings::get('triptrack',
+                'internationalInstructions');
         $settings['confirmationInstructions'] = Settings::get('triptrack',
                 'confirmationInstructions');
         $settings['contactBannerRequired'] = (bool) Settings::get('triptrack',
@@ -165,9 +167,10 @@ class SettingFactory
             case 'defaultCountry':
             case 'defaultState':
             case 'uploadInstructions':
+            case 'internationalInstructions':
             case 'confirmationInstructions':
                 Settings::set('triptrack', $varName,
-                    filter_var($value, FILTER_SANITIZE_STRING));
+                    strip_tags(filter_var($value, FILTER_SANITIZE_STRING)));
                 break;
 
             default:

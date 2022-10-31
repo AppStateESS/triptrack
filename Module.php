@@ -80,6 +80,7 @@ class Module extends \Canopy\Module implements SettingDefaults
             'siteContactEmail' => 'no-reply@appstate.edu',
             'uploadRequired' => false,
             'uploadInstructions' => '',
+            'internationalInstructions' => '',
             'confirmationInstructions' => '',
             'secondaryRequired' => true,
             'forceEngageOrg' => false,
