@@ -60,6 +60,13 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = '<pre>';
             $content[] = '+ Fixed member selection bug.';
             $content[] = '</pre>';
+        case version_compare($currentVersion, '1.3.4', '<'):
+            $content[] = '<pre>';
+            $content[] = '+ Updates wording.';
+            $content[] = '+ Adds international notes setting.';
+            $content[] = '+ Adds search to member selection.';
+            $content[] = '+ Adds warning page to non-member logins.';
+            $content[] = '</pre>';
     }
     return true;
 }

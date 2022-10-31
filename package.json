@@ -1,6 +1,6 @@
 {
   "name": "triptrack",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Tracks students travel plans",
   "main": "index.js",
   "scripts": {
