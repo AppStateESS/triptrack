@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 const Participants = ({currentMembers, removeMember}) => {
@@ -9,7 +9,7 @@ const Participants = ({currentMembers, removeMember}) => {
   const memberList = currentMembers.map((value, key) => {
     return (
       <button
-        className="btn btn-primary m-1"
+        className="btn btn-primary btn-sm m-1"
         key={`member-${value.id}`}
         onClick={() => removeMember(key)}>
         {value.firstName} {value.lastName}
@@ -19,7 +19,9 @@ const Participants = ({currentMembers, removeMember}) => {
 
   return (
     <div className="card">
-      <div className="card-body">{memberList}</div>
+      <div className="card-body overflow-auto" style={{maxHeight: '300px'}}>
+        {memberList}
+      </div>
     </div>
   )
 }
