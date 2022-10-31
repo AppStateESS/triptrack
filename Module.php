@@ -97,6 +97,8 @@ class Module extends \Canopy\Module implements SettingDefaults
                 \Layout::add(View\FrontPageView::admin());
             } elseif (MemberFactory::currentUserIsMember()) {
                 \Layout::add(View\FrontPageView::member());
+            } elseif (\Current_User::isLogged()) {
+                \Layout::add(View\FrontPageView::nonmember());
             } else {
                 \Layout::add(View\FrontPageView::user());
             }

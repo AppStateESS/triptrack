@@ -52,6 +52,15 @@ class FrontPageView
         return $template->get();
     }
 
+    public static function nonmember()
+    {
+        $vars['organizationLabel'] = \triptrack\Factory\SettingFactory::getOrganizationLabel();
+        $vars['contactEmail'] = \triptrack\Factory\SettingFactory::getEmailAddressOnly();
+        $template = new \phpws2\Template($vars);
+        $template->setModuleTemplate('triptrack', 'User/NonMember.html');
+        return $template->get();
+    }
+
     public static function user()
     {
         $auth = \Current_User::getAuthorization();
