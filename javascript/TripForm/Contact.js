@@ -9,18 +9,34 @@ const Contact = ({
   secondaryRequired,
   setErrors,
 }) => {
+  let contactInformation = (
+    <p>
+      Please identify the trip participant who will serve as the primary
+      emergency contact. Include a secondary source if available.
+    </p>
+  )
+  if (secondaryRequired) {
+    contactInformation = (
+      <p>
+        Please identify the trip participant who will serve as the primary
+        emergency contact. A secondary back up contact is also required.
+      </p>
+    )
+  }
+
   const invalid = 'form-control is-invalid'
   const valid = 'form-control'
   return (
     <fieldset className="mb-4">
       <legend className="border-bottom mb-3">Contact information</legend>
-      <p>In case we need to reach a trip participant, fill out the below.</p>
+      {contactInformation}
+
       <a id="contact-info"></a>
       <div className="row">
         <div className="col-sm-6">
           <div className="card">
             <div className="card-header">
-              <h4 className="mb-0">Primary Contact</h4>
+              <h4 className="mb-0">Primary Onsite Contact</h4>
             </div>
             <div className="card-body">
               <div className="row form-group">
@@ -108,7 +124,7 @@ const Contact = ({
         <div className="col-sm-6">
           <div className="card">
             <div className="card-header">
-              <h4 className="mb-0">Secondary Contact</h4>
+              <h4 className="mb-0">Secondary Onsite Contact</h4>
             </div>
             <div className="card-body">
               <div className="row form-group">
