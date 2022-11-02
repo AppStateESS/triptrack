@@ -13,6 +13,7 @@ import AttendingList from './AttendingList'
 import OrganizationList from './OrganizationList'
 import Participants from './Participants'
 import Search from './Search'
+import Message from '../Share/Message'
 import {getItem} from '../api/Fetch'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
@@ -28,36 +29,51 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
   const [currentMembers, setCurrentMembers] = useState([])
   const [saving, setSaving] = useState(0)
   const [changed, setChanged] = useState(false)
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     getTrip(tripId, role).then((response) => {
       const trip = response.data
       setTrip(trip)
 
-      const p1 = getItem('Organization', trip.organizationId, role).then(
-        (response) => {
+      const p1 = getItem('Organization', trip.organizationId, role)
+        .then((response) => {
           setOrganization(response.data)
-        }
-      )
+        })
+        .catch(() => {
+          setMessage('Error: unable to get organization information')
+          setLoading(false)
+        })
 
-      const p2 = getMemberListByOrganization(trip.organizationId, role).then(
-        (response) => {
+      const p2 = getMemberListByOrganization(trip.organizationId, role)
+        .then((response) => {
           setOrganizationMembers(response.data)
-        }
-      )
+        })
+        .catch(() => {
+          setMessage('Error: unable to get membership list')
+          setLoading(false)
+        })
 
-      const p3 = getEventAttending(trip.engageEventId, role).then(
-        (response) => {
+      const p3 = getEventAttending(trip.engageEventId, role)
+        .then((response) => {
           if (response.data !== false) {
             setEventAttending(response.data)
           }
-        }
-      )
+        })
+        .catch(() => {
+          setMessage('Error: failed to get Engage attended list')
+          setLoading(false)
+        })
 
-      const p4 = getParticipants(trip.id, role).then((response) => {
-        setCurrentMembers(response.data)
-        updateBannerIds(response.data)
-      })
+      const p4 = getParticipants(trip.id, role)
+        .then((response) => {
+          setCurrentMembers(response.data)
+          updateBannerIds(response.data)
+        })
+        .catch(() => {
+          setMessage('Error: failed to get trip particiants')
+          setLoading(false)
+        })
 
       Promise.all([p1, p2, p3, p4]).then(() => {
         setLoading(false)
@@ -184,6 +200,7 @@ const MemberSelection = ({tripId, organizationLabel, role}) => {
         <h2>{trip.host} - member selection</h2>
         {listLink}
         <hr />
+        {message.length > 0 && <Message message={message} type="danger" />}
         {saveButton}
 
         <h3>
