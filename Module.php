@@ -73,7 +73,7 @@ class Module extends \Canopy\Module implements SettingDefaults
             'bannerImport' => false,
             'contactBannerRequired' => true,
             'defaultCountry' => 'United States',
-            'defaultState' => 'North Carolina',
+            'defaultState' => 'NC',
             'hostLabel' => '',
             'organizationLabel' => '',
             'siteContactName' => 'TripTrack Site',
