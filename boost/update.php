@@ -67,6 +67,13 @@ function triptrack_update(&$content, $currentVersion)
             $content[] = '+ Adds search to member selection.';
             $content[] = '+ Adds warning page to non-member logins.';
             $content[] = '</pre>';
+        case version_compare($currentVersion, '1.3.5', '<'):
+            $content[] = '<pre>';
+            $content[] = '+ Fixes default state not using abbreviation.';
+            $content[] = '+ Adds error message on server problem..';
+            $content[] = '+ Adds error check on Engage data.';
+            $content[] = '+ Trip dates broken into two fields.';
+            $content[] = '</pre>';
     }
     return true;
 }
