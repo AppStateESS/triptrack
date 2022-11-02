@@ -10,11 +10,6 @@ import {deleteTrip, getIncomplete, copyTrip} from '../api/TripAjax'
 
 /* global hostLabel, unapproved */
 
-const updateSession = (dateArray) => {
-  localStorage.setItem('startDate', dateArray[0].getTime())
-  localStorage.setItem('endDate', dateArray[1].getTime())
-}
-
 const TripList = ({hostLabel, unapproved}) => {
   const today = new Date()
   let startRange = new Date()
@@ -31,21 +26,16 @@ const TripList = ({hostLabel, unapproved}) => {
   const [init, setInit] = useState(false)
   const [sort, setSort] = useState({column: '', dir: 0})
   const [incomplete, setIncomplete] = useState(null)
-  const [dateRange, setDateRange] = useState(() => {
-    const startDate = localStorage.getItem('startDate')
-    const endDate = localStorage.getItem('endDate')
-    if (startDate && endDate) {
-      return [new Date(parseInt(startDate)), new Date(parseInt(endDate))]
-    } else {
-      return [startRange, endRange]
-    }
-  })
+  const [dateStart, setDateStart] = useState(startRange)
+  const [dateEnd, setDateEnd] = useState(endRange)
 
   let searchTimeout = useRef(null)
 
   useEffect(() => {
-    load()
-  }, [sort, dateRange])
+    if (dateStart.getTime() < dateEnd.getTime()) {
+      load()
+    }
+  }, [sort, dateStart, dateEnd])
 
   useEffect(() => {
     setInit(true)
@@ -78,8 +68,8 @@ const TripList = ({hostLabel, unapproved}) => {
     const options = {
       search: useSearch ? search : '',
       unapprovedOnly,
-      startDate: Math.floor(dateRange[0].getTime() / 1000),
-      endDate: Math.floor(dateRange[1].getTime() / 1000),
+      startDate: Math.floor(dateStart.getTime() / 1000),
+      endDate: Math.floor(dateEnd.getTime() / 1000),
     }
     switch (sort.dir) {
       case 1:
@@ -127,19 +117,6 @@ const TripList = ({hostLabel, unapproved}) => {
       load()
     })
   }
-  const updateDateRange = (value) => {
-    if (value === null) {
-      setDateRange([startRange, endRange])
-      updateSession([startRange, endRange])
-      localStorage.removeItem('startDate')
-      localStorage.removeItem('endDate')
-    } else {
-      value[0].setHours(0)
-      value[1].setHours(23, 59, 59)
-      setDateRange(value)
-      updateSession(value)
-    }
-  }
 
   const menu = (
     <Menu
@@ -151,8 +128,10 @@ const TripList = ({hostLabel, unapproved}) => {
         resetSearch,
         setUnapprovedOnly,
         unapprovedOnly,
-        dateRange,
-        setDateRange: updateDateRange,
+        setDateStart,
+        setDateEnd,
+        dateStart,
+        dateEnd,
       }}
     />
   )

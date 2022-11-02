@@ -1,7 +1,8 @@
 'use strict'
 import React from 'react'
 import PropTypes from 'prop-types'
-import DateRangePicker from '@wojtekmaj/react-daterange-picker'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import './menu.css'
 
 const Menu = ({
@@ -12,8 +13,10 @@ const Menu = ({
   resetSearch,
   unapprovedOnly,
   setUnapprovedOnly,
-  setDateRange,
-  dateRange,
+  setDateStart,
+  setDateEnd,
+  dateStart,
+  dateEnd,
 }) => {
   const unapprovedOnlyButton = () => {
     if (unapprovedOnly) {
@@ -38,6 +41,7 @@ const Menu = ({
       )
     }
   }
+
   return (
     <div className="mb-3">
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -69,12 +73,28 @@ const Menu = ({
               )}
             </li>
             <li className="nav-item mr-2">{unapprovedOnlyButton()}</li>
-            <li className="nav-item">
-              <DateRangePicker
-                className="form-control"
-                onChange={setDateRange}
-                value={dateRange}
-              />
+            <li className="nav-item d-flex justify-content-center">
+              <div style={{width: '160px'}}>
+                <DatePicker
+                  selected={dateStart}
+                  todayButton="Today"
+                  maxDate={dateEnd}
+                  onChange={(date) => setDateStart(date)}
+                  closeOnScroll={true}
+                  className="form-control"
+                />
+              </div>
+              <div className="px-2 pt-1">to</div>
+              <div style={{width: '160px'}}>
+                <DatePicker
+                  selected={dateEnd}
+                  todayButton="Today"
+                  minDate={dateStart}
+                  onChange={(date) => setDateEnd(date)}
+                  closeOnScroll={true}
+                  className="form-control"
+                />
+              </div>
             </li>
           </ul>
           <div className="d-flex justify-content-end">
@@ -119,7 +139,10 @@ Menu.propTypes = {
   resetSearch: PropTypes.func,
   unapprovedOnly: PropTypes.bool,
   setUnapprovedOnly: PropTypes.func,
-  setDateRange: PropTypes.func,
+  setDateStart: PropTypes.func,
+  setDateEnd: PropTypes.func,
+  dateEnd: PropTypes.object,
+  dateStart: PropTypes.object,
   dateRange: PropTypes.array,
   incomplete: PropTypes.object,
 }
