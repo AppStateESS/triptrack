@@ -139,7 +139,11 @@ class EngageFactory
         if (empty($attending)) {
             return [];
         }
+
         foreach ($attending as $att) {
+            if (empty($att->userId->username)) {
+                continue;
+            }
             $newMember = false;
             $bannerId = $att->userId->username;
             $member = MemberFactory::loadByBannerId($bannerId);
