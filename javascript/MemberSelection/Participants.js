@@ -10,7 +10,7 @@ const Participants = ({currentMembers, removeMember}) => {
     return (
       <button
         className="btn btn-primary btn-sm m-1"
-        key={`member-${value.id}`}
+        key={`member-${value.bannerId}`}
         onClick={() => removeMember(key)}>
         {value.firstName} {value.lastName}
       </button>
